@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="创建型模式1、单例模式定义：确保一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。 类型：创建类模式 类图： 单例模式是23种设计模式中最简单的一种模式。有以下几个要素： ​    私有的构造方法 ​    指向自己实例的私有静态引用 ​    以自己实例为返回值的静态的公有的方法 饿汉式单例： 1234567public class Singleton &amp;#123;	private s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="创建型模式">
+<meta property="og:url" content="http://example.com/2020/12/07/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="创建型模式1、单例模式定义：确保一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。 类型：创建类模式 类图： 单例模式是23种设计模式中最简单的一种模式。有以下几个要素： ​    私有的构造方法 ​    指向自己实例的私有静态引用 ​    以自己实例为返回值的静态的公有的方法 饿汉式单例： 1234567public class Singleton &amp;#123;	private s">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201116132235343.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201116171957986.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201117101041833.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201117101644820.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201116114608546.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201117102923155.png">
+<meta property="article:published_time" content="2020-12-07T02:57:06.000Z">
+<meta property="article:modified_time" content="2020-12-07T02:57:59.154Z">
+<meta property="article:author" content="GCC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201116132235343.png">
+
+<link rel="canonical" href="http://example.com/2020/12/07/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>创建型模式 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          创建型模式
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-07 10:57:06 / 修改时间：10:57:59" itemprop="dateCreated datePublished" datetime="2020-12-07T10:57:06+08:00">2020-12-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="创建型模式"><a href="#创建型模式" class="headerlink" title="创建型模式"></a>创建型模式</h1><h2 id="1、单例模式"><a href="#1、单例模式" class="headerlink" title="1、单例模式"></a>1、单例模式</h2><p><strong>定义：</strong>确保一个类只有一个实例，而且自行实例化并向整个系统提供这个实例。</p>
+<p><strong>类型：</strong>创建类模式</p>
+<p><strong>类图：</strong><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116132235343.png" alt="image-20201116132235343"></p>
+<p>单例模式是23种设计模式中最简单的一种模式。有以下几个要素：</p>
+<p>​    私有的构造方法</p>
+<p>​    指向自己实例的私有静态引用</p>
+<p>​    以自己实例为返回值的静态的公有的方法</p>
+<p><strong>饿汉式单例：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Singleton singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> singleton;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>懒汉式单例</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> Singleton singleton;</span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(singleton==<span class="keyword">null</span>)&#123;</span><br><span class="line">			singleton = <span class="keyword">new</span> Singleton();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> singleton;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>单例模式的优点：</strong></p>
+<p>​    在内存中只有一个对象，节省内存空间</p>
+<p>​    避免频繁的创建销毁对象，可以提高性能</p>
+<p>​    避免对共享资源的多重占用</p>
+<p>​    可以全局访问</p>
+<p><strong>适用场景：</strong>由于单例模式以上的优点，所以是编程中用的比价多多的一种设计模式。我总结了一下我所知道的适合使用单例模式的场景：</p>
+<ul>
+<li>需要频繁实例化然后销毁的对象。</li>
+<li>创建对象时耗时过多或者耗资源过多，但又经常用到的对象。</li>
+<li>有状态的工具类对象。</li>
+<li>频繁访问数据库或文件的对象。</li>
+<li>以及其他我没用过的所有要求只有一个对象的场景。</li>
+</ul>
+<p><strong>单例模式注意事项：</strong></p>
+<ul>
+<li>只能使用单例类提供的方法得到单例对象，不要使用反射，否则将会实例化一个新对象。</li>
+<li>不要做断开单例类对象与类中静态引用的危险操作。</li>
+<li>多线程使用单例使用共享资源时，注意线程安全问题。</li>
+</ul>
+<p>关于java中单例模式的一些争议：</p>
+<p><strong>单例模式的对象长时间不用会被jvm垃圾收集器收集吗</strong></p>
+<ul>
+<li>只能使用单例类提供的方法得到单例对象，不要使用反射，否则将会实例化一个新对象。</li>
+<li>不要做断开单例类对象与类中静态引用的危险操作。</li>
+<li>多线程使用单例使用共享资源时，注意线程安全问题。</li>
+</ul>
+<p>关于java中单例模式的一些争议：</p>
+<p><strong>单例模式的对象长时间不用会被jvm垃圾收集器收集吗</strong></p>
+<ul>
+<li>只能使用单例类提供的方法得到单例对象，不要使用反射，否则将会实例化一个新对象。</li>
+<li>不要做断开单例类对象与类中静态引用的危险操作。</li>
+<li>多线程使用单例使用共享资源时，注意线程安全问题。</li>
+</ul>
+<p>关于java中单例模式的一些争议：</p>
+<ul>
+<li>只能使用单例类提供的方法得到单例对象，不要使用反射，否则将会实例化一个新对象。</li>
+<li>不要做断开单例类对象与类中静态引用的危险操作。</li>
+<li>多线程使用单例使用共享资源时，注意线程安全问题。</li>
+</ul>
+<p><strong>单例模式的对象长时间不用会被jvm垃圾收集器收集吗</strong></p>
+<p>​    看到不少资料中说：如果一个单例对象在内存中长久不用，会被jvm认为是一个垃圾，在执行垃圾收集的时候会被清理掉。对此这个说法，笔者持怀疑态度，笔者本人的观点是：<strong>在hotspot虚拟机1.6版本中，除非人为地断开单例中静态引用到单例对象的联接，否则jvm垃圾收集器是不会回收单例对象的。</strong></p>
+<p><strong>在一个jvm中会出现多个单例吗</strong></p>
+<p>​    在分布式系统、多个类加载器、以及序列化的的情况下，会产生多个单例，这一点是无庸置疑的。那么在同一个jvm中，会不会产生单例呢？使用单例提供的getInstance()方法只能得到同一个单例，除非是使用反射方式，将会得到新的单例。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class c = Class.forName(Singleton.class.getName());</span><br><span class="line">Constructor ct = c.getDeclaredConstructor();</span><br><span class="line">ct.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">Singleton singleton = (Singleton)ct.newInstance();</span><br></pre></td></tr></table></figure>
+
+<p>这样每次运行都会产生新的单例对象。所以运用单例模式时，一定注意不要使用反射产生新的单例对象。</p>
+<p><strong>懒汉式单例线程安全吗</strong></p>
+<p>懒汉式的单例模式是线程不安全的，即使是在实例化对象的方法上加<strong>synchronized</strong>关键字，也依然是危险的，但是笔者经过编码测试，发现加<strong>synchronized</strong>关键字修饰后，虽然对性能有部分影响，但是却是线程安全的，并不会产生实例化多个对象的情况。</p>
+<p><strong>单例类可以被继承吗</strong></p>
+<p>​    饿汉式单例和懒汉式单例由于构造方法是private的，所以他们都是不可继承的，但是其他很多单例模式是可以继承的，例如登记式单例。</p>
+<p><strong>饿汉式单例好还是懒汉式单例好</strong></p>
+<p>​    在java中，饿汉式单例要优于懒汉式单例。C++中则一般使用懒汉式单例。饿汉式是类一加载就实例化对象，所以要提前占用系统资源。然而懒汉式，又会面临着多线程访问的安全性问题，需要做双重锁定这样的处理才可以保证安全。</p>
+<h2 id="2、工厂方法模式"><a href="#2、工厂方法模式" class="headerlink" title="2、工厂方法模式"></a>2、工厂方法模式</h2><p><strong>定义：</strong>定义一个用于创建对象的接口，让子类决定实例化哪一个类，工厂方法使一个类的实例化延迟到其子类。</p>
+<p><strong>类型：</strong>创建类模式</p>
+<p><strong>类图：</strong></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116171957986.png" alt="image-20201116171957986"></p>
+<p><strong>工厂方法模式代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IProduct</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">productMethod</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span> <span class="keyword">implements</span> <span class="title">IProduct</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">productMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;产品&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IProduct <span class="title">createProduct</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span> <span class="keyword">implements</span> <span class="title">IFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IProduct <span class="title">createProduct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Product();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		IFactory factory = <span class="keyword">new</span> Factory();</span><br><span class="line">		IProduct prodect = factory.createProduct();</span><br><span class="line">		prodect.productMethod();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>工厂模式：</strong></p>
+<p>​    首先需要说一下工厂模式。工厂模式根据抽象程度的不同分为三种：简单工厂模式（也叫静态工厂模式）、本文所讲述的<strong>工厂方法模式</strong>、以及抽象工厂模式。工厂模式是编程中经常用到的一种模式。它的主要优点有：</p>
+<ul>
+<li>可以使代码结构清晰，有效地封装变化。在编程中，产品类的实例化有时候是比较复杂和多变的，通过工厂模式，将产品的实例化封装起来，使得调用者根本无需关心产品的实例化过程，只需依赖工厂即可得到自己想要的产品。</li>
+<li>对调用者屏蔽具体的产品类。如果使用工厂模式，调用者只关心产品的接口就可以了，至于具体的实现，调用者根本无需关心。即使变更了具体的实现，对调用者来说没有任何影响。</li>
+<li>降低耦合度。产品类的实例化通常来说是很复杂的，它需要依赖很多的类，而这些类对于调用者来说根本无需知道，如果使用了工厂方法，我们需要做的仅仅是实例化好产品类，然后交给调用者使用。对调用者来说，产品所依赖的类都是透明的。</li>
+</ul>
+<p><strong>工厂方法模式：</strong></p>
+<p>​    工厂接口：工厂接口是工厂方法模式的核心，与调用者直接交互用来提供产品。在实际编程中，有时候也会使用一个抽象类来作为与调用者交互的接口，其本质上是一样的。</p>
+<p>​    工厂实现。在编程中，工厂实现决定如何实例化产品，是实现扩展的途径，需要有多少种产品，就需要有多少个具体的工厂实现。</p>
+<p>​    产品接口。产品接口的主要目的是定义产品的规范，所有的产品都必须遵循产品接口定义的规范。产品接口是调用者最为关心的，产品接口定义的优劣直接决定了调用者代码的稳定性。同样，产品接口也可以用抽象类来代替，但要注意最好不要违反里氏替换原则。</p>
+<p>​    产品实现。实现产品接口的具体类，决定了产品在客户端中的具体行为。</p>
+<p><strong>适用场景：</strong></p>
+<p>首先，作为一种创建类模式，在任何需要生成<strong>复杂对象</strong>的地方，都可以使用工厂方法模式。有一点需要注意的地方就是复杂对象适合使用工厂模式，而简单对象，特别是只需要通过new就可以完成创建的对象，无需使用工厂模式。如果使用工厂模式，就需要引入一个工厂类，会增加系统的复杂度。</p>
+<p>​    其次，工厂模式是一种典型的解耦模式，迪米特法则在工厂模式中表现的尤为明显。假如调用者自己组装产品需要增加依赖关系时，可以考虑使用工厂模式。将会大大降低对象之间的耦合度。</p>
+<p>​    再次，由于工厂模式是依靠抽象架构的，它把实例化产品的任务交由实现类完成，扩展性比较好。也就是说，当需要系统有比较好的扩展性时，可以考虑工厂模式，不同的产品用不同的实现工厂来组装。</p>
+<p><strong>典型应用：</strong></p>
+<p>要说明工厂模式的优点，可能没有比组装汽车更合适的例子了。场景是这样的：汽车由发动机、轮、底盘组成，现在需要组装一辆车交给调用者。假如不使用工厂模式，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Engine</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getStyle</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;这是汽车的发动机&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Underpan</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getStyle</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;这是汽车的底盘&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Wheel</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getStyle</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;这是汽车的轮胎&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		Engine engine = <span class="keyword">new</span> Engine();</span><br><span class="line">		Underpan underpan = <span class="keyword">new</span> Underpan();</span><br><span class="line">		Wheel wheel = <span class="keyword">new</span> Wheel();</span><br><span class="line">		ICar car = <span class="keyword">new</span> Car(underpan, wheel, engine);</span><br><span class="line">		car.show();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，调用者为了组装汽车还需要另外实例化发动机、底盘和轮胎，而这些汽车的组件是与调用者无关的，严重违反了迪米特法则，耦合度太高。并且非常不利于扩展。另外，本例中发动机、底盘和轮胎还是比较具体的，在实际应用中，可能这些产品的组件也都是抽象的，调用者根本不知道怎样组装产品。假如使用工厂方法的话，整个架构就显得清晰了许多。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> ICar <span class="title">createCar</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span> <span class="keyword">implements</span> <span class="title">IFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> ICar <span class="title">createCar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		Engine engine = <span class="keyword">new</span> Engine();</span><br><span class="line">		Underpan underpan = <span class="keyword">new</span> Underpan();</span><br><span class="line">		Wheel wheel = <span class="keyword">new</span> Wheel();</span><br><span class="line">		ICar car = <span class="keyword">new</span> Car(underpan, wheel, engine);</span><br><span class="line">		<span class="keyword">return</span> car;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		IFactory factory = <span class="keyword">new</span> Factory();</span><br><span class="line">		ICar car = factory.createCar();</span><br><span class="line">		car.show();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用工厂方法后，调用端的耦合度大大降低了。并且对于工厂来说，是可以扩展的，以后如果想组装其他的汽车，只需要再增加一个工厂类的实现就可以。无论是灵活性还是稳定性都得到了极大的提高。</p>
+<h2 id="3、抽象工厂模式"><a href="#3、抽象工厂模式" class="headerlink" title="3、抽象工厂模式"></a>3、抽象工厂模式</h2><p><strong>定义：</strong>为创建一组相关或相互依赖的对象提供一个接口，而且无需指定他们的具体类。</p>
+<p><strong>类型：</strong>创建类模式</p>
+<p><strong>类图：</strong></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201117101041833.png" alt="image-20201117101041833"></p>
+<p><strong>抽象工厂模式与工厂方法模式的区别：</strong></p>
+<p>​    抽象工厂模式是工厂方法模式的升级版本，他用来创建一组相关或者相互依赖的对象。他与工厂方法模式的区别就在于，工厂方法模式针对的是一个产品等级结构；而抽象工厂模式则是针对的多个产品等级结构。在编程中，通常一个产品结构，表现为一个接口或者抽象类，也就是说，工厂方法模式提供的所有产品都是衍生自同一个接口或抽象类，而抽象工厂模式所提供的产品则是衍生自不同的接口或抽象类。</p>
+<p>​    在抽象工厂模式中，有一个产品族的概念：所谓的产品族，是指位于不同产品等级结构中功能相关联的产品组成的家族。抽象工厂模式所提供的一系列产品就组成一个产品族；而工厂方法提供的一系列产品称为一个等级结构。</p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201117101644820.png" alt="image-20201117101644820"></p>
+<p>在上面的类图中，两厢车和三厢车称为两个不同的等级结构；而2.0排量车和2.4排量车则称为两个不同的产品族。再具体一点，2.0排量两厢车和2.4排量两厢车属于同一个等级结构，2.0排量三厢车和2.4排量三厢车属于另一个等级结构；而2.0排量两厢车和2.0排量三厢车属于同一个产品族，2.4排量两厢车和2.4排量三厢车属于另一个产品族。</p>
+<p>明白了等级结构和产品族的概念，就理解工厂方法模式和抽象工厂模式的区别了，如果工厂的产品全部属于同一个等级结构，则属于工厂方法模式；如果工厂的产品来自多个等级结构，则属于抽象工厂模式。在本例中，如果一个工厂模式提供2.0排量两厢车和2.4排量两厢车，那么他属于工厂方法模式；如果一个工厂模式是提供2.4排量两厢车和2.4排量三厢车两个产品，那么这个工厂模式就是抽象工厂模式，因为他提供的产品是分属两个不同的等级结构。当然，如果一个工厂提供全部四种车型的产品，因为产品分属两个等级结构，他当然也属于抽象工厂模式了。</p>
+<p><strong>抽象工厂模式代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IProduct1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IProduct2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product1</span> <span class="keyword">implements</span> <span class="title">IProduct1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;这是1型产品&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product2</span> <span class="keyword">implements</span> <span class="title">IProduct2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;这是2型产品&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IFactory</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IProduct1 <span class="title">createProduct1</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IProduct2 <span class="title">createProduct2</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Factory</span> <span class="keyword">implements</span> <span class="title">IFactory</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IProduct1 <span class="title">createProduct1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Product1();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IProduct2 <span class="title">createProduct2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> Product2();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		IFactory factory = <span class="keyword">new</span> Factory();</span><br><span class="line">		factory.createProduct1().show();</span><br><span class="line">		factory.createProduct2().show();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>抽象工厂模式的优点：</strong></p>
+<p>抽象工厂模式除了具有工厂方法模式的优点外，最主要的优点就是可以在类的内部对产品族进行约束。所谓的产品族，一把或多或少的都存在一定的关联，抽象工厂模式就可以在类内部对产品族的关联关系进行定义和描述，而不必专门引入一个新的类来进行管理。</p>
+<p><strong>抽象工厂模式的缺点：</strong></p>
+<p>​    产品族的扩展将是一件十分费力的事情，假如产品族中需要增加一个新的产品，则几乎所有的工厂类都需要进行修改。所以使用抽象工厂模式时，对产品等级结构的划分是非常重要的。</p>
+<p><strong>适用场景：</strong></p>
+<p>当需要创建的对象是一系列相互关联或相互依赖的产品族时，便可以使用抽象工厂模式。说的更明白一点，就是一个继承体系中，如果存在着多个等级结构（即存在着多个抽象类），并且分属各个等级结构中的实现类之间存在着一定的关联或者约束，就可以使用抽象工厂模式。假如各个等级结构中的实现类之间不存在关联或约束，则使用多个独立的工厂来对产品进行创建，则更合适一点。</p>
+<p><strong>总结：</strong></p>
+<p>无论是简单工厂模式，工厂方法模式，还是抽象工厂模式，他们都属于工厂模式，在形式和特点上也是极为相似的，他们的最终目的都是为了解耦。在使用时，我们不必去在意这个模式到底工厂方法模式还是抽象工厂模式，因为他们之间的演变常常是令人琢磨不透的。经常你会发现，明明使用的工厂方法模式，当新需求来临，稍加修改，加入了一个新方法后，由于类中的产品构成了不同等级结构中的产品族，它就变成抽象工厂模式了；而对于抽象工厂模式，当减少一个方法使的提供的产品不再构成产品族之后，它就演变成了工厂方法模式。</p>
+<h2 id="4、建造者模式"><a href="#4、建造者模式" class="headerlink" title="4、建造者模式"></a>4、建造者模式</h2><p><strong>定义：</strong>将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+<p><strong>类型：</strong>创建类模式</p>
+<p><strong>类图：</strong></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116114608546.png" alt="image-20201116114608546"></p>
+<p><strong>四个要素：</strong></p>
+<p>​    <strong>产品类：</strong>一般是一个较为负责的对象，也就是说创建对象的过程比较复杂，一般会有比较多的代码量。在本类图中，产品类是一个具体的类，而非抽象类。实际编程中，产品类可以是由一个抽象类与它的不同实现组成，也可以是由多个抽象类与他们的实现组成。</p>
+<p>​    <strong>抽象建造者：</strong>引入抽象建造者的目的，是为了将建造的具体过程交与它的子类来实现。这样更容易扩展，一般有两个抽象方法，一个用来建造产品，一个是用来返回产品。</p>
+<p>​    <strong>建造者：</strong>实现抽象类的所有未实现的方法，具体来说一般是两项任务：组建产品；返回组建好的产品。</p>
+<p>​    <strong>导演类：</strong>负责调用适当的建造者来组建产品，导演类一般不与产品类发生依赖关系，与导演类直接交互的是建造者类。一般来说，导演类被用来封装程序中易变的部分。</p>
+<p><strong>代码实现</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">private</span> String type;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showProduct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;名称：&quot;</span>+name);</span><br><span class="line">		System.out.println(<span class="string">&quot;型号：&quot;</span>+type);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.name = name;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setType</span><span class="params">(String type)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.type = type;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">setPart</span><span class="params">(String arg1, String arg2)</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> Product <span class="title">getProduct</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcreteBuilder</span> <span class="keyword">extends</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Product product = <span class="keyword">new</span> Product();</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Product <span class="title">getProduct</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> product;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPart</span><span class="params">(String arg1, String arg2)</span> </span>&#123;</span><br><span class="line">		product.setName(arg1);</span><br><span class="line">		product.setType(arg2);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Director</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> Builder builder = <span class="keyword">new</span> ConcreteBuilder();</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Product <span class="title">getAProduct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		builder.setPart(<span class="string">&quot;宝马汽车&quot;</span>,<span class="string">&quot;X7&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> builder.getProduct();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Product <span class="title">getBProduct</span><span class="params">()</span></span>&#123;</span><br><span class="line">		builder.setPart(<span class="string">&quot;奥迪汽车&quot;</span>,<span class="string">&quot;Q5&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> builder.getProduct();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Director director = <span class="keyword">new</span> Director();</span><br><span class="line">		Product product1 = director.getAProduct();</span><br><span class="line">		product1.showProduct();</span><br><span class="line"> </span><br><span class="line">		Product product2 = director.getBProduct();</span><br><span class="line">		product2.showProduct();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>建造者模式的有点</strong></p>
+<p>​    首先，建造者模式的封装性很好。使用建造者模式可以有效的封装变化，在使用建造者模式的场景中，一般产品类和建造者类是比较稳定的，因此，将主要的业务逻辑封装在导演类中对整体而言可以取得比较好的稳定性。</p>
+<p>​    其次，建造者模式很容易进行扩展。如果有新的需求，通过实现一个新的建造者类就可以完成，基本上不用修改之前已经测试通过的代码，因此也就不会对原有功能引入风险。</p>
+<p><strong>建造者模式与工厂模式的区别</strong></p>
+<p>​    我们可以看到，建造者模式与工厂模式是极为相似的，总体上，建造者模式仅仅只比工厂模式多了一个“导演类”的角色。在建造者模式的类图中，假如把这个导演类看做是最终调用的客户端，那么图中剩余的部分就可以看作是一个简单的工厂模式了。</p>
+<p>​    与工厂模式相比，建造者模式一般用来创建<strong>更为复杂的对象</strong>，因为对象的创建过程更为复杂，因此将对象的创建过程独立出来组成一个新的类——导演类。也就是说，工厂模式是将对象的全部创建过程封装在工厂类中，由工厂类向客户端提供最终的产品；而建造者模式中，建造者类一般只提供产品类中各个组件的建造，而将具体建造过程交付给导演类。由导演类负责将各个组件按照特定的规则组建为产品，然后将组建好的产品交付给客户端。</p>
+<p><strong>总结</strong></p>
+<p>​    建造者模式与工厂模式类似，他们都是建造者模式，适用的场景也很相似。一般来说，如果产品的建造很复杂，那么请用工厂模式；如果产品的建造更复杂，那么请用建造者模式。</p>
+<h2 id="5、原型模式"><a href="#5、原型模式" class="headerlink" title="5、原型模式"></a>5、原型模式</h2><p><strong>定义：</strong></p>
+<p>​    用原型实例指定创建对象的终类，并通过拷贝这些原型创建新的对象。</p>
+<p><strong>类型：</strong></p>
+<p>​    创建类模式</p>
+<p><strong>类图：</strong></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201117102923155.png" alt="image-20201117102923155"></p>
+<p>原型模式主要用于对象的复制，它的核心就是类图中的原型类Prototype。Prototype类需要以下两个条件：</p>
+<p>​    实现Cloneable接口。在java语言有一个Cloneable接口，它的作用只有一个，就是在运行时通知虚拟机可以安全地在实现了此接口的类上使用clone方法。在java虚拟机中，只有实现了这个接口的类才可以被拷贝，否则在运行时会抛出CloneNotSupportedException异常。</p>
+<p>​    重写Object类中的clone方法。Java中，所有类的父类都是Object类，Object类中有一个clone方法，作用是返回对象的一个拷贝，但是其作用域protected类型的，一般的类无法调用，因此，Prototype类需要将clone方法的作用域修改为public类型。</p>
+<p>​    原型模式是一种比较简单的模式，也非常容易理解，实现一个接口，重写一个方法即完成了原型模式。在实际应用中，原型模式很少单独出现。经常与其他模式混用，他的原型类Prototype也常用抽象类来替代。</p>
+<p><strong>实现代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Prototype</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Prototype <span class="title">clone</span><span class="params">()</span></span>&#123;</span><br><span class="line">		Prototype prototype = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			prototype = (Prototype)<span class="keyword">super</span>.clone();</span><br><span class="line">		&#125;<span class="keyword">catch</span>(CloneNotSupportedException e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> prototype; </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConcretePrototype</span> <span class="keyword">extends</span> <span class="title">Prototype</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;原型模式实现类&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		ConcretePrototype cp = <span class="keyword">new</span> ConcretePrototype();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt; <span class="number">10</span>; i++)&#123;</span><br><span class="line">			ConcretePrototype clonecp = (ConcretePrototype)cp.clone();</span><br><span class="line">			clonecp.show();</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>原型模式的优点及适用场景：</strong></p>
+<p>​    使用原型模式创建对象比直接new一个对象在性能上要好的多，因为Object类的clone方法是一个本地方法，它直接操作内存中的二进制流，特别是复制大对象时，性能的差别非常明显。</p>
+<p>​    使用原型模式的另一个好处是简化对象的创建，使得创建对象就像我们在编辑文档时的复制粘贴一样简单。</p>
+<p>​    因为以上优点，所以在需要重复地创建相似对象时可以考虑使用原型模式。比如需要在一个循环体内创建对象，假如对象创建过程比较复杂或者循环次数很多的话，使用原型模式不但可以简化创建过程，而且可以使系统的整体性能提高很多。</p>
+<p><strong>原型模式的注意事项：</strong></p>
+<ul>
+<li><p>使用原型模式复制对象不会调用类的构造方法。因为对象的复制是通过调用Object类的clone方法来完成的，它直接在内存中复制数据，因此不会调用到类的构造方法。不但构造方法中的代码不会执行，甚至连访问权限都对原型模式无效。还记得单例模式吗？单例模式中，只要将构造方法的访问权限设置为private型，就可以实现单例。但是clone方法直接无视构造方法的权限，所以，单例模式与原型模式是冲突的，在使用时要特别注意。</p>
+</li>
+<li><p>深拷贝与浅拷贝。Object类的clone方法只会拷贝对象中的基本的数据类型，对于数组、容器对象、引用对象等都不会拷贝，这就是浅拷贝。如果要实现深拷贝，必须将原型模式中的数组、容器对象、引用对象等另行拷贝。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Prototype</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> ArrayList list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">	<span class="function"><span class="keyword">public</span> Prototype <span class="title">clone</span><span class="params">()</span></span>&#123;</span><br><span class="line">		Prototype prototype = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span>&#123;</span><br><span class="line">			prototype = (Prototype)<span class="keyword">super</span>.clone();</span><br><span class="line">			prototype.list = (ArrayList) <span class="keyword">this</span>.list.clone();</span><br><span class="line">		&#125;<span class="keyword">catch</span>(CloneNotSupportedException e)&#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> prototype; </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于ArrayList不是基本类型，所以成员变量list，不会被拷贝，需要我们自己实现深拷贝，幸运的是java提供的大部分容器类都实现了Cloneable接口，所以实现深拷贝并不是特别困难。</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/07/%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/" rel="prev" title="六大原则">
+      <i class="fa fa-chevron-left"></i> 六大原则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/07/%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="next" title="行为型模式">
+      行为型模式 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">创建型模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">1、单例模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">2、工厂方法模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">3、抽象工厂模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">4、建造者模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.5.</span> <span class="nav-text">5、原型模式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
