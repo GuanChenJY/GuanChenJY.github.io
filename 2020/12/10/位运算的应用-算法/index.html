@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="位运算　　位操作是一种通过算法来处理bit或比单词短的数据片段的操作。需要位操作的计算机程序任务包括低级设备控制，错误检测和校正算法，数据压缩，加密算法和优化。对于大多数其他任务，现代程序语言允许编程者直接在抽象层面上工作，而不是去编程那些代表这些抽象的bit位（即我们现在编程都是用代码写程序，而不是0和1）。在源码中可以用的位操作包括：AND、OR、XOR、NOT和位移。　　在某些情况中，位操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="位运算的应用-算法">
+<meta property="og:url" content="http://example.com/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="位运算　　位操作是一种通过算法来处理bit或比单词短的数据片段的操作。需要位操作的计算机程序任务包括低级设备控制，错误检测和校正算法，数据压缩，加密算法和优化。对于大多数其他任务，现代程序语言允许编程者直接在抽象层面上工作，而不是去编程那些代表这些抽象的bit位（即我们现在编程都是用代码写程序，而不是0和1）。在源码中可以用的位操作包括：AND、OR、XOR、NOT和位移。　　在某些情况中，位操作">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201210141043810.png">
+<meta property="article:published_time" content="2020-12-10T03:48:12.000Z">
+<meta property="article:modified_time" content="2020-12-10T06:26:18.072Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201210141043810.png">
+
+<link rel="canonical" href="http://example.com/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>位运算的应用-算法 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          位运算的应用-算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-10 11:48:12 / 修改时间：14:26:18" itemprop="dateCreated datePublished" datetime="2020-12-10T11:48:12+08:00">2020-12-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>　　位操作是一种通过算法来处理bit或比单词短的数据片段的操作。需要位操作的计算机程序任务包括低级设备控制，错误检测和校正算法，数据压缩，加密算法和优化。对于大多数其他任务，现代程序语言允许编程者直接在抽象层面上工作，而不是去编程那些代表这些抽象的bit位（即我们现在编程都是用代码写程序，而不是0和1）。在源码中可以用的位操作包括：AND、OR、XOR、NOT和位移。<br>　　在某些情况中，位操作可以避免或者减少在一个数据结构上需要进行循环的次数，并且可以成倍的效率提升，因为位操作是并行处理的。但是位操作的代码比较难以编写和维护。</p>
+<p>这里我们先用一个简单的问题来感受一下位操作的威力。比如现在问题是要求判断一个数x是不是2的整数幂，普通的思路是用循环不断去判断x x<em>x</em>看是否能够被2整除，如果是，则除以2，否则这个数不是2的整数幂。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isPowerOfTwo</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: bool</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">if</span> x &lt;= <span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">while</span> x % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">		x //= <span class="number">2</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">return</span> x == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>上面普通解法，需要进行的循环次数随着x的增大而增大，采用位运算的算法程序如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isPowerOfTwo</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: bool</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">not</span> (x &amp; (x - <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<p>代码中<code>x&amp;(x-1)</code>的作用是将x的二进制表示中右边第一个1置0。比如3原来的二进制表示是<code>11</code>，最右边的1置0后就变成了<code>10</code>，所以有<code>3&amp;(3-1)=2</code>。而2的整数幂的二进制表示肯定是只有一个1，如果将这个1置0，那么结果肯定是0。</p>
+<h2 id="位运算的应用实例"><a href="#位运算的应用实例" class="headerlink" title="位运算的应用实例"></a>位运算的应用实例</h2><p>位运算的几个核心操作符是&amp;（按位与）、|（按位或）、~（按位取反）、^（按位异或）、&lt;&lt;（左移）、&gt;&gt;（右移）。下面根据一些具体的问题，来看看位运算怎么应用。</p>
+<p>**Example 1:**计算给定整数的二进制表达中有多少个1</p>
+<p>最简单的思路就是每次判断数字的二进制表达的最后一位是否为1，如果是1就计数器加一，然后将数字右移一位，但是这样会有很多无效操作，比如100个0连在一起，需要右移100次才能遇到下一个1。这里可以用到上面提到的<code>x &amp; (x - 1)</code>，每次去掉最右边的一个1，x中有多少个1，就只要循环这么多次。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count1Bit</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	count = <span class="number">0</span></span><br><span class="line">	<span class="keyword">while</span> x:</span><br><span class="line">		count += <span class="number">1</span></span><br><span class="line">		x &amp;= x - <span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> count</span><br></pre></td></tr></table></figure>
+
+<p>上面也提到过，<code>x &amp; (x - 1)</code>的作用是将x的二进制表示中右边第一个1置0，我们来分步看一下为什么会这样子。首先<code>x-1</code>的作用是将x最右边的1置0，并且这个1后面的所有0置1（如果这个1已经是最后一位则忽略不计）。如果将减一后的结果和原数按位相与，首先最右边一个1由于变成0了，肯定与的结果是0，最右边1后面的数字，原数都是0，现在都是1，那么与的结果肯定也还都是0。比如现在一个二进制数是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x:0010,0101,0000</span><br><span class="line">x-1:0010,0100,1111</span><br><span class="line">x&amp;(x-1):0010,0100,0000</span><br></pre></td></tr></table></figure>
+
+<p>这里就没有考虑负数的情况了，由于计算机中负数是补码形式存储，而Python中整数的位数又没有限制，感觉没啥意义，这里就pass了。</p>
+<p><strong>Example 2</strong>: 不使用加减法实现两个整数相加</p>
+<p>不能使用加减法，那就只能靠位运算了。可以将加法分解一下，每次先计算不考虑进位的加法，然后计算进位，最后把两个结果加在一起。看一下程序:honey_pot:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getSum</span>(<span class="params">a, b</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type a: int</span></span><br><span class="line"><span class="string">	:type b: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">while</span> b:</span><br><span class="line">		a, b = a ^ b, (a &amp; b) &lt;&lt; <span class="number">1</span></span><br><span class="line">		a &amp;= <span class="number">0xFFFFFFFF</span>		<span class="comment"># 32位整型</span></span><br><span class="line">		b &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line">		<span class="keyword">if</span> a &gt; <span class="number">0x7FFFFFFF</span>:		<span class="comment"># 考虑负数的情况</span></span><br><span class="line">			a = ~(a ^ <span class="number">0xFFFFFFFF</span>)</span><br><span class="line">	<span class="keyword">return</span> a</span><br></pre></td></tr></table></figure>
+
+<p>上面程序，<code>a^b</code>的结果是是不考虑进位的和，因为1+1和0+0的结果都是0，只有0+1或1+0才是1，这刚好符合异或的性质。而<code>(a &amp; b) &lt;&lt; 1</code>表示进位的结果，因为只有1+1才会发生进位，并且需要将这个进位左移1位（因为是进位往前一位加）。然后一直循环，直到进位为0，此时的<code>a</code>就是输入两个数的和了。</p>
+<p>以5和7为例：</p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201210141043810.png" alt="image-20201210141043810"></p>
+<p>当<code>b=0</code>时停止循环，此时<code>a=0b1100=12</code>，结果正确。<br>　　不过因为在Python中，整型的长度没有限制，当一个整数超过32位时，Python会自动扩展，理论上可以表示无穷大的数（实际最大能够表示多大我也没有测试过）。这个就直接导致进位右移操作在Python算法中起不到效果，永远不可能出现<code>b=0</code>的情况。所以Python代码中需要判断整数<strong>溢出</strong>的情况。现在假设整数由32bit表示，<code>a &amp;= 0xFFFFFFFF</code>就是获取<code>a</code>的32位二进制表示，如果<code>a</code>为负数，那么得到的是<code>a</code>的无符号补码，这里需要注意一下。由于在计算机中，二进制第一位是符号位，0表示正数，1表示负数，所以32位能表示的最大的正数为0x7FFFFFF，即0111,1111,1111,1111,1111,1111,1111,1111</p>
+<p>如果<code>a &amp;= 0xFFFFFFFF</code>的结果大于0x7FFFFFFF，就说明<code>a</code>是个负数，需要进行转原码的处理</p>
+<p>我们如何根据无符号的负数补码得其有符号的原码呢？先回顾一下补码是如何计算的：正数的补码就是其本身；负数的补码是保持符号位不变，其他位按位取反，然后加1得到补码。现在最大的问题就是如果一个数和0xFFFFFFFF与运算之后，得到的数是无符号类型的，所以也不存在符号位这一说了。这里我们可以先将<code>a ^= 0xFFFFFFFF</code>，这其实也就是按位取反，不过这种形式的按位取反得到的还是无符号类型，如果先用<code>~</code>进行按位取反，Python会将得到一个有符号类型的数，这改变了数的大小，显然不行。所以第二次再用<code>~</code>进行按位取反，得到的有符号的<code>a</code>的补码了。<br>　　简而言之，如果<code>a</code>是负数，<code>a &amp;= 0xFFFFFFFF</code>得到的是<code>a</code>无符号的补码形式，如果先用<code>a ^= 0xFFFFFFFF</code>按位取反，再用<code>a = ~a</code>按位取反，得到的还是原来的数（两次取反相互抵消，负负得正），只不过变成<code>a</code>有符号的补码了。这时Python会将其当做负数的补码处理，会再对其进行一次求补码的操作，得到<code>a</code>的原码。</p>
+<p><strong>Example 3</strong>:给一个从0~n的连续整数数组，找出数组缺少的一个数，比如数组为[0,1,3]，缺少的数为2</p>
+<p>这个我们当然可以用等差数列求和公式算出理论上数组的和，再减去数组实际的和，就能得到缺少的这个数。如果用位运算应该怎么做呢？代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">missingNumber</span>(<span class="params">nums</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type nums: list</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	ret = <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(nums):</span><br><span class="line">		ret ^= i</span><br><span class="line">		ret ^= x</span><br><span class="line">	<span class="keyword">return</span> ret ^ <span class="built_in">len</span>(nums)</span><br></pre></td></tr></table></figure>
+
+<p>这里用到的其实是异或的一个特性：两个同样的数异或结果为0。就以[0, 1, 3]为例，程序中<code>ret</code>初始值为0，<code>ret</code>每次循环分别同<code>i</code>和<code>x</code>进行了一次异或操作，这里<code>i</code>代表完整数组应该出现的值，<code>x</code>代表实际数组中的值。循环结束时，<code>ret</code>同[0, 0, 1, 1, 2, 3]进行了异或，因为完整数组是从0 ~ n的，循环结束时只访问了0 ~ n-1，所以<code>ret</code>需要再和<code>len(nums)</code>异或一次。<code>ret</code>就总共和[0, 0, 1, 1, 2, 3, 3]进行了异或，相同的数异或抵消为，2只出现了一次，所以2就是这个连续数组缺失的数字。<br>　　异或很适合“找不同”的问题，下面再看一个例子。</p>
+<p><strong>Example 4:</strong> 一个无序整数数组中，除了两个数字只出现过一次，其他数字都出现了两次，找出这两个只出现一次的数字出来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">int</span>[] singleNumbers(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">    <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n:nums)&#123;</span><br><span class="line">        res^=n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> div=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> ((div&amp;res)==<span class="number">0</span>)&#123;</span><br><span class="line">        div&lt;&lt;=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> a=<span class="number">0</span>,b=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n:nums)&#123;</span><br><span class="line">        <span class="keyword">if</span> ((div&amp;n)!=<span class="number">0</span>)&#123;</span><br><span class="line">            a^=n;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            b^=n;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;a,b&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example5:找出不大于N的最大的2的幂指数</strong></p>
+<p>这个问题本质上就是找到N的二进制表达中最左边的1所在的位置，然后将后面的1全部置0的问题。笨办法是循环判断找到最高位的1，这个问题还可以转化为将最左边的1后面全部置1，然后加1再右移一位。比如现在N=19，其二进制表示为<code>10011</code>，我们只要将其转化为<code>11111</code>然后加1变为<code>100000</code>，最后再右移一位变为<code>10000</code>即得到不大于19的最大二次幂为16。将最高位右边全部置1可以用或逻辑<code>|</code>来实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">largestPower</span>(<span class="params">N</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type N: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">1</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">2</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">4</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">8</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">16</span></span><br><span class="line">	<span class="keyword">return</span> (N + <span class="number">1</span>) &gt;&gt; <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>位运算符<code>|</code>的一个作用就是尽可能多的保留1，这里我们默认用32bit来表示整数，所以上述代码中只考虑了除去符号位的后31位。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>常用的位运算包括&amp;（按位与）、|（按位或）、~（按位取反）、^（按位异或）、&lt;&lt;（左移）、&gt;&gt;（右移）。</p>
+<ul>
+<li><code>&amp;</code>通常用于需要选择特定的数位的情况，因为任何一个数位和1相与得到的是其本身；</li>
+<li><code>|</code>通常用于要求尽可能保留1的情况，因为只要有1，或运算的结果一定是1；</li>
+<li><code>~</code>按位取反会将符号位一同取反，得到的还是一个有符号整数；</li>
+<li><code>^</code>常用于去除重复元素的情况，和“负负得正”这种情况比较类似；</li>
+<li><code>&lt;&lt;</code>和<code>&gt;&gt;</code>通常和上面4种位运算符搭配使用，不过要注意在Python中左移是不会发生溢出的，需要人为判断溢出。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/" rel="prev" title="网络杂谈">
+      <i class="fa fa-chevron-left"></i> 网络杂谈
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97"><span class="nav-number">1.</span> <span class="nav-text">位运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8%E5%AE%9E%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">位运算的应用实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.1.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
