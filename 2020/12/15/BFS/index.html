@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="BFSBFS核心思想就是把一些问题抽象成图，从一个点开始，向四周扩散。一般来说，写BFS算法都是用队列这种数据结构，每次将一个节点周围的所有节点加入队列。 BFS相对DFS的最主要的区别是：BFS找到的路径一定是最短的，但代价就是空间复杂度比DFS大很多。 算法框架BFS的常见场景就是在一副“图”中找到从起点start到终点target的最近距离，这个栗子听起来很枯燥，但是BFS算法问题都是在干这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BFS">
+<meta property="og:url" content="http://example.com/2020/12/15/BFS/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="BFSBFS核心思想就是把一些问题抽象成图，从一个点开始，向四周扩散。一般来说，写BFS算法都是用队列这种数据结构，每次将一个节点周围的所有节点加入队列。 BFS相对DFS的最主要的区别是：BFS找到的路径一定是最短的，但代价就是空间复杂度比DFS大很多。 算法框架BFS的常见场景就是在一副“图”中找到从起点start到终点target的最近距离，这个栗子听起来很枯燥，但是BFS算法问题都是在干这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-15T07:02:09.000Z">
+<meta property="article:modified_time" content="2020-12-15T08:32:48.530Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/12/15/BFS/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>BFS | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/15/BFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          BFS
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-15 15:02:09 / 修改时间：16:32:48" itemprop="dateCreated datePublished" datetime="2020-12-15T15:02:09+08:00">2020-12-15</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="BFS"><a href="#BFS" class="headerlink" title="BFS"></a>BFS</h1><p>BFS核心思想就是把一些问题抽象成图，从一个点开始，向四周扩散。一般来说，写BFS算法都是用队列这种数据结构，每次将一个节点周围的所有节点加入队列。</p>
+<p>BFS相对DFS的最主要的区别是：<strong>BFS找到的路径一定是最短的，但代价就是空间复杂度比DFS大很多。</strong></p>
+<h2 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h2><p>BFS的常见场景就是在一副“图”中找到从起点start到终点target的最近距离，这个栗子听起来很枯燥，但是BFS算法问题都是在干这个事儿。</p>
+<p><strong>框架</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计算从起点start到终点target的最近距离</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BFS</span><span class="params">(Node start,Node target)</span></span>&#123;</span><br><span class="line">    Queue&lt;Node&gt; q; <span class="comment">//核心数据结构</span></span><br><span class="line">    Set&lt;Node&gt; visited; <span class="comment">//避免走回头路</span></span><br><span class="line">    </span><br><span class="line">    q.offer(start); <span class="comment">//将起点加入队列</span></span><br><span class="line">    visited.add(start);</span><br><span class="line">    <span class="keyword">int</span> step=<span class="number">0</span>; <span class="comment">//记录扩散的步数</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(q not empty)&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向四周扩散*/</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            Node cur=q.poll();</span><br><span class="line">            <span class="comment">/*划重点：这里判断是否到达终点*/</span></span><br><span class="line">            <span class="keyword">if</span> (cur is target)&#123;</span><br><span class="line">                <span class="keyword">return</span> step;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*将cur的相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">for</span> (Node x: cur.adj())&#123;</span><br><span class="line">                <span class="keyword">if</span> (x not in visited)&#123;</span><br><span class="line">                    q.offer(x);</span><br><span class="line">                    visited.add(x);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*划重点：更新步数在这里*/</span></span><br><span class="line">        step++;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>队列q是BFS的核心数据结构；<code>cur.adj()</code>泛指<code>cur</code>相邻的节点，比如说二维数组中，cur上下左右四面的位置就是相邻节点；<code>visited</code>的主要作用是防止走回头路，大部分时候都是必须的，但是像一般的二叉树结构，没有子节点到父节点的指针，不会走回头路就不需要<code>visited</code>。</p>
+<h3 id="二叉树的最小高度"><a href="#二叉树的最小高度" class="headerlink" title="二叉树的最小高度"></a>二叉树的最小高度</h3><p>力扣111题：</p>
+<p><strong>起点是root根节点，终点就是最靠近根节点的那个叶子节点嘛，叶子节点就是两个子节点都是null的节点</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cur.left == <span class="keyword">null</span> &amp;&amp; cur.right == <span class="keyword">null</span>)</span><br><span class="line">    <span class="comment">//到达叶子节点</span></span><br></pre></td></tr></table></figure>
+
+<p>因此程序可写为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">minDepth</span><span class="params">(TreeNode root)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (root == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    Queue&lt;TreeNode&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    q.offer(root);</span><br><span class="line">    <span class="comment">//root本身就是一层，depth初始化为1</span></span><br><span class="line">    <span class="keyword">int</span> depth=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (!q.isEmpty)&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向四周扩散*/</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            TreeNode cur=q.poll();</span><br><span class="line">            <span class="comment">/*判断是否到达终点*/</span></span><br><span class="line">            <span class="keyword">if</span> (cur.left == <span class="keyword">null</span> &amp;&amp; cur.right == <span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">return</span> depth;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*将cur的相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">if</span> (cur.left != <span class="keyword">null</span>)&#123;</span><br><span class="line">                q.offer(cur.left);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (cur.right != <span class="keyword">null</span>)&#123;</span><br><span class="line">                q.offer(cur.right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*这里增加步数*/</span></span><br><span class="line">        depth++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> depth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解开密码锁的最少次数"><a href="#解开密码锁的最少次数" class="headerlink" title="解开密码锁的最少次数"></a>解开密码锁的最少次数</h3><p>力扣752题</p>
+<p>题目描述的就是生活中常见的那种密码锁，如果没有任何约束，最少的拨动次数很好算，就像我们平时开密码锁那样直奔密码拨就行了。</p>
+<p>但现在不能出现<code>deadends</code>(题目中给的死亡序列)，应该如何计算出最少的转动次数呢？</p>
+<p><strong>step 1: 不管所有的限制条件，不管<code>deadends</code>和<code>target</code>的限制，就思考一个问题：设计一个算法，穷举所有可能的密码组合</strong></p>
+<p>穷举，总共有4个位置，每个位置可以向上转，也可以乡下转，就是有8种可能。</p>
+<p>比如说从<code>&quot;0000&quot;</code>开始，转一次，可以穷举出<code>&quot;1000&quot;</code>,<code>&quot;9000&quot;</code>,<code>&quot;0100&quot;</code>,<code>&quot;0900&quot;...</code>共8种密码。然后再以这8种密码作为基础，对每个密码再转一下，穷举出所有可能…</p>
+<p><strong>仔细想想，就可以抽象成一幅图，每个节点有8个相邻的节点</strong>，又让求最短距离，就是典型的BFS。框架如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将S[j]向上拨动一次</span></span><br><span class="line"><span class="function">String <span class="title">plusOne</span><span class="params">(String s, <span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] ch=s.toCharArray();</span><br><span class="line">    <span class="keyword">if</span> (ch[j]==<span class="string">&#x27;9&#x27;</span>)&#123;</span><br><span class="line">        ch[j]=<span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        ch[j]+=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(ch);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//将S[i]向下拨动一次</span></span><br><span class="line"><span class="function">String <span class="title">minusOne</span><span class="params">(String s,<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] ch=s.toCharArray();</span><br><span class="line">    <span class="keyword">if</span> (ch[j]==<span class="string">&#x27;0&#x27;</span>)&#123;</span><br><span class="line">        ch[j]=<span class="string">&#x27;9&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        ch[j]-=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(ch);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//BFS框架，打印出所有可能的密码</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BFS</span><span class="params">(String target)</span></span>&#123;</span><br><span class="line">    Queue&lt;String&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    q.offer(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    <span class="keyword">while</span> (!q.isEmpty())&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向周围扩散*/</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            String cur=q.poll();</span><br><span class="line">            <span class="comment">/*判断是否到达终点*/</span></span><br><span class="line">            System.out.println(cur);</span><br><span class="line">            <span class="comment">/*将一个节点的相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">4</span>;j++)&#123;</span><br><span class="line">                String up=plusOne(cur,j);</span><br><span class="line">                String down=minusOne(cur,j);</span><br><span class="line">                q.offer(up);</span><br><span class="line">                q.offer(down);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*在这里增加步数*/</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>这段代码可以穷举所有可能的密码组合了，但是显然不能完成题目，有如下问题需要解决：</strong></p>
+<p>1、会走回头路。比如说我们从<code>&quot;0000&quot;</code> 拨到<code>&quot;1000&quot;</code>，但是等从队列拿出<code>&quot;1000&quot;</code>时，还会拨出一个<code>&quot;0000&quot;</code>，这样会产生死循环。</p>
+<p>2、没有终止条件，找到<code>target</code>就应该结束并返回拨动的次数。</p>
+<p>3、没有对<code>deadends</code>的处理，按道理这些死亡密码是不能出现的，也就是说遇到这些密码的时候需要跳过。</p>
+<p>按照BFS框架在对应的位置稍作修改即可修复以上问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">openLock</span><span class="params">(String[] deadends,String target)</span></span>&#123;</span><br><span class="line">    <span class="comment">//记录需要跳过的死亡密码</span></span><br><span class="line">    Set&lt;String&gt; deads=<span class="keyword">new</span> HashSets&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (String s:deadends) deads.add(s);</span><br><span class="line">    <span class="comment">//记录已经穷举过的密码，防止走回头路</span></span><br><span class="line">    Set&lt;String&gt; visited=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    Queue&lt;String&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    <span class="comment">//从起点开始启动广度优先搜索</span></span><br><span class="line">    <span class="keyword">int</span> step=<span class="number">0</span>;</span><br><span class="line">    q.offer(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    visited.add(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(!q.isEmpty())&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向周围扩散*/</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            String cur=q.poll();</span><br><span class="line">            <span class="comment">/*判断是否到达终点*/</span></span><br><span class="line">            <span class="keyword">if</span> (deads.contains(cur))&#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (cur.equals(target))&#123;</span><br><span class="line">                <span class="keyword">return</span> step;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*将一个节点的未遍历相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">4</span>;j++)&#123;</span><br><span class="line">                String up=plusOne(cur,j);</span><br><span class="line">                <span class="keyword">if</span> (!visited.contains(up))&#123;</span><br><span class="line">                    q.offer(up);</span><br><span class="line">                    visited.add(up);</span><br><span class="line">                &#125;</span><br><span class="line">                String down=minusOne(cur,j);</span><br><span class="line">                <span class="keyword">if</span> (!visited.contains(down))&#123;</span><br><span class="line">                    q.offer(down);</span><br><span class="line">                    visited.add(down);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;            </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*增加步数*/</span></span><br><span class="line">        step++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//如果穷举完都没找到目标密码，那就是找不到了</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/14/%E6%A0%91/" rel="prev" title="树">
+      <i class="fa fa-chevron-left"></i> 树
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#BFS"><span class="nav-number">1.</span> <span class="nav-text">BFS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E6%A1%86%E6%9E%B6"><span class="nav-number">1.1.</span> <span class="nav-text">算法框架</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E6%9C%80%E5%B0%8F%E9%AB%98%E5%BA%A6"><span class="nav-number">1.1.1.</span> <span class="nav-text">二叉树的最小高度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%BC%80%E5%AF%86%E7%A0%81%E9%94%81%E7%9A%84%E6%9C%80%E5%B0%91%E6%AC%A1%E6%95%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">解开密码锁的最少次数</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
