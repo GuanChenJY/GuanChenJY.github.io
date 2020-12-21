@@ -20,65 +20,28 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="概览容器，就是可以容纳其他Java对象的对象。Java Collections Framework（JCF）为Java开发者提供了通用的容器，其始于JDK 1.2，优点是：  降低编程难度 提高程序性能 提高API间的互操作性 降低学习难度 降低设计和实现相关API的难度 增加程序的重要性  Java容器里只能放对象，对于基本类型（int, long, float, double等），需要将其包装">
-<meta property="og:type" content="article">
-<meta property="og:title" content="java容器">
-<meta property="og:url" content="http://example.com/2020/12/03/java%E5%AE%B9%E5%99%A8/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Laplace">
+<meta property="og:url" content="http://example.com/page/3/index.html">
 <meta property="og:site_name" content="Laplace">
-<meta property="og:description" content="概览容器，就是可以容纳其他Java对象的对象。Java Collections Framework（JCF）为Java开发者提供了通用的容器，其始于JDK 1.2，优点是：  降低编程难度 提高程序性能 提高API间的互操作性 降低学习难度 降低设计和实现相关API的难度 增加程序的重要性  Java容器里只能放对象，对于基本类型（int, long, float, double等），需要将其包装">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201130163512028.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201085943078.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201090922801.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201091034375.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201092035272.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201093026709.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201093915731.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201095507417.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201095723891.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201100228506.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201201100512506.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203091724296.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203093347588.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203093405215.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203093609902.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203093640596.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203094140260.png">
-<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201203094829267.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/TreeMap_put.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/TreeMap_fixAfterDeletion.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/HashMap_base.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/HashMap_getEntry.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/HashMap_addEntry.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/HashMap_removeEntryForKey.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/LinkedHashMap_base.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/LinkedHashMap_addEntry.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/LinkedHashMap_removeEntryForKey.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/PriorityQueue_base.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/PriorityQueue_offer.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/PriorityQueue_peek.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/PriorityQueue_poll.png">
-<meta property="og:image" content="https://github.com/CarpenterLee/JCFInternals/raw/master/PNGFigures/PriorityQueue_remove2.png">
-<meta property="article:published_time" content="2020-12-03T13:40:11.000Z">
-<meta property="article:modified_time" content="2020-12-03T13:40:57.254Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201130163512028.png">
 
-<link rel="canonical" href="http://example.com/2020/12/03/java%E5%AE%B9%E5%99%A8/">
+<link rel="canonical" href="http://example.com/page/3/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : false,
-    isPost : true,
+    isHome : true,
+    isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>java容器 | Laplace</title>
+  <title>Laplace</title>
   
 
 
@@ -181,10 +144,9 @@
         <div class="content-wrap">
           
 
-          <div class="content post posts-expand">
+          <div class="content index posts-expand">
             
-
-    
+      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -200,9 +162,10 @@
       <meta itemprop="name" content="Laplace">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          java容器
-        </h1>
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/03/java%E5%AE%B9%E5%99%A8/" class="post-title-link" itemprop="url">java容器</a>
+        </h2>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -226,7 +189,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>容器，就是可以容纳其他Java对象的对象。<em>Java Collections Framework（JCF）</em>为Java开发者提供了通用的容器，其始于JDK 1.2，优点是：</p>
+          <h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>容器，就是可以容纳其他Java对象的对象。<em>Java Collections Framework（JCF）</em>为Java开发者提供了通用的容器，其始于JDK 1.2，优点是：</p>
 <ul>
 <li>降低编程难度</li>
 <li>提高程序性能</li>
@@ -790,31 +753,25 @@
 
 
 
+      
     </div>
 
     
     
     
-
       <footer class="post-footer">
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item"></div>
-      <div class="post-nav-item">
-    <a href="/2020/12/03/JVM/" rel="next" title="JVM">
-      JVM <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
+        <div class="post-eof"></div>
       </footer>
-    
   </article>
   
   
   
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span>
+  </nav>
 
 
 
@@ -866,7 +823,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%9B%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">泛型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">内存管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">接口和实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3"><span class="nav-number">4.1.</span> <span class="nav-text">接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.2.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">迭代器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ArrayList"><span class="nav-number"></span> <span class="nav-text">ArrayList</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#set"><span class="nav-number">2.1.</span> <span class="nav-text">set()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">2.2.</span> <span class="nav-text">get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#add"><span class="nav-number">2.3.</span> <span class="nav-text">add()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addAll"><span class="nav-number">2.4.</span> <span class="nav-text">addAll()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove"><span class="nav-number">2.5.</span> <span class="nav-text">remove()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LinkedList"><span class="nav-number"></span> <span class="nav-text">LinkedList</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D-1"><span class="nav-number">1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90-1"><span class="nav-number">2.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#add-1"><span class="nav-number">2.1.</span> <span class="nav-text">add()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-1"><span class="nav-number">2.2.</span> <span class="nav-text">remove()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-1"><span class="nav-number">2.3.</span> <span class="nav-text">get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set-1"><span class="nav-number">2.4.</span> <span class="nav-text">set()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Stack-and-Queue"><span class="nav-number"></span> <span class="nav-text">Stack and Queue</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D-2"><span class="nav-number">2.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90-2"><span class="nav-number">3.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#addFirst"><span class="nav-number">3.1.</span> <span class="nav-text">addFirst()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addLast"><span class="nav-number">3.2.</span> <span class="nav-text">addLast()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PollFirst"><span class="nav-number">3.3.</span> <span class="nav-text">PollFirst()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pollLast"><span class="nav-number">3.4.</span> <span class="nav-text">pollLast()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#peekFirst"><span class="nav-number">3.5.</span> <span class="nav-text">peekFirst()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#peekLast"><span class="nav-number">3.6.</span> <span class="nav-text">peekLast()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TreeSet-and-TreeMap"><span class="nav-number"></span> <span class="nav-text">TreeSet and TreeMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D-3"><span class="nav-number">1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E5%A4%87%E7%9F%A5%E8%AF%86"><span class="nav-number">2.</span> <span class="nav-text">预备知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E6%97%8B"><span class="nav-number">2.1.</span> <span class="nav-text">左旋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B3%E6%97%8B"><span class="nav-number">2.2.</span> <span class="nav-text">右旋</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E8%8A%82%E7%82%B9%E5%90%8E%E7%BB%A7"><span class="nav-number">2.3.</span> <span class="nav-text">寻找节点后继</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90-3"><span class="nav-number">3.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#get-2"><span class="nav-number">3.1.</span> <span class="nav-text">get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put"><span class="nav-number">3.2.</span> <span class="nav-text">put()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-2"><span class="nav-number">3.3.</span> <span class="nav-text">remove()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeSet"><span class="nav-number">3.4.</span> <span class="nav-text">TreeSet</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#HashSet-and-HashMap"><span class="nav-number"></span> <span class="nav-text">HashSet and HashMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D-4"><span class="nav-number">1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90-4"><span class="nav-number">2.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#get-3"><span class="nav-number">2.1.</span> <span class="nav-text">get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-1"><span class="nav-number">2.2.</span> <span class="nav-text">put()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-3"><span class="nav-number">2.3.</span> <span class="nav-text">remove()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HashSet"><span class="nav-number">3.</span> <span class="nav-text">HashSet</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LinkedHashSet-and-LinkedHashMap"><span class="nav-number"></span> <span class="nav-text">LinkedHashSet and LinkedHashMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D-5"><span class="nav-number">1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90-5"><span class="nav-number">2.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#get-4"><span class="nav-number">2.1.</span> <span class="nav-text">get()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-2"><span class="nav-number">2.2.</span> <span class="nav-text">put()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-4"><span class="nav-number">2.3.</span> <span class="nav-text">remove()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashSet"><span class="nav-number">3.</span> <span class="nav-text">LinkedHashSet</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LinkedHashMap%E7%BB%8F%E5%85%B8%E7%94%A8%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">LinkedHashMap经典用法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PriorityQueue"><span class="nav-number"></span> <span class="nav-text">PriorityQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E4%BB%8B%E7%BB%8D-6"><span class="nav-number">1.</span> <span class="nav-text">总体介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%89%96%E6%9E%90-6"><span class="nav-number">2.</span> <span class="nav-text">方法剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#add-%E5%92%8Coffer"><span class="nav-number">2.1.</span> <span class="nav-text">add()和offer()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#element-%E5%92%8Cpeek"><span class="nav-number">2.2.</span> <span class="nav-text">element()和peek()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove%E5%92%8Cpoll"><span class="nav-number">2.3.</span> <span class="nav-text">remove和poll()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#remove-Object-o"><span class="nav-number">2.4.</span> <span class="nav-text">remove(Object o)</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
