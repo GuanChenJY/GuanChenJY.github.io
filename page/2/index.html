@@ -150,6 +150,348 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/11/mqtt/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/11/mqtt/" class="post-title-link" itemprop="url">mqtt</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-11 16:16:56 / 修改时间：16:40:58" itemprop="dateCreated datePublished" datetime="2020-12-11T16:16:56+08:00">2020-12-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>MQTT（Message Queueing Telemetry Transport，消息队列遥测传输协议），是一种基于发布/订阅（publish/subscribe）模式的“轻量级”通讯协议，该协议构建与TCP/IP之上，由IBM在1999年发布。MQTT最大优点在于，可以以极少的代码和有限的带宽，为连接远程设备提供实时可靠的消息服务。作为一种低开销、低带宽占用的即时通讯协议，使其在物联网、小型设备、移动应用等方面有较广泛的应用。</p>
+<p>MQTT是一个基于客户端-服务器的消息发布/订阅传输协议。MQTT协议是轻量、简单、开放和易于实现的，这些特点使它适用范围非常广泛。在很多情况下，包括受限的环境中，如：机器与机器（M2M）通信和物联网（IoT）。其在，通过卫星链路通信传感器、偶尔拨号的医疗设备、智能家居、及一些小型化设备中已广泛使用。</p>
+<p><img src="https://static.runoob.com/images/mix/mqtt-fidge-2.svg" alt="img"></p>
+<h2 id="设计规范"><a href="#设计规范" class="headerlink" title="设计规范"></a>设计规范</h2><p>由于物联网的环境是非常特别的，所以MQTT遵循以下设计原则：</p>
+<ul>
+<li>（1）精简，不添加可有可无的功能；</li>
+<li>（2）发布/订阅（Pub/Sub）模式，方便消息在传感器之间传递；</li>
+<li>（3）允许用户动态创建主题，零运维成本；</li>
+<li>（4）把传输量降到最低以提高传输效率；</li>
+<li>（5）把低带宽、高延迟、不稳定的网络等因素考虑在内；</li>
+<li>（6）支持连续的会话控制；</li>
+<li>（7）理解客户端计算能力可能很低；</li>
+<li>（8）提供服务质量管理；</li>
+<li>（9）假设数据不可知，不强求传输数据的类型与格式，保持灵活性。</li>
+</ul>
+<h2 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h2><p>MQTT协议工作在低带宽、不可靠的网络的远程传感器和控制设备通讯而设计的协议，它具有以下主要的几项特性：</p>
+<ul>
+<li><p>（1）使用发布/订阅消息模式，提供一对多的消息发布，解除应用程序耦合。</p>
+<p>这一点很类似于XMPP，但是MQTT的信息冗余远小于XMPP，,因为XMPP使用XML格式文本来传递数据。</p>
+</li>
+<li><p>（2）对负载内容屏蔽的消息传输。</p>
+</li>
+<li><p>（3）使用TCP/IP提供网络连接。</p>
+<p>主流的MQTT是基于TCP连接进行数据推送的，但是同样有基于UDP的版本，叫做MQTT-SN。这两种版本由于基于不同的连接方式，优缺点自然也就各有不同了。</p>
+</li>
+<li><p>（4）有三种消息发布服务质量：</p>
+<p>“至多一次”，消息发布完全依赖底层TCP/IP网络。会发生消息丢失或重复。这一级别可用于如下情况，环境传感器数据，丢失一次读记录无所谓，因为不久后还会有第二次发送。这一种方式主要普通APP的推送，倘若你的智能设备在消息推送时未联网，推送过去没收到，再次联网也就收不到了。</p>
+<p>“至少一次”，确保消息到达，但消息重复可能会发生。</p>
+<p>“只有一次”，确保消息到达一次。在一些要求比较严格的计费系统中，可以使用此级别。在计费系统中，消息重复或丢失会导致不正确的结果。这种最高质量的消息发布服务还可以用于即时通讯类的APP的推送，确保用户收到且只会收到一次。</p>
+</li>
+<li><p>（5）小型传输，开销很小（固定长度的头部是2字节），协议交换最小化，以降低网络流量。</p>
+<p>这就是为什么在介绍里说它非常适合”在物联网领域，传感器与服务器的通信，信息的收集”，要知道嵌入式设备的运算能力和带宽都相对薄弱，使用这种协议来传递消息再适合不过了。</p>
+</li>
+<li><p>（6）使用Last Will和Testament特性通知有关各方客户端异常中断的机制。</p>
+<p>Last Will：即遗言机制，用于通知同一主题下的其他设备发送遗言的设备已经断开了连接。</p>
+<p>Testament：遗嘱机制，功能类似于Last Will。</p>
+</li>
+</ul>
+<h2 id="MQTT协议实现原理"><a href="#MQTT协议实现原理" class="headerlink" title="MQTT协议实现原理"></a>MQTT协议实现原理</h2><h3 id="MQTT协议实现方式"><a href="#MQTT协议实现方式" class="headerlink" title="MQTT协议实现方式"></a>MQTT协议实现方式</h3><p>实现MQTT协议需要客户端和服务器端通讯完成，在通讯过程中，MQTT协议中有三种身份：发布者（Publish）、代理（Broker）（服务器）、订阅者（Subscribe）。其中，消息的发布者和订阅者都是客户端，消息代理是服务器，消息发布者可以同时是订阅者。</p>
+<p>MQTT传输的消息分为：主题（Topic）和负载（payload）两部分：</p>
+<ul>
+<li>（1）Topic，可以理解为消息的类型，订阅者订阅（Subscribe）后，就会收到该主题的消息内容（payload）；</li>
+<li>（2）payload，可以理解为消息的内容，是指订阅者具体要使用的内容</li>
+</ul>
+<h3 id="网络传输与应用消息"><a href="#网络传输与应用消息" class="headerlink" title="网络传输与应用消息"></a>网络传输与应用消息</h3><p>MQTT会构建底层网络传输：它将建立客户端到服务器的连接，提供两者之间的一个有序的、无损的、基于字节流的双向传输。</p>
+<p>当应用数据通过MQTT网络发送时，MQTT会把与之相关的服务质量（QoS）和主题名（Topic）相关连。</p>
+<h3 id="MQTT客户端"><a href="#MQTT客户端" class="headerlink" title="MQTT客户端"></a>MQTT客户端</h3><p>一个使用MQTT协议的应用程序或者设备，它总是建立到服务器的网络连接。客户端可以：</p>
+<ul>
+<li>（1）发布其他客户端可能会订阅的信息；</li>
+<li>（2）订阅其它客户端发布的消息；</li>
+<li>（3）退订或删除应用程序的消息；</li>
+<li>（4）断开与服务器连接。</li>
+</ul>
+<h3 id="MQTT服务器"><a href="#MQTT服务器" class="headerlink" title="MQTT服务器"></a>MQTT服务器</h3><p>MQTT服务器以称为”消息代理”（Broker），可以是一个应用程序或一台设备。它是位于消息发布者和订阅者之间，它可以：</p>
+<ul>
+<li>（1）接受来自客户的网络连接；</li>
+<li>（2）接受客户发布的应用信息；</li>
+<li>（3）处理来自客户端的订阅和退订请求；</li>
+<li>（4）向订阅的客户转发应用程序消息。</li>
+</ul>
+<h3 id="MQTT协议中的订阅、主题、会话"><a href="#MQTT协议中的订阅、主题、会话" class="headerlink" title="MQTT协议中的订阅、主题、会话"></a>MQTT协议中的订阅、主题、会话</h3><h4 id="订阅"><a href="#订阅" class="headerlink" title="订阅"></a>订阅</h4><p>订阅包含主题筛选器（Topic Filter）和最大服务质量（QoS）。订阅会与一个会话（Session）关联。一个会话可以包含多个订阅。每一个会话中的每个订阅都有一个不同的主题筛选器。</p>
+<h4 id="会话（Session）"><a href="#会话（Session）" class="headerlink" title="会话（Session）"></a>会话（Session）</h4><p>每个客户端与服务器建立连接后就是一个会话，客户端和服务器之间有状态交互。会话存在于一个网络之间，也可能在客户端和服务器之间跨越多个连续的网络连接。</p>
+<h4 id="主题名（Topic-Name）"><a href="#主题名（Topic-Name）" class="headerlink" title="主题名（Topic Name）"></a>主题名（Topic Name）</h4><p>连接到一个应用程序消息的标签，该标签与服务器的订阅相匹配。服务器会将消息发送给订阅所匹配标签的每个客户端</p>
+<h4 id="主题筛选器-Topic-Filter"><a href="#主题筛选器-Topic-Filter" class="headerlink" title="主题筛选器(Topic Filter)"></a>主题筛选器(Topic Filter)</h4><p>一个对主题名通配符筛选器，在订阅表达式中使用，表示订阅所匹配到的多个主题。</p>
+<h4 id="负载（Payload）"><a href="#负载（Payload）" class="headerlink" title="负载（Payload）"></a>负载（Payload）</h4><p>消息订阅者所具体接收的内容。</p>
+<h3 id="MQTT协议中的方法"><a href="#MQTT协议中的方法" class="headerlink" title="MQTT协议中的方法"></a>MQTT协议中的方法</h3><p>MQTT协议中定义了一些方法（也被称为动作），来于表示对确定资源所进行操作。这个资源可以代表预先存在的数据或动态生成数据，这取决于服务器的实现。通常来说，资源指服务器上的文件或输出。主要方法有：</p>
+<ul>
+<li>（1）Connect。等待与服务器建立连接。</li>
+<li>（2）Disconnect。等待MQTT客户端完成所做的工作，并与服务器断开TCP/IP会话。</li>
+<li>（3）Subscribe。等待完成订阅。</li>
+<li>（4）UnSubscribe。等待服务器取消客户端的一个或多个topics订阅。</li>
+<li>（5）Publish。MQTT客户端发送消息请求，发送完成后返回应用程序线程。</li>
+</ul>
+<h2 id="MQTT协议数据包结构"><a href="#MQTT协议数据包结构" class="headerlink" title="MQTT协议数据包结构"></a>MQTT协议数据包结构</h2><p>在MQTT协议中，一个MQTT数据包由：固定头（Fixed header）、可变头（Variable header）、消息体（payload）三部分构成。MQTT数据包结构如下：</p>
+<ul>
+<li>（1）固定头（Fixed header）。存在于所有MQTT数据包中，表示数据包类型及数据包的分组类标识。</li>
+<li>（2）可变头（Variable header）。存在于部分MQTT数据包中，数据包类型决定了可变头是否存在及其具体内容。</li>
+<li>（3）消息体（Payload）。存在于部分MQTT数据包中，表示客户端收到的具体内容。</li>
+</ul>
+<h4 id="MQTT固定头"><a href="#MQTT固定头" class="headerlink" title="MQTT固定头"></a>MQTT固定头</h4><p>固定头存在于所有MQTT数据包中，其结构如下：</p>
+<h5 id="MQTT数据包类型"><a href="#MQTT数据包类型" class="headerlink" title="MQTT数据包类型"></a>MQTT数据包类型</h5><p>位置：Byte 1中bits 7-4。</p>
+<p>相于一个4位的无符号值，类型、取值及描述如下：</p>
+<h5 id="标识位"><a href="#标识位" class="headerlink" title="标识位"></a>标识位</h5><p>位置：Byte 1中bits 3-0。</p>
+<p>在不使用标识位的消息类型中，标识位被作为保留位。如果收到无效的标志时，接收端必须关闭网络连接：</p>
+<p>（1）DUP：发布消息的副本。用来在保证消息的可靠传输，如果设置为1，则在下面的变长中增加MessageId，并且需要回复确认，以保证消息传输完成，但不能用于检测消息重复发送。</p>
+<p>（2）QoS：发布消息的服务质量，即：保证消息传递的次数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Ø00：最多一次，即：&lt;&#x3D;1</span><br><span class="line"></span><br><span class="line">Ø01：至少一次，即：&gt;&#x3D;1</span><br><span class="line"></span><br><span class="line">Ø10：一次，即：&#x3D;1</span><br><span class="line"></span><br><span class="line">Ø11：预留</span><br></pre></td></tr></table></figure>
+
+<p>（3）RETAIN： 发布保留标识，表示服务器要保留这次推送的信息，如果有新的订阅者出现，就把这消息推送给它，如果设有那么推送至当前订阅者后释放。 5.1.3 剩余长度（Remaining Length）</p>
+<p>地址：Byte 2。</p>
+<p>固定头的第二字节用来保存变长头部和消息体的总大小的，但不是直接保存的。这一字节是可以扩展，其保存机制，前7位用于保存长度，后一部用做标识。当最后一位为1时，表示长度不足，需要使用二个字节继续保存。例如：计算出后面的大小为0</p>
+<h4 id="MQTT可变头"><a href="#MQTT可变头" class="headerlink" title="MQTT可变头"></a>MQTT可变头</h4><p>MQTT数据包中包含一个可变头，它驻位于固定的头和负载之间。可变头的内容因数据包类型而不同，较常的应用是作为包的标识：</p>
+<p>很多类型数据包中都包括一个2字节的数据包标识字段，这些类型的包有：PUBLISH (QoS &gt; 0)、PUBACK、PUBREC、PUBREL、PUBCOMP、SUBSCRIBE、SUBACK、UNSUBSCRIBE、UNSUBACK。</p>
+<h4 id="Payload消息体"><a href="#Payload消息体" class="headerlink" title="Payload消息体"></a>Payload消息体</h4><p>Payload消息体位MQTT数据包的第三部分，包含CONNECT、SUBSCRIBE、SUBACK、UNSUBSCRIBE四种类型的消息：</p>
+<ul>
+<li>（1）CONNECT，消息体内容主要是：客户端的ClientID、订阅的Topic、Message以及用户名和密码。</li>
+<li>（2）SUBSCRIBE，消息体内容是一系列的要订阅的主题以及QoS。</li>
+<li>（3）SUBACK，消息体内容是服务器对于SUBSCRIBE所申请的主题及QoS进行确认和回复。</li>
+<li>（4）UNSUBSCRIBE，消息体内容是要订阅的主题。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">位运算的应用-算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-10 11:48:12" itemprop="dateCreated datePublished" datetime="2020-12-10T11:48:12+08:00">2020-12-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-11 14:28:32" itemprop="dateModified" datetime="2020-12-11T14:28:32+08:00">2020-12-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>　　位操作是一种通过算法来处理bit或比单词短的数据片段的操作。需要位操作的计算机程序任务包括低级设备控制，错误检测和校正算法，数据压缩，加密算法和优化。对于大多数其他任务，现代程序语言允许编程者直接在抽象层面上工作，而不是去编程那些代表这些抽象的bit位（即我们现在编程都是用代码写程序，而不是0和1）。在源码中可以用的位操作包括：AND、OR、XOR、NOT和位移。<br>　　在某些情况中，位操作可以避免或者减少在一个数据结构上需要进行循环的次数，并且可以成倍的效率提升，因为位操作是并行处理的。但是位操作的代码比较难以编写和维护。</p>
+<p>这里我们先用一个简单的问题来感受一下位操作的威力。比如现在问题是要求判断一个数x是不是2的整数幂，普通的思路是用循环不断去判断x x<em>x</em>看是否能够被2整除，如果是，则除以2，否则这个数不是2的整数幂。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isPowerOfTwo</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: bool</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">if</span> x &lt;= <span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">while</span> x % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">		x //= <span class="number">2</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">return</span> x == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>上面普通解法，需要进行的循环次数随着x的增大而增大，采用位运算的算法程序如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isPowerOfTwo</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: bool</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">not</span> (x &amp; (x - <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<p>代码中<code>x&amp;(x-1)</code>的作用是将x的二进制表示中右边第一个1置0。比如3原来的二进制表示是<code>11</code>，最右边的1置0后就变成了<code>10</code>，所以有<code>3&amp;(3-1)=2</code>。而2的整数幂的二进制表示肯定是只有一个1，如果将这个1置0，那么结果肯定是0。</p>
+<h2 id="位运算的应用实例"><a href="#位运算的应用实例" class="headerlink" title="位运算的应用实例"></a>位运算的应用实例</h2><p>位运算的几个核心操作符是&amp;（按位与）、|（按位或）、~（按位取反）、^（按位异或）、&lt;&lt;（左移）、&gt;&gt;（右移）。下面根据一些具体的问题，来看看位运算怎么应用。</p>
+<p>**Example 1:**计算给定整数的二进制表达中有多少个1</p>
+<p>最简单的思路就是每次判断数字的二进制表达的最后一位是否为1，如果是1就计数器加一，然后将数字右移一位，但是这样会有很多无效操作，比如100个0连在一起，需要右移100次才能遇到下一个1。这里可以用到上面提到的<code>x &amp; (x - 1)</code>，每次去掉最右边的一个1，x中有多少个1，就只要循环这么多次。代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count1Bit</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	count = <span class="number">0</span></span><br><span class="line">	<span class="keyword">while</span> x:</span><br><span class="line">		count += <span class="number">1</span></span><br><span class="line">		x &amp;= x - <span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> count</span><br></pre></td></tr></table></figure>
+
+<p>上面也提到过，<code>x &amp; (x - 1)</code>的作用是将x的二进制表示中右边第一个1置0，我们来分步看一下为什么会这样子。首先<code>x-1</code>的作用是将x最右边的1置0，并且这个1后面的所有0置1（如果这个1已经是最后一位则忽略不计）。如果将减一后的结果和原数按位相与，首先最右边一个1由于变成0了，肯定与的结果是0，最右边1后面的数字，原数都是0，现在都是1，那么与的结果肯定也还都是0。比如现在一个二进制数是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x:0010,0101,0000</span><br><span class="line">x-1:0010,0100,1111</span><br><span class="line">x&amp;(x-1):0010,0100,0000</span><br></pre></td></tr></table></figure>
+
+<p>这里就没有考虑负数的情况了，由于计算机中负数是补码形式存储，而Python中整数的位数又没有限制，感觉没啥意义，这里就pass了。</p>
+<p><strong>Example 2</strong>: 不使用加减法实现两个整数相加</p>
+<p>不能使用加减法，那就只能靠位运算了。可以将加法分解一下，每次先计算不考虑进位的加法，然后计算进位，最后把两个结果加在一起。看一下程序:honey_pot:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getSum</span>(<span class="params">a, b</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type a: int</span></span><br><span class="line"><span class="string">	:type b: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">while</span> b:</span><br><span class="line">		a, b = a ^ b, (a &amp; b) &lt;&lt; <span class="number">1</span></span><br><span class="line">		a &amp;= <span class="number">0xFFFFFFFF</span>		<span class="comment"># 32位整型</span></span><br><span class="line">		b &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line">		<span class="keyword">if</span> a &gt; <span class="number">0x7FFFFFFF</span>:		<span class="comment"># 考虑负数的情况</span></span><br><span class="line">			a = ~(a ^ <span class="number">0xFFFFFFFF</span>)</span><br><span class="line">	<span class="keyword">return</span> a</span><br></pre></td></tr></table></figure>
+
+<p>上面程序，<code>a^b</code>的结果是不考虑进位的和，因为1+1和0+0的结果都是0，只有0+1或1+0才是1，这刚好符合异或的性质。而<code>(a &amp; b) &lt;&lt; 1</code>表示进位的结果，因为只有1+1才会发生进位，并且需要将这个进位左移1位（因为是进位往前一位加）。然后一直循环，直到进位为0，此时的<code>a</code>就是输入两个数的和了。</p>
+<p>以5和7为例：</p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201210141043810.png" alt="image-20201210141043810"></p>
+<p>当<code>b=0</code>时停止循环，此时<code>a=0b1100=12</code>，结果正确。<br>　　不过因为在Python中，整型的长度没有限制，当一个整数超过32位时，Python会自动扩展，理论上可以表示无穷大的数（实际最大能够表示多大我也没有测试过）。这个就直接导致进位右移操作在Python算法中起不到效果，永远不可能出现<code>b=0</code>的情况。所以Python代码中需要判断整数<strong>溢出</strong>的情况。现在假设整数由32bit表示，<code>a &amp;= 0xFFFFFFFF</code>就是获取<code>a</code>的32位二进制表示，如果<code>a</code>为负数，那么得到的是<code>a</code>的无符号补码，这里需要注意一下。由于在计算机中，二进制第一位是符号位，0表示正数，1表示负数，所以32位能表示的最大的正数为0x7FFFFFF，即0111,1111,1111,1111,1111,1111,1111,1111</p>
+<p>如果<code>a &amp;= 0xFFFFFFFF</code>的结果大于0x7FFFFFFF，就说明<code>a</code>是个负数，需要进行转原码的处理</p>
+<p>我们如何根据无符号的负数补码得其有符号的原码呢？先回顾一下补码是如何计算的：正数的补码就是其本身；负数的补码是保持符号位不变，其他位按位取反，然后加1得到补码。现在最大的问题就是如果一个数和0xFFFFFFFF与运算之后，得到的数是无符号类型的，所以也不存在符号位这一说了。这里我们可以先将<code>a ^= 0xFFFFFFFF</code>，这其实也就是按位取反，不过这种形式的按位取反得到的还是无符号类型，如果先用<code>~</code>进行按位取反，Python会将得到一个有符号类型的数，这改变了数的大小，显然不行。所以第二次再用<code>~</code>进行按位取反，得到的有符号的<code>a</code>的补码了。<br>　　简而言之，如果<code>a</code>是负数，<code>a &amp;= 0xFFFFFFFF</code>得到的是<code>a</code>无符号的补码形式，如果先用<code>a ^= 0xFFFFFFFF</code>按位取反，再用<code>a = ~a</code>按位取反，得到的还是原来的数（两次取反相互抵消，负负得正），只不过变成<code>a</code>有符号的补码了。这时Python会将其当做负数的补码处理，会再对其进行一次求补码的操作，得到<code>a</code>的原码。</p>
+<p><strong>Example 3</strong>:给一个从0~n的连续整数数组，找出数组缺少的一个数，比如数组为[0,1,3]，缺少的数为2</p>
+<p>这个我们当然可以用等差数列求和公式算出理论上数组的和，再减去数组实际的和，就能得到缺少的这个数。如果用位运算应该怎么做呢？代码如下</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">missingNumber</span>(<span class="params">nums</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type nums: list</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	ret = <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(nums):</span><br><span class="line">		ret ^= i</span><br><span class="line">		ret ^= x</span><br><span class="line">	<span class="keyword">return</span> ret ^ <span class="built_in">len</span>(nums)</span><br></pre></td></tr></table></figure>
+
+<p>这里用到的其实是异或的一个特性：两个同样的数异或结果为0。就以[0, 1, 3]为例，程序中<code>ret</code>初始值为0，<code>ret</code>每次循环分别同<code>i</code>和<code>x</code>进行了一次异或操作，这里<code>i</code>代表完整数组应该出现的值，<code>x</code>代表实际数组中的值。循环结束时，<code>ret</code>同[0, 0, 1, 1, 2, 3]进行了异或，因为完整数组是从0 ~ n的，循环结束时只访问了0 ~ n-1，所以<code>ret</code>需要再和<code>len(nums)</code>异或一次。<code>ret</code>就总共和[0, 0, 1, 1, 2, 3, 3]进行了异或，相同的数异或抵消为，2只出现了一次，所以2就是这个连续数组缺失的数字。<br>　　异或很适合“找不同”的问题，下面再看一个例子。</p>
+<p><strong>Example 4:</strong> 一个无序整数数组中，除了两个数字只出现过一次，其他数字都出现了两次，找出这两个只出现一次的数字出来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">int</span>[] singleNumbers(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">    <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n:nums)&#123;</span><br><span class="line">        res^=n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> div=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> ((div&amp;res)==<span class="number">0</span>)&#123;</span><br><span class="line">        div&lt;&lt;=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> a=<span class="number">0</span>,b=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n:nums)&#123;</span><br><span class="line">        <span class="keyword">if</span> ((div&amp;n)!=<span class="number">0</span>)&#123;</span><br><span class="line">            a^=n;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            b^=n;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;a,b&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Example5:找出不大于N的最大的2的幂指数</strong></p>
+<p>这个问题本质上就是找到N的二进制表达中最左边的1所在的位置，然后将后面的1全部置0的问题。笨办法是循环判断找到最高位的1，这个问题还可以转化为将最左边的1后面全部置1，然后加1再右移一位。比如现在N=19，其二进制表示为<code>10011</code>，我们只要将其转化为<code>11111</code>然后加1变为<code>100000</code>，最后再右移一位变为<code>10000</code>即得到不大于19的最大二次幂为16。将最高位右边全部置1可以用或逻辑<code>|</code>来实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">largestPower</span>(<span class="params">N</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type N: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">1</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">2</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">4</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">8</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">16</span></span><br><span class="line">	<span class="keyword">return</span> (N + <span class="number">1</span>) &gt;&gt; <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>位运算符<code>|</code>的一个作用就是尽可能多的保留1，这里我们默认用32bit来表示整数，所以上述代码中只考虑了除去符号位的后31位。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>常用的位运算包括&amp;（按位与）、|（按位或）、~（按位取反）、^（按位异或）、&lt;&lt;（左移）、&gt;&gt;（右移）。</p>
+<ul>
+<li><code>&amp;</code>通常用于需要选择特定的数位的情况，因为任何一个数位和1相与得到的是其本身；</li>
+<li><code>|</code>通常用于要求尽可能保留1的情况，因为只要有1，或运算的结果一定是1；</li>
+<li><code>~</code>按位取反会将符号位一同取反，得到的还是一个有符号整数；</li>
+<li><code>^</code>常用于去除重复元素的情况，和“负负得正”这种情况比较类似；</li>
+<li><code>&lt;&lt;</code>和<code>&gt;&gt;</code>通常和上面4种位运算符搭配使用，不过要注意在Python中左移是不会发生溢出的，需要人为判断溢出。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">网络杂谈</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-10 10:45:23 / 修改时间：11:23:28" itemprop="dateCreated datePublished" datetime="2020-12-10T10:45:23+08:00">2020-12-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="VPN的原理"><a href="#VPN的原理" class="headerlink" title="VPN的原理"></a>VPN的原理</h2><p>VPN：英文全称是“Virtual Private Network”，就是虚拟专用网络。VPN通常拿来做两个事情，一个是可以让世界上任意2台机器进入一个虚拟的局域网中（当然这个局域网的数据通讯是加密的，很安全，用起来和一个家庭局域网没有区别），一个是可以用来翻墙。</p>
+<p>VPN比SS更加底层，它通过操作系统的接口直接虚拟出一张网卡，后续整个操作系统的网络通讯都将通过这张虚拟的网卡进行收发。这和任何一个代理的实现思路都差不多，应用层并不知道网卡是虚拟的，这样vpn虚拟网卡将以中间人的身份对数据进行加工，从而实现各种神奇的效果。具体来说，vpn是通过编写一套网卡驱动并注册到操作系统实现的虚拟网卡，这样数据只要经过网卡收发就可以进行拦截处理。</p>
+<p>一句话，vpn在IP层工作，而ss在TCP层工作。</p>
+<p><strong>翻墙用途</strong></p>
+<p><img src="http://yuerblog.cc/wp-content/uploads/2017/01/baiviet000181.png" alt="baiviet000181"></p>
+<p>需要在vps上部署vpn server，客户端所有数据将经过虚拟网卡的加密封装后都转发给vps上的vpn server，由它来转发给目标服务器，这和ss server原理类似，由vpn协议加密从而绕过GFW实现访问墙外网站，下面将以pptp vpn协议为例说明。</p>
+<p>例如要访问谷歌，那么客户端发出的数据包首先通过协议栈处理封装成IP包，其源地址是虚拟网卡的地址，例如：192.168.0.2，而目标地址是谷歌的IP。</p>
+<p>原始IP包交给虚拟网卡发送时，PPTP网卡驱动会按PPP协议对这个IP包整体加密封装作为新的payload，用一层新的IP头封装这个payload发送出去，这个新IP头的目标地址是vpn server，源地址是客户端的外网IP。</p>
+<p>vpn server的协议栈会剥离掉新IP头，将内部PPP协议的payload交给pptpd进程处理，pptpd进程会按PPP协议解包得到原始的IP包，我们知道这个IP包的源地址是192.168.0.2，目标地址google。因此pptpd进程需要做的是将这个ip包的源ip地址改为VPS的地址，然后将IP包发给谷歌，从而和谷歌进行数据交换。最终，pptpd理所应当将谷歌的应答IP包的目标IP地址换成192.168.0.2，然后经过PPP协议封装并添加新的IP头后发回给客户端既可。</p>
+<p><strong>局域网用途</strong></p>
+<p><img src="http://yuerblog.cc/wp-content/uploads/2017/01/Drawing3.gif" alt="drawing3"></p>
+<p>大家知道，玩CS的时候都是局域网搜索房间的，要求大家坐在一个网吧里连着一台交换机。如果大家各自坐在家里玩CS想联机，通常要登录一个对战平台，其实对战平台做的事情就是VPN，也就是虚拟一个局域网，大家感受起来就和坐在一起一样。</p>
+<p>虚拟网卡的驱动会尽力伪装成一个物理网卡的样子，我们知道DHCP协议是局域网动态分配客户端IP的协议，那么VPN的虚拟网卡其实也会和vpn server进行一些协商得到一个虚拟局域网的IP，比如192.168.0.2。得到虚拟IP后，后续数据将通过虚拟网卡发送至vpn server所在的IP，最终被pptpd进程处理。</p>
+<p>既然各个客户端的虚拟网卡都是和同一个pptpd进程交互，那么这个pptpd进程自然知道这个虚拟的局域网内有哪些局域网用户，因此当2个虚拟局域网用户192.168.0.2和192.168.0.3之间想互相通讯的时候，pptpd会完成数据的中转。不过要注意，虚拟局域网用户间的通讯是不需要像访问谷歌那样修改数据包的源IP地址的，这个很容易想明白。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/09/kubeEdge%E5%AD%A6%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1410,1186 +1752,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/07/%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99/" class="post-title-link" itemprop="url">六大原则</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-07 10:56:47 / 修改时间：10:57:44" itemprop="dateCreated datePublished" datetime="2020-12-07T10:56:47+08:00">2020-12-07</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="六大原则"><a href="#六大原则" class="headerlink" title="六大原则"></a>六大原则</h1><h2 id="1、单一职责原则"><a href="#1、单一职责原则" class="headerlink" title="1、单一职责原则"></a>1、单一职责原则</h2><p><strong>定义</strong>：不要存在多于一个导致类变更的原因。通俗的说，即一个类只负责一项职责。</p>
-<p><strong>问题由来：</strong>类T负责两个不同的职责，职责P1，职责P2。当由于职责P1需求发生改变而需要修改类T时，有可能会导致原本运行正常的职责P2功能发生故障。  </p>
-<p><strong>解决方案：</strong>遵循单一职责原则。分别建立两个类T1、T2，使T1完成职责P1功能，T2完成职责P2功能。这样，当修改类T1时，不会使职责P2发生故障风险；同理，当修改T2时，也不会使职责P1发生故障风险。  </p>
-<p>说到单一职责原则，很多人都会不屑一顾。因为它太简单了。稍有经验的程序员即使从来没有读过设计模式、从来没有听说过单一职责原则，在设计软件时也会自觉的遵守这一重要原则，因为这是常识。在软件编程中，谁也不希望因为修改了一个功能导致其他的功能发生故障。而避免出现这一问题的方法便是遵循单一职责原则。虽然单一职责原则如此简单，并且被认为是常识，但是即便是经验丰富的程序员写出的程序，也会有违背这一原则的代码存在。为什么会出现这种现象呢？因为有职责扩散。<strong>所谓职责扩散，就是因为某种原因，职责P被分化为粒度更细的职责P1和P2。</strong></p>
-<p>比如：类T只负责一个职责P，这样设计是符合单一职责原则的。后来由于某种原因，也许是需求变更了，也许是程序的设计者境界提高了，需要将职责P细分为粒度更细的职责P1，P2，这时如果要使程序遵循单一职责原则，需要将类T也分解为两个类T1和T2，分别负责P1、P2两个职责。但是在程序已经写好的情况下，这样做简直太费时间了。所以，简单的修改类T，用它来负责两个职责是一个比较不错的选择，虽然这样做有悖于单一职责原则。（这样做的风险在于职责扩散的不确定性，因为我们不会想到这个职责P，在未来可能会扩散为P1，P2，P3，P4……Pn。所以记住，在职责扩散到我们无法控制的程度之前，立刻对代码进行重构。）  </p>
-<p>举例说明，用一个类描述动物呼吸这个场景：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">breathe</span><span class="params">(String animal)</span></span>&#123;</span><br><span class="line">		System.out.println(animal+<span class="string">&quot;呼吸空气&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Animal animal = <span class="keyword">new</span> Animal();</span><br><span class="line">		animal.breathe(<span class="string">&quot;牛&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;羊&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;猪&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果：</p>
-<p>牛呼吸空气<br>羊呼吸空气<br>猪呼吸空气</p>
-<p>程序上线后，发现问题了，并不是所有的动物都呼吸空气的，比如鱼就是呼吸水的。修改时如果遵循单一职责原则，需要将Animal类细分为陆生动物类Terrestrial，水生动物Aquatic，代码如下：</p>
-<pre><code>class Terrestrial&#123;
-public void breathe(String animal)&#123;
-    System.out.println(animal+&quot;呼吸空气&quot;);
-    &#125;
-&#125;    
-class Aquatic&#123;
-    public void breathe(String animal)&#123;
-        System.out.println(animal+&quot;呼吸水&quot;);
-    &#125;
-&#125;
-public class Client&#123;
-    public static void main(String[] args)&#123;
-        Terrestrial terrestrial = new Terrestrial();
-        terrestrial.breathe(&quot;牛&quot;);
-        terrestrial.breathe(&quot;羊&quot;);
-        terrestrial.breathe(&quot;猪&quot;);
-    Aquatic aquatic = new Aquatic();
-    aquatic.breathe(&quot;鱼&quot;);
-    &#125;
-&#125;</code></pre>
-<p>运行结果：</p>
-<p>牛呼吸空气<br>羊呼吸空气<br>猪呼吸空气<br>鱼呼吸水</p>
-<p>我们会发现如果这样修改花销是很大的，除了将原来的类分解之外，还需要修改客户端。而直接修改类Animal来达成目的虽然违背了单一职责原则，但花销却小的多，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">breathe</span><span class="params">(String animal)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(<span class="string">&quot;鱼&quot;</span>.equals(animal))&#123;</span><br><span class="line">			System.out.println(animal+<span class="string">&quot;呼吸水&quot;</span>);</span><br><span class="line">		&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">			System.out.println(animal+<span class="string">&quot;呼吸空气&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Animal animal = <span class="keyword">new</span> Animal();</span><br><span class="line">		animal.breathe(<span class="string">&quot;牛&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;羊&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;猪&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;鱼&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，这种修改方式要简单的多。但是却存在着隐患：有一天需要将鱼分为呼吸淡水的鱼和呼吸海水的鱼，则又需要修改Animal类的breathe方法，而对原有代码的修改会对调用“猪”“牛”“羊”等相关功能带来风险，也许某一天你会发现程序运行的结果变为“牛呼吸水”了。这种修改方式直接在代码级别上违背了单一职责原则，虽然修改起来最简单，但隐患却是最大的。还有一种修改方式：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Animal</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">breathe</span><span class="params">(String animal)</span></span>&#123;</span><br><span class="line">		System.out.println(animal+<span class="string">&quot;呼吸空气&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">breathe2</span><span class="params">(String animal)</span></span>&#123;</span><br><span class="line">		System.out.println(animal+<span class="string">&quot;呼吸水&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Animal animal = <span class="keyword">new</span> Animal();</span><br><span class="line">		animal.breathe(<span class="string">&quot;牛&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;羊&quot;</span>);</span><br><span class="line">		animal.breathe(<span class="string">&quot;猪&quot;</span>);</span><br><span class="line">		animal.breathe2(<span class="string">&quot;鱼&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 可以看到，这种修改方式没有改动原来的方法，而是在类中新加了一个方法，这样虽然也违背了单一职责原则，但在方法级别上却是符合单一职责原则的，因为它并没有动原来方法的代码。这三种方式各有优缺点，那么在实际编程中，采用哪一中呢？其实这真的比较难说，需要根据实际情况来确定。我的原则是：只有逻辑足够简单，才可以在代码级别上违反单一职责原则；只有类中方法数量足够少，才可以在方法级别上违反单一职责原则；</p>
-<p>​     例如本文所举的这个例子，它太简单了，它只有一个方法，所以，无论是在代码级别上违反单一职责原则，还是在方法级别上违反，都不会造成太大的影响。实际应用中的类都要复杂的多，一旦发生职责扩散而需要修改类时，除非这个类本身非常简单，否则还是遵循单一职责原则的好。</p>
-<p>遵循单一职责原的优点有：</p>
-<ul>
-<li>可以降低类的复杂度，一个类只负责一项职责，其逻辑肯定要比负责多项职责简单的多；</li>
-<li>提高类的可读性，提高系统的可维护性；</li>
-<li>变更引起的风险降低，变更是必然的，如果单一职责原则遵守的好，当修改一个功能时，可以显著降低对其他功能的影响。</li>
-</ul>
-<p>​     需要说明的一点是单一职责原则不只是面向对象编程思想所特有的，只要是模块化的程序设计，都适用单一职责原则。</p>
-<h2 id="2、里氏替换原则"><a href="#2、里氏替换原则" class="headerlink" title="2、里氏替换原则"></a>2、里氏替换原则</h2><p><strong>定义：</strong>如果对每一个类型为T1的对象o1，都有类型为T2的对象o2,使得以T1定义的所有程序P在所有的对象o1都代换成o2时，程序P的行为没有发生变化，那么类型T2是类型T1的子类型。</p>
-<p><strong>定义2：</strong>所有引用基类的地方必须能透明地使用其子类的对象。</p>
-<p><strong>问题由来：</strong>有一功能P1，由类A完成。现需要将功能P1进行扩展，扩展后的功能为P，其中P由原有功能P1与新功能P2组成。新功能P由类A的子类B来完成，则子类B在完成新功能P2的同时，有可能会导致原有功能P1发生故障。</p>
-<p><strong>解决方案：</strong>当使用继承时，遵循里氏替换原则。类B继承类A时，除添加新的方法完成新增功能P2外，尽量不要重写父类A的方法，也尽量不要重载父类A的方法。  </p>
-<p>继承包含这样一层含义：父类中凡是已经实现好的方法（相对于抽象方法而言），实际上是在设定一系列的规范和契约，虽然它不强制要求所有的子类必须遵从这些契约，但是如果子类对这些非抽象方法任意修改，就会对整个继承体系造成破坏。而里氏替换原则就是表达了这一层含义。</p>
-<p>继承作为面向对象三大特性之一，在给程序设计带来巨大便利的同时，也带来了弊端。比如使用继承会给程序带来侵入性，程序的可移植性降低，增加了对象间的耦合性，如果一个类被其他的类所继承，则当这个类需要修改时，必须考虑到所有的子类，并且父类修改后，所有涉及到子类的功能都有可能会产生故障。</p>
-<p>举例说明继承的风险，我们需要完成一个两数相减的功能，由类A来负责。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">func1</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a-b;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		A a = <span class="keyword">new</span> A();</span><br><span class="line">		System.out.println(<span class="string">&quot;100-50=&quot;</span>+a.func1(<span class="number">100</span>, <span class="number">50</span>));</span><br><span class="line">		System.out.println(<span class="string">&quot;100-80=&quot;</span>+a.func1(<span class="number">100</span>, <span class="number">80</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果：</p>
-<p>100-50=50<br>100-80=20</p>
-<p>后来，我们需要增加一个新的功能：完成两数相加，然后再与100求和，由类B来负责。即类B需要完成两个功能：</p>
-<p>​    两数相减</p>
-<p>​    两数相加，然后再加100</p>
-<p>由于类A已经实现了第一个功能，所以类B继承类A后，只需要再完成第二个功能就可以了，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">func1</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a+b;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">func2</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> func1(a,b)+<span class="number">100</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125; </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		B b = <span class="keyword">new</span> B();</span><br><span class="line">		System.out.println(<span class="string">&quot;100-50=&quot;</span>+b.func1(<span class="number">100</span>, <span class="number">50</span>));</span><br><span class="line">		System.out.println(<span class="string">&quot;100-80=&quot;</span>+b.func1(<span class="number">100</span>, <span class="number">80</span>));</span><br><span class="line">		System.out.println(<span class="string">&quot;100+20+100=&quot;</span>+b.func2(<span class="number">100</span>, <span class="number">20</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>类B完成后，运行结果：</p>
-<p>100-50=150<br>100-80=180<br>100+20+100=220</p>
-<p>我们发现原本运行正常的相减功能发生了错误。原因就是类B在给方法起名时无意中重写了父类的方法，造成所有运行相减功能的代码全部调用了类B重写后的方法，造成原本运行正常的功能出现了错误。在本例中，引用基类A完成的功能，换成子类B之后，发生了异常。在实际编程中，我们常常会通过重写父类的方法来完成新的功能，这样写起来虽然简单，但是整个继承体系的可复用性会比较差，特别是运用多态比较频繁时，程序运行出错的几率非常大。如果非要重写父类的方法，比较通用的做法是：原来的父类和子类都继承一个更通俗的基类，原有的继承关系去掉，采用依赖、聚合，组合等关系代替。</p>
-<p>里氏替换原则通俗的来讲就是：<strong>子类可以扩展父类的功能，但不能改变父类原有的功能。</strong>它包含以下4层含义:</p>
-<p>​    子类可以实现父类的抽象方法，但不能覆盖父类的非抽象方法。</p>
-<p>​    子类中可以增加自己特有的方法。</p>
-<p>​    当子类的方法重载父类的方法时，方法的前置条件（即方法的形参）要比父类方法的输入参数更宽松。</p>
-<p>​    当子类的方法实现父类的抽象方法时，方法的后置条件要比父类更严格。</p>
-<p>看上去很不可思议，因为我们会发现在自己编程中常常会违反里氏替换原则，程序照样跑的好好的。所以大家都会产生这样的疑问，假如我非要不遵循里氏替换原则会有什么后果？</p>
-<p>​    后果就是：**<em>你写的代码出问题的几率将会大大增加。**</em>  </p>
-<h2 id="3、依赖倒置原则"><a href="#3、依赖倒置原则" class="headerlink" title="3、依赖倒置原则"></a>3、依赖倒置原则</h2><p><strong>定义：</strong>高层模块不应该依赖底层模块，二者都应该依赖其抽象；抽象不应该依赖细节；细节应该依赖抽象。</p>
-<p><strong>问题由来：</strong>类A直接依赖类B，假如要将类A改为依赖类C，则必须通过修改类A的代码来达成。这种场景下，类A一般是高层模块，负责复杂的业务逻辑；类B和类C是底层模块，负责基本的原子操作；假如修改类A，会给程序带来不必要的风险。</p>
-<p><strong>解决方案：</strong>将类A修改为依赖接口I，类B和类C各自实现接口I，类A通过接口I间接与类B或者类C发生联系，则会大大降低修改类A的几率。</p>
-<p>​    依赖倒置原则基于这样一个事实：相对于细节的多变性，抽象的东西要稳定的多。以抽象为基础搭建起来的架构比以细节为基础搭建起来的架构要稳定的多。在java中，抽象指的是接口或者抽象类，细节就是具体的实现类，使用接口或者抽象类的目的是制定好规范和契约，而不去涉及任何具体的操作，把展现细节的任务交给他们的实现类去完成。</p>
-<p>依赖倒置原则的核心思想是<strong>面向接口编程，</strong>我们依旧用一个例子来说明面向接口编程比相对于面向实现编程好在什么地方。场景是这样的，母亲给孩子讲故事，只要给她一本书，她就可以照着书给孩子讲故事了。代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getContent</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;很久很久以前有一个阿拉伯的故事……&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mother</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">narrate</span><span class="params">(Book book)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;妈妈开始讲故事&quot;</span>);</span><br><span class="line">		System.out.println(book.getContent());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Mother mother = <span class="keyword">new</span> Mother();</span><br><span class="line">		mother.narrate(<span class="keyword">new</span> Book());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果：</p>
-<p>妈妈开始讲故事<br>很久很久以前有一个阿拉伯的故事……</p>
-<p> 运行良好，假如有一天，需求变成这样：不是给书而是给一份报纸，让这位母亲讲一下报纸上的故事，报纸的代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Newspaper</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getContent</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;林书豪38+7领导尼克斯击败湖人……&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这位母亲却办不到，因为她居然不会读报纸上的故事，这太荒唐了，只是将书换成报纸，居然必须要修改Mother才能读。假如以后需求换成杂志呢？换成网页呢？还要不断地修改Mother，这显然不是好的设计。原因就是Mother与Book之间的耦合性太高了，必须降低他们之间的耦合度才行。</p>
-<p>我们引入一个抽象的接口IReader。读物，只要是带字的都属于读物：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">IReader</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getContent</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Mother类与接口IReader发生依赖关系，而Book和Newspaper都属于读物的范畴，他们各自都去实现IReader接口，这样就符合依赖倒置原则了，代码修改为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Newspaper</span> <span class="keyword">implements</span> <span class="title">IReader</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getContent</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;林书豪17+9助尼克斯击败老鹰……&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Book</span> <span class="keyword">implements</span> <span class="title">IReader</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getContent</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">&quot;很久很久以前有一个阿拉伯的故事……&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Mother</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">narrate</span><span class="params">(IReader reader)</span></span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;妈妈开始讲故事&quot;</span>);</span><br><span class="line">		System.out.println(reader.getContent());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		Mother mother = <span class="keyword">new</span> Mother();</span><br><span class="line">		mother.narrate(<span class="keyword">new</span> Book());</span><br><span class="line">		mother.narrate(<span class="keyword">new</span> Newspaper());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>运行结果：</p>
-<p>妈妈开始讲故事<br>很久很久以前有一个阿拉伯的故事……<br>妈妈开始讲故事<br>林书豪17+9助尼克斯击败老鹰……</p>
-<p>这样修改后，无论怎样扩展Client类，都不需要再修改Mother类了。这只是一个简单的例子，实际情况中，代表高层模块的Mother类将负责完成主要的业务逻辑，一旦需要对它进行修改，引入错误的风险极大。所以遵循依赖倒置原则可以降低类之间的耦合性，提高系统的稳定性，降低修改程序造成的风险。</p>
-<p>采用依赖倒置原则给多人并行开发带来了极大的便利，比如上例中，原本Mother类与Book类直接耦合时，Mother类必须等Book类编码完成后才可以进行编码，因为Mother类依赖于Book类。修改后的程序则可以同时开工，互不影响，因为Mother与Book类一点关系也没有。参与协作开发的人越多、项目越庞大，采用依赖导致原则的意义就越重大。现在很流行的TDD开发模式就是依赖倒置原则最成功的应用。</p>
-<p>传递依赖关系有三种方式，以上的例子中使用的方法是接口传递，另外还有两种传递方式：构造方法传递和setter方法传递。</p>
-<p>在实际编程中，我们一般需要做到如下三点：</p>
-<p>​    低层模块尽量都要有抽象类或接口，或者两者都有。</p>
-<p>​    变量的声明类型尽量是抽象类或接口。</p>
-<p>​    使用继承时遵循里氏替换原则。</p>
-<p>依赖倒置原则的核心就是要我们<strong>面向接口编程</strong>，理解了面向接口编程，也就理解了面向接口编程。</p>
-<h2 id="4、接口隔离原则"><a href="#4、接口隔离原则" class="headerlink" title="4、接口隔离原则"></a>4、接口隔离原则</h2><p><strong>定义:</strong> 客户端不应该依赖它不需要的接口；一个类对另一个类的依赖应该建立在最小的接口上。</p>
-<p><strong>问题由来：</strong>类A通过接口I依赖类B，类C通过接口I依赖类D，如果接口I对于类A和类B来说不是最小接口，则类B和类D必须去实现他们不需要的方法。</p>
-<p><strong>解决方案：</strong>将臃肿的接口I产分为独立的几个接口，类A和类C分别与他们需要的接口建立依赖关系。也就是采用接口隔离的原则。</p>
-<p>举例来说明接口隔离原则：</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116110332520.png" alt="image-20201116110332520"></p>
-<p>这个图的意思是：类A依赖接口I中的方法1、方法2、方法3，类B是对类A依赖的实现。类C依赖接口I中的方法1、方法4、方法5，类D是对类C依赖的实现。对于类B和类D来说，虽然他们都存在着用不到的方法（也就是图中红色字体标记的方法），但由于实现了接口I，所以也必须要实现这些用不到的方法。对类图不熟悉的可以参照程序代码来理解，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">I</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method4</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method5</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend1</span><span class="params">(I i)</span></span>&#123;</span><br><span class="line">		i.method1();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend2</span><span class="params">(I i)</span></span>&#123;</span><br><span class="line">		i.method2();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend3</span><span class="params">(I i)</span></span>&#123;</span><br><span class="line">		i.method3();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">implements</span> <span class="title">I</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类B实现接口I的方法1&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类B实现接口I的方法2&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类B实现接口I的方法3&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//对于类B来说，method4和method5不是必需的，但是由于接口A中有这两个方法，</span></span><br><span class="line">	<span class="comment">//所以在实现过程中即使这两个方法的方法体为空，也要将这两个没有作用的方法进行实现。</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method4</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method5</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend1</span><span class="params">(I i)</span></span>&#123;</span><br><span class="line">		i.method1();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend2</span><span class="params">(I i)</span></span>&#123;</span><br><span class="line">		i.method4();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend3</span><span class="params">(I i)</span></span>&#123;</span><br><span class="line">		i.method5();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> <span class="keyword">implements</span> <span class="title">I</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类D实现接口I的方法1&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//对于类D来说，method2和method3不是必需的，但是由于接口A中有这两个方法，</span></span><br><span class="line">	<span class="comment">//所以在实现过程中即使这两个方法的方法体为空，也要将这两个没有作用的方法进行实现。</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类D实现接口I的方法4&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method5</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类D实现接口I的方法5&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		A a = <span class="keyword">new</span> A();</span><br><span class="line">		a.depend1(<span class="keyword">new</span> B());</span><br><span class="line">		a.depend2(<span class="keyword">new</span> B());</span><br><span class="line">		a.depend3(<span class="keyword">new</span> B());</span><br><span class="line">		</span><br><span class="line">		C c = <span class="keyword">new</span> C();</span><br><span class="line">		c.depend1(<span class="keyword">new</span> D());</span><br><span class="line">		c.depend2(<span class="keyword">new</span> D());</span><br><span class="line">		c.depend3(<span class="keyword">new</span> D());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，如果接口过于臃肿，只要接口中出现的方法，不管对依赖于它的类有没有用处，实现类中都必须去实现这些方法，这显然不是好的设计。如果将这个设计修改为符合接口隔离原则，就必须对接口I进行拆分。在这里我们将原有的接口I拆分为三个接口，拆分后的设计如图2所示：</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116110623007.png" alt="image-20201116110623007"></p>
-<p>照例贴出程序的代码，供不熟悉类图的朋友参考：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">I1</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">I2</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">I3</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method4</span><span class="params">()</span></span>;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method5</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend1</span><span class="params">(I1 i)</span></span>&#123;</span><br><span class="line">		i.method1();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend2</span><span class="params">(I2 i)</span></span>&#123;</span><br><span class="line">		i.method2();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend3</span><span class="params">(I2 i)</span></span>&#123;</span><br><span class="line">		i.method3();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">implements</span> <span class="title">I1</span>, <span class="title">I2</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类B实现接口I1的方法1&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类B实现接口I2的方法2&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method3</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类B实现接口I2的方法3&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend1</span><span class="params">(I1 i)</span></span>&#123;</span><br><span class="line">		i.method1();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend2</span><span class="params">(I3 i)</span></span>&#123;</span><br><span class="line">		i.method4();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">depend3</span><span class="params">(I3 i)</span></span>&#123;</span><br><span class="line">		i.method5();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> <span class="keyword">implements</span> <span class="title">I1</span>, <span class="title">I3</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类D实现接口I1的方法1&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method4</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类D实现接口I3的方法4&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method5</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;类D实现接口I3的方法5&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>接口隔离原则的含义是：建立单一接口，不要建立庞大臃肿的接口，尽量细化接口，接口中的方法尽量少。也就是说，我们要为各个类建立专用的接口，而不要试图去建立一个很庞大的接口供所有依赖它的类去调用。本文例子中，将一个庞大的接口变更为3个专用的接口所采用的就是接口隔离原则。在程序设计中，依赖几个专用的接口要比依赖一个综合的接口更灵活。接口是设计时对外部设定的“契约”，通过分散定义多个接口，可以预防外来变更的扩散，提高系统的灵活性和可维护性。</p>
-<p>说到这里，很多人会觉的接口隔离原则跟之前的单一职责原则很相似，其实不然。其一，单一职责原则原注重的是职责；而接口隔离原则注重对接口依赖的隔离。其二，单一职责原则主要是约束类，其次才是接口和方法，它针对的是程序中的实现和细节；而接口隔离原则主要约束接口接口，主要针对抽象，针对程序整体框架的构建。</p>
-<p>   采用接口隔离原则对接口进行约束时，要注意以下几点：</p>
-<ul>
-<li>接口尽量小，但是要有限度。对接口进行细化可以提高程序设计灵活性是不挣的事实，但是如果过小，则会造成接口数量过多，使设计复杂化。所以一定要适度。</li>
-<li>为依赖接口的类定制服务，只暴露给调用的类它需要的方法，它不需要的方法则隐藏起来。只有专注地为一个模块提供定制服务，才能建立最小的依赖关系。</li>
-<li>提高内聚，减少对外交互。使接口用最少的方法去完成最多的事情。</li>
-</ul>
-<p>运用接口隔离原则，一定要适度，接口设计的过大或过小都不好。设计接口的时候，只有多花些时间去思考和筹划，才能准确地实践这一原则。</p>
-<h2 id="5、迪米特法则"><a href="#5、迪米特法则" class="headerlink" title="5、迪米特法则"></a>5、迪米特法则</h2><p><strong>定义：</strong>一个对象应该对其他对象保持最少的了解。</p>
-<p><strong>问题由来：</strong> 类与类之间的关系越密切，耦合度越大，当一个类发生改变时，对另一个类的影响也越大。</p>
-<p><strong>解决方案：</strong>尽量降低类与类之间的耦合。</p>
-<p>自从我们接触编程开始，就知道了软件编程的总的原则：低耦合，高内聚。无论是面向过程编程还是面向对象编程，只有使各个模块之间的耦合尽量的低，才能提高代码的复用率。低耦合的优点不言而喻，但是怎么样编程才能做到低耦合呢？那正是迪米特法则要去完成的。</p>
-<p>迪米特法则又叫最少知道原则，最早是在1987年由美国Northeastern University的Ian Holland提出。通俗的来讲，就是一个类对自己依赖的类知道的越少越好。也就是说，对于被依赖的类来说，无论逻辑多么复杂，都尽量地的将逻辑封装在类的内部，对外除了提供的public方法，不对外泄漏任何信息。迪米特法则还有一个更简单的定义：<strong>只与直接的朋友通信。</strong>首先来解释一下什么是直接的朋友：每个对象都会与其他对象有耦合关系，只要两个对象之间有耦合关系，我们就说这两个对象之间是朋友关系。耦合的方式很多，依赖、关联、组合、聚合等。其中，我们称出现成员变量、方法参数、方法返回值中的类为<strong>直接的朋友</strong>，而出现在局部变量中的类则不是直接的朋友。也就是说，陌生的类最好不要作为局部变量的形式出现在类的内部。</p>
-<p>举一个例子：有一个集团公司，下属单位有分公司和直属部门，现在要求打印出所有下属单位的员工ID。先来看一下违反迪米特法则的设计。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//总公司员工</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Employee</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String id;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(String id)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> id;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//分公司员工</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubEmployee</span></span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String id;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setId</span><span class="params">(String id)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">getId</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> id;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCompanyManager</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;SubEmployee&gt; <span class="title">getAllEmployee</span><span class="params">()</span></span>&#123;</span><br><span class="line">		List&lt;SubEmployee&gt; list = <span class="keyword">new</span> ArrayList&lt;SubEmployee&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">100</span>; i++)&#123;</span><br><span class="line">			SubEmployee emp = <span class="keyword">new</span> SubEmployee();</span><br><span class="line">			<span class="comment">//为分公司人员按顺序分配一个ID</span></span><br><span class="line">			emp.setId(<span class="string">&quot;分公司&quot;</span>+i);</span><br><span class="line">			list.add(emp);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> list;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CompanyManager</span></span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Employee&gt; <span class="title">getAllEmployee</span><span class="params">()</span></span>&#123;</span><br><span class="line">		List&lt;Employee&gt; list = <span class="keyword">new</span> ArrayList&lt;Employee&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">30</span>; i++)&#123;</span><br><span class="line">			Employee emp = <span class="keyword">new</span> Employee();</span><br><span class="line">			<span class="comment">//为总公司人员按顺序分配一个ID</span></span><br><span class="line">			emp.setId(<span class="string">&quot;总公司&quot;</span>+i);</span><br><span class="line">			list.add(emp);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> list;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printAllEmployee</span><span class="params">(SubCompanyManager sub)</span></span>&#123;</span><br><span class="line">		List&lt;SubEmployee&gt; list1 = sub.getAllEmployee();</span><br><span class="line">		<span class="keyword">for</span>(SubEmployee e:list1)&#123;</span><br><span class="line">			System.out.println(e.getId());</span><br><span class="line">		&#125;</span><br><span class="line"> </span><br><span class="line">		List&lt;Employee&gt; list2 = <span class="keyword">this</span>.getAllEmployee();</span><br><span class="line">		<span class="keyword">for</span>(Employee e:list2)&#123;</span><br><span class="line">			System.out.println(e.getId());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">		CompanyManager e = <span class="keyword">new</span> CompanyManager();</span><br><span class="line">		e.printAllEmployee(<span class="keyword">new</span> SubCompanyManager());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>现在这个设计的主要问题出在CompanyManager中，根据迪米特法则，只与直接的朋友发生通信，而SubEmployee类并不是CompanyManager类的直接朋友（以局部变量出现的耦合不属于直接朋友），从逻辑上讲总公司只与他的分公司耦合就行了，与分公司的员工并没有任何联系，这样设计显然是增加了不必要的耦合。按照迪米特法则，应该避免类中出现这样非直接朋友关系的耦合。修改后的代码如下:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubCompanyManager</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;SubEmployee&gt; <span class="title">getAllEmployee</span><span class="params">()</span></span>&#123;</span><br><span class="line">		List&lt;SubEmployee&gt; list = <span class="keyword">new</span> ArrayList&lt;SubEmployee&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">100</span>; i++)&#123;</span><br><span class="line">			SubEmployee emp = <span class="keyword">new</span> SubEmployee();</span><br><span class="line">			<span class="comment">//为分公司人员按顺序分配一个ID</span></span><br><span class="line">			emp.setId(<span class="string">&quot;分公司&quot;</span>+i);</span><br><span class="line">			list.add(emp);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> list;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printEmployee</span><span class="params">()</span></span>&#123;</span><br><span class="line">		List&lt;SubEmployee&gt; list = <span class="keyword">this</span>.getAllEmployee();</span><br><span class="line">		<span class="keyword">for</span>(SubEmployee e:list)&#123;</span><br><span class="line">			System.out.println(e.getId());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CompanyManager</span></span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> List&lt;Employee&gt; <span class="title">getAllEmployee</span><span class="params">()</span></span>&#123;</span><br><span class="line">		List&lt;Employee&gt; list = <span class="keyword">new</span> ArrayList&lt;Employee&gt;();</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">30</span>; i++)&#123;</span><br><span class="line">			Employee emp = <span class="keyword">new</span> Employee();</span><br><span class="line">			<span class="comment">//为总公司人员按顺序分配一个ID</span></span><br><span class="line">			emp.setId(<span class="string">&quot;总公司&quot;</span>+i);</span><br><span class="line">			list.add(emp);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> list;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printAllEmployee</span><span class="params">(SubCompanyManager sub)</span></span>&#123;</span><br><span class="line">		sub.printEmployee();</span><br><span class="line">		List&lt;Employee&gt; list2 = <span class="keyword">this</span>.getAllEmployee();</span><br><span class="line">		<span class="keyword">for</span>(Employee e:list2)&#123;</span><br><span class="line">			System.out.println(e.getId());</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>修改后，为分公司增加了打印人员ID的方法，总公司直接调用来打印，从而避免了与分公司的员工发生耦合。</p>
-<p>​    迪米特法则的初衷是降低类之间的耦合，由于每个类都减少了不必要的依赖，因此的确可以降低耦合关系。但是凡事都有度，虽然可以避免与非直接的类通信，但是要通信，必然会通过一个“中介”来发生联系，例如本例中，总公司就是通过分公司这个“中介”来与分公司的员工发生联系的。过分的使用迪米特原则，会产生大量这样的中介和传递类，导致系统复杂度变大。所以在采用迪米特法则时要反复权衡，既做到结构清晰，又要高内聚低耦合。</p>
-<h2 id="6、开闭原则"><a href="#6、开闭原则" class="headerlink" title="6、开闭原则"></a>6、开闭原则</h2><p><strong>定义：</strong>一个软件实体如类、模块和函数应该对扩展开放，对修改关闭。</p>
-<p><strong>问题由来：</strong>在软件的生命周期内，因为变化、升级和维护等原因需要对软件原有代码进行修改时，可能会给旧代码中引入错误，也可能会使我们不得不对整个功能进行重构，并且需要原有代码经过重新测试</p>
-<p><strong>解决方案：</strong>当软件需要变化时，尽量通过扩展软件实体的行为来实现变化，而不是通过修改已有的代码来实现变化。</p>
-<p>开闭原则无非就是想表达这样一层意思：<strong>用抽象构建框架，用实现扩展细节。</strong>因为抽象灵活性好，始应性广，只要抽象的合理，可以基本保持软件架构的稳定。而软件中易变的细节，我们用从抽象派生的实现类来进行扩展，当软件需要发生变化时，我们只需要根据需求重新派生一个实现类来扩展就可以了。当然前提是我们的抽象要合理，要对需求的变更有前瞻性和预见性才行。</p>
-<p>说到这里，再回想一下前面说的5项原则，恰恰是告诉我们<strong>用抽象构建框架，用实现扩展细节</strong>的注意事项而已：单一职责原则告诉我们实现类要职责单一；里氏替换原则告诉我们不要破坏继承体系；依赖倒置原则告诉我们要面向接口编程；接口隔离原则告诉我们在设计接口的时候要精简单一；迪米特法则告诉我们要降低耦合。而开闭原则是总纲，他告诉我们要对扩展开放，对修改关闭。</p>
-<p>最后说明一下如何去遵守这六个原则。对这六个原则的遵守并不是是和否的问题，而是多和少的问题，也就是说，我们一般不会说有没有遵守，而是说遵守程度的多少。任何事都是过犹不及，设计模式的六个设计原则也是一样，制定这六个原则的目的并不是要我们刻板的遵守他们，而需要根据实际情况灵活运用。对他们的遵守程度只要在一个合理的范围内，就算是良好的设计。我们用一幅图来说明一下。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116112329856.png" alt="image-20201116112329856"></p>
-<p>图中的每一条维度各代表一项原则，我们依据对这项原则的遵守程度在维度上画一个点，则如果对这项原则遵守的合理的话，这个点应该落在红色的同心圆内部；如果遵守的差，点将会在小圆内部；如果过度遵守，点将会落在大圆外部。一个良好的设计体现在图中，应该是六个顶点都在同心圆中的六边形</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201116112419572.png" alt="image-20201116112419572"></p>
-<p>在上图中，设计1、设计2属于良好的设计，他们对六项原则的遵守程度都在合理的范围内；设计3、设计4设计虽然有些不足，但也基本可以接受；设计5则严重不足，对各项原则都没有很好的遵守；而设计6则遵守过渡了，设计5和设计6都是迫切需要重构的设计。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/04/redis/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/04/redis/" class="post-title-link" itemprop="url">redis</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-04 09:10:26" itemprop="dateCreated datePublished" datetime="2020-12-04T09:10:26+08:00">2020-12-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-07 11:27:21" itemprop="dateModified" datetime="2020-12-07T11:27:21+08:00">2020-12-07</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="第一部分：数据结构与对象"><a href="#第一部分：数据结构与对象" class="headerlink" title="第一部分：数据结构与对象"></a>第一部分：数据结构与对象</h1><h2 id="简单动态字符串"><a href="#简单动态字符串" class="headerlink" title="简单动态字符串"></a>简单动态字符串</h2><p>简单动态字符串（simple dynamic string，SDS），redis将SDS用作默认字符串表示。在redis里面，C字符串只会作为字符串字面量(string literal)用在一些无须对字符串值进行修改的地方，比如打印日志。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">redis&gt;</span><span class="bash"> SET msg <span class="string">&quot;hello world&quot;</span></span></span><br><span class="line">OK</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> RPUSH fruits <span class="string">&quot;apple&quot;</span> <span class="string">&quot;banana&quot;</span> <span class="string">&quot;cherry&quot;</span></span></span><br><span class="line">(integer) 3</span><br></pre></td></tr></table></figure>
-
-<p>除了用来保存数据库中的字符串之外，SDS还被用作缓冲区（buffer）：AOF模块中的AOF缓冲区，以及客户端状态中的输入缓冲区均由SDS实现。</p>
-<h3 id="SDS的定义"><a href="#SDS的定义" class="headerlink" title="SDS的定义"></a>SDS的定义</h3><p>每个sds.h/sdshdr结构表示一个SDS值：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line">    <span class="comment">//记录buf数组中已使用字节的数量</span></span><br><span class="line">    <span class="comment">//等于SDS所保存字符串的长度</span></span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line">    <span class="comment">//记录buf数组中未使用字节的数量</span></span><br><span class="line">    <span class="keyword">int</span> <span class="built_in">free</span>;</span><br><span class="line">    <span class="comment">//字节数组，用于保存字符串</span></span><br><span class="line">    <span class="keyword">char</span> buf[];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201204093147827.png" alt="image-20201204093147827"></p>
-<p>当我们有一个指向上图所示SDS的指针s，那么我们可以直接使用&lt;stdio.h&gt;/printf函数，通过执行以下语句：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;%s&quot;</span>,s-&gt;buf);</span><br></pre></td></tr></table></figure>
-
-<p>来打印出SDS保存的字符串值“Redis”，而无须为SDS编写专门的打印函数。</p>
-<h3 id="SDS与C字符串的区别"><a href="#SDS与C字符串的区别" class="headerlink" title="SDS与C字符串的区别"></a>SDS与C字符串的区别</h3><h4 id="常数复杂度获取字符串长度"><a href="#常数复杂度获取字符串长度" class="headerlink" title="常数复杂度获取字符串长度"></a>常数复杂度获取字符串长度</h4><p>C字符串并不记录自身的长度信息，所以为了获取一个C字符串的长度，程序必须遍历整个字符串，这个操作的复杂度为O(N)。</p>
-<p>和C字符串不同，因为SDS在len属性中记录了SDS本身的长度，所以获取一个SDS长度的复杂度仅为O（10.</p>
-<h4 id="杜绝缓冲区溢出"><a href="#杜绝缓冲区溢出" class="headerlink" title="杜绝缓冲区溢出"></a>杜绝缓冲区溢出</h4><p>除了获取字符串长度的复杂度高之外，C字符串不记录自身长度带来的另一个问题是容易造成缓冲区溢出（buffer overflow）。如<code>&lt;string.h&gt;/strcat</code>函数可以将src字符串中的内容拼接到dest字符串的末尾：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcat</span><span class="params">(<span class="keyword">char</span> *dest,<span class="keyword">const</span> <span class="keyword">char</span> *src)</span></span></span><br></pre></td></tr></table></figure>
-
-<p>因为C字符串不记录自身的长度，所以strcat假定用户在执行这个函数时，已经为dest分配了足够多的内存，可以容纳src字符串中的所有内容，而一旦假设不成立时，就会产生缓冲区溢出。</p>
-<p>与C字符串不同，SDS的空间分配策略完全杜绝了发生缓冲区溢出的可能性：当SDS API需要对SDS进行修改时，API会先检查SDS的空间是否满足所需的要求，如果不满足的话，API会自动将SDS的空间扩展至执行修改所需的大小，然后才执行实际的修改操作，所以使用SDS既不需要手动修改SDS的空间大小，也不会出现前面所说的缓冲区溢出问题。</p>
-<p>举个栗子：SDS的API里面也有一个用于执行拼接操作的sdscat函数，它可以将一个C字符串拼接到给定SDS所保存的字符串的后面，但是在执行拼接之前，sdscat会先检查给定SDS的空间是否足够，如果不够的话，sdscat就会先扩展SDS的空间，然后才执行拼接操作。</p>
-<h4 id="减少修改字符串时带来的内存重分配次数"><a href="#减少修改字符串时带来的内存重分配次数" class="headerlink" title="减少修改字符串时带来的内存重分配次数"></a>减少修改字符串时带来的内存重分配次数</h4><p>因为C字符串并不记录自身的长度，所以对于一个包含了N个字符的C字符串来说，这个C字符串的底层实现总是一个N+1字符串长的数组。因为C字符串的长度和底层数组的长度之间存在着这种关联性，所以每次增长或者缩短一个C字符串，程序都总要对保存这个C字符串的数组进行一次内存重分配操作：</p>
-<ul>
-<li>若程序执行增长字符串操作，比如拼接操作（append），那么在执行了这个操作之前，程序需要先通过内存重分配来扩展底层数组的空间大小，否则就会产生缓冲区溢出。</li>
-<li>若程序执行缩短字符串的操作，比如截断操作（trim），那么在执行这个操作之后，程序需要通过内存重分配来释放字符串不再使用的那部分空间，否则会产生内存泄漏。</li>
-</ul>
-<p>内存重分配涉及复杂的算法，并且可能需要执行系统调用，所以通常是一个比较耗时的操作。</p>
-<p>为了避免C字符串的这种缺陷，SDS通过未使用空间解除了字符串长度和底层数组长度之间的关联；</p>
-<p><strong>1.空间预分配</strong></p>
-<p>空间预分配用于优化SDS的字符串增长操作；当SDS的API对一个SDS进行修改，并且需要对SDS进行空间扩展的时候，程序不仅会为SDS分配修改所必须要的空间，还会为SDS分配额外的未使用空间。</p>
-<ul>
-<li>如对SDS进行修改之后，SDS的长度将小于1MB，那么程序分配和len属性同样大小的未使用空间，这时SDS len属性的值将和free属性的值相同。举个栗子，如果进行修改之后，SDS的len将变成13字节，那么程序也会分配13字节的未使用空间，SDS的buf数组的实际长度将变成13+13+1=27字节。</li>
-<li>如对SDS进行修改之后，SDS的的长度大于1MB，那么程序会分配1MB的未使用空间。</li>
-</ul>
-<p><strong>2.惰性空间释放</strong></p>
-<p>惰性空间释放用于优化SDS的字符串缩短操作：当SDS的API需要缩短SDS保存的字符串时，程序并不立即使用内存重分配来回收缩短后多出来的字节，而是使用free属性将这些字节的数量记录起来，并等待将来使用。</p>
-<h4 id="二进制安全"><a href="#二进制安全" class="headerlink" title="二进制安全"></a>二进制安全</h4><p>C字符串的字符必须符合某种编码，并且除了字符串的末尾之外，字符串里面不能包含字符，否则最先被程序读入的空字符被误认为是字符串结尾，这些限制使得C字符串只能保存文本数据，而不能保存像图片、音频、压缩文件这样的二进制数据。</p>
-<p>SDS的API都是二进制安全的（binary-safe），所有SDS API都会以处理二进制的方式来处理SDS存放在buf数组里的数据，程序不会对其中的数据做任何限制、过滤或者假设，数据在写入时是什么样的，它被读取时就是什么样。</p>
-<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><table>
-<thead>
-<tr>
-<th>C字符串</th>
-<th>SDS</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>获取字符串长度的复杂度为O（N）</td>
-<td>获取字符串长度的复杂度为O（1）</td>
-</tr>
-<tr>
-<td>API是不安全的，可能会造成缓冲区溢出</td>
-<td>API是安全的，不会造成缓冲区溢出</td>
-</tr>
-<tr>
-<td>修改字符串长度N次必然需要执行N次内存重分配</td>
-<td>修改字符串长度为N次最多需要执行N次内存重分配</td>
-</tr>
-<tr>
-<td>只能保存文本数据</td>
-<td>可以保存文本后者二进制数据</td>
-</tr>
-<tr>
-<td>可以使用所有&lt;string.h&gt;库中的函数</td>
-<td>可以使用一部分&lt;string.h&gt;库中的函数</td>
-</tr>
-</tbody></table>
-<h3 id="SDS-API"><a href="#SDS-API" class="headerlink" title="SDS API"></a>SDS API</h3><p>略</p>
-<h2 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h2><p>链表在Redis中的应用非常广泛，比如列表键的底层实现之一就是链表。当一个链表键包含了数量比较多的元素，又或者列表中包含的元素都是比较长的字符串时,Redis就会使用链表作为列表键的底层实现。</p>
-<p>举个栗子：以下展示的integers列表键包含了从1到1024共一千零二十四个整数：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">redis&gt;</span><span class="bash"> LLEN integers</span></span><br><span class="line">(integer) 1024</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> LRANGE integers 0 10</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="链表和链表节点的实现"><a href="#链表和链表节点的实现" class="headerlink" title="链表和链表节点的实现"></a>链表和链表节点的实现</h3><p>每个链表节点使用一个alist.h/listNode结构来表示：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span>&#123;</span></span><br><span class="line">   <span class="comment">//前置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">prev</span>;</span></span><br><span class="line">    <span class="comment">//后置节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">listNode</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="comment">//节点的值</span></span><br><span class="line">    <span class="keyword">void</span> *value;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>多个listNode可以通过prev和next指针组成双端链表。虽然仅仅使用多个listNode结构就可以组成链表，但使用adlist.h/list来持有链表的话，操作起来会更方便；</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">list</span>&#123;</span></span><br><span class="line">    <span class="comment">//表头节点</span></span><br><span class="line">    listNode * head;</span><br><span class="line">    <span class="comment">//表尾节点</span></span><br><span class="line">    listNode *tail;</span><br><span class="line">    <span class="comment">//链表所包含的节点数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> len;</span><br><span class="line">    <span class="comment">//节点值复制函数</span></span><br><span class="line">    <span class="keyword">void</span> (*<span class="built_in">free</span>)(<span class="keyword">void</span> *ptr);</span><br><span class="line">    <span class="comment">//节点值对比函数</span></span><br><span class="line">    <span class="keyword">int</span> (*match)(<span class="keyword">void</span> *ptr,<span class="keyword">void</span> *key);        </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>list结构为链表提供了表头指针、表尾指针tail，以及链表长度计数器len，而dup、free和match成员则是用于实现多态链表所需的类型特定函数。</p>
-<ul>
-<li>dup 函数用于复制链表节点所保存的值；</li>
-<li>free函数用于释放链表节点所保存的值；</li>
-<li>match函数则用于对比链表节点所保存的值和另一个输入值是否相等。</li>
-</ul>
-<h2 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h2><p>在字典中，一个键可以和一个值进行关联，这些关联中的键和值就称为键值对。字典可以用来表示数据库，还是哈希键的底层实现之一，当一个哈希键包含的键值对比较多，又或者键值对中的元素都是比较长的字符串时，Redis就会使用字典作为哈希键的底层实现。</p>
-<p>举个栗子：website是一个包含10086个键值对的哈希键，这个哈希键的键都是一些数据库的名字，而键的值就是数据库的主页网址：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">redis&gt;</span><span class="bash"> HLEN website</span></span><br><span class="line">(integer) 10086</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> HGETALL website</span></span><br><span class="line">1)&quot;Redis&quot;</span><br><span class="line">2)&quot;Redis.io&quot;</span><br><span class="line">3)&quot;MariaDB&quot;</span><br><span class="line">4)&quot;MariaDB.org&quot;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
-
-<h3 id="字典的实现"><a href="#字典的实现" class="headerlink" title="字典的实现"></a>字典的实现</h3><p>Redis的字典使用哈希表作为底层实现，一个哈希表里面可以有多个哈希表节点，而每个哈希表节点就保存了字典中的一个键值对。</p>
-<h4 id="哈希表"><a href="#哈希表" class="headerlink" title="哈希表"></a>哈希表</h4><p>Redis所使用的哈希表由dict.h/dictht结构定义</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictht</span>&#123;</span></span><br><span class="line">    <span class="comment">//哈希表数组</span></span><br><span class="line">    dictEntry **table;</span><br><span class="line">    <span class="comment">//哈希表大小</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> size;</span><br><span class="line">    <span class="comment">//哈希表大小掩码，用于计算索引值</span></span><br><span class="line">    <span class="comment">//总是等于size-1</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> sizemask;</span><br><span class="line">    <span class="comment">//该哈希表已有节点的数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> used;</span><br><span class="line">&#125;dictht;</span><br></pre></td></tr></table></figure>
-
-<p>table属性是一个数组，数组中的灭个元素都是一个指向dict.h/dictEntry结构的指针，每个dictEntry结构保存着一个键值对。size属性记录了哈希表的大小，也即是table数组的大小，而used属性则记录了哈希表目前已有节点的数量。sizemask属性的值总是等于size-1，这个属性和哈希值一起决定一个键应该被放到table数组的哪个索引上面。</p>
-<h4 id="哈希表节点"><a href="#哈希表节点" class="headerlink" title="哈希表节点"></a>哈希表节点</h4><p>哈希表节点使用dictEntry结构表示，每个dictEntry结构都保存着一个键值对：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span>&#123;</span></span><br><span class="line">    <span class="comment">//键</span></span><br><span class="line">    <span class="keyword">void</span> *key;</span><br><span class="line">    <span class="comment">//值</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span>&#123;</span></span><br><span class="line">        <span class="keyword">void</span> **val;</span><br><span class="line">        uint64_tu64;</span><br><span class="line">        int64_ts64;</span><br><span class="line">    &#125;v;</span><br><span class="line">    <span class="comment">//指向下个哈希表节点，形成链表</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">dictEntry</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;dictEntry;</span><br></pre></td></tr></table></figure>
-
-<p>key属性保存着键值对中的键，而v属性则保存着键值对中的值，其中键值对的值可以是一个指针，或者是一个uint64_t整数，又或者是一个int64_t整数。</p>
-<p>next属性是指向另一个哈希表节点的指针，这个指针可以将多个哈希值相同的键值对连接在一次，以此来解决键冲突的问题。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201204112800830.png" alt="image-20201204112800830"></p>
-<h4 id="字典-1"><a href="#字典-1" class="headerlink" title="字典"></a>字典</h4><p>redis中的字典由dict.h/dict结构表示：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dict</span>&#123;</span></span><br><span class="line">    <span class="comment">//类型特定函数</span></span><br><span class="line">    dictType *type;</span><br><span class="line">    <span class="comment">//私有数据</span></span><br><span class="line">    <span class="keyword">void</span> *privdata;</span><br><span class="line">    <span class="comment">//哈希表</span></span><br><span class="line">    dictht ht[<span class="number">2</span>];</span><br><span class="line">    <span class="comment">//rehash索引</span></span><br><span class="line">    <span class="comment">//当rehash不在进行时，值为-1</span></span><br><span class="line">    <span class="keyword">int</span> trehashidx;</span><br><span class="line">&#125;dict;</span><br></pre></td></tr></table></figure>
-
-<p>type属性和privdata属性是针对不同类型的键值对，为创建多态字典而设置的；</p>
-<ul>
-<li>type属性是一个指向dictType结构的指针，每个dictType结构保存了一簇用于操作特定类型键值对的函数，Redis会为用途不同的字典设置不同的类型特定函数。</li>
-<li>而privdata属性则保存了需要传给那些类型特定函数的可选参数。</li>
-</ul>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">dictType</span>&#123;</span></span><br><span class="line">    <span class="comment">//计算哈希值的函数</span></span><br><span class="line">    <span class="function"><span class="keyword">unsigned</span> <span class="title">int</span><span class="params">(*hashFunction)</span><span class="params">(<span class="keyword">const</span> <span class="keyword">void</span> *key)</span></span>;</span><br><span class="line">    <span class="comment">//复制键的函数</span></span><br><span class="line">    <span class="keyword">void</span> *(*keyDup)(<span class="keyword">void</span> *privdata,<span class="keyword">const</span> <span class="keyword">void</span> *key);</span><br><span class="line">    <span class="comment">//复制值的函数</span></span><br><span class="line">    <span class="keyword">void</span> *(*valDup) (<span class="keyword">void</span> *privdata,<span class="keyword">const</span> <span class="keyword">void</span> *obj);</span><br><span class="line">    <span class="comment">//对比键的函数</span></span><br><span class="line">    <span class="keyword">int</span> (*keyCompare)(<span class="keyword">void</span> <span class="number">8</span>privdata,<span class="keyword">void</span> *key);</span><br><span class="line">    <span class="comment">//销毁值的函数</span></span><br><span class="line">    <span class="keyword">void</span> (*valDestructor)(<span class="keyword">void</span> *privadate,<span class="keyword">void</span> *obj);</span><br><span class="line">&#125;dicType;</span><br></pre></td></tr></table></figure>
-
-<p>ht属性是一个包含两个项的数组，数组中的每个项都是一个dictht哈希表，一般情况下，字典只使用ht[0]哈希表，ht[1]哈希表只会在对ht[0]哈希表进行rehash时使用。</p>
-<h3 id="哈希算法"><a href="#哈希算法" class="headerlink" title="哈希算法"></a>哈希算法</h3><p>当要将一个新的键值对添加到字典里面时，程序需要先根据键值对的键计算出哈希值和索引值，然后再根据索引值，将包含新键值对的哈希表节点放到哈希表数组的指定索引上面。</p>
-<p>Redis计算哈希值和索引值的方法如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#使用字典设置的哈希函数，计算键key的哈希值</span><br><span class="line">hash=dict-&gt;type-&gt;hashFunction(key);</span><br><span class="line">#使用哈希表的sizemask属性和哈希值，计算出索引值</span><br><span class="line">#根据情况不同，ht[x]可以是ht[<span class="number">0</span>]或者ht[<span class="number">1</span>]</span><br><span class="line">index=hash&amp;dict-&gt;ht[x].sizemask;</span><br></pre></td></tr></table></figure>
-
-<p>举个栗子：如果要将一个键值对k0和v0添加到字典里面，那么程序会先使用语句：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hash=dict-&gt;type-&gt;hashFunction(k0);</span><br></pre></td></tr></table></figure>
-
-<p>计算键k0的哈希值。</p>
-<p>假设计算得出的哈希值为8，那么程序会继续使用语句：</p>
-<p><code>index=hash&amp;dict-&gt;ht[0].sizemask=8&amp;3=0;</code>j计算出键k0的索引值0，这表示包含键值对k0和v0的节点应该被放置到哈希表数组的索引0位置上。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201204135731038.png" alt="image-20201204135731038"></p>
-<h3 id="解决键冲突"><a href="#解决键冲突" class="headerlink" title="解决键冲突"></a>解决键冲突</h3><p>当有两个或以上数量的键被分配到了哈希表数组的同一个索引上面时，我们称这些键发生了冲突（collision）。</p>
-<p>Redis的哈希表使用链地址法（separate chaining）来解决键冲突，每个哈希表节点都有一个next指针，，多个哈希表节点可以用next指针构成一个单向链表，被分配到同一个索引上的多个节点可以用这个单向链表连接起来，这就解决了键冲突的问题。</p>
-<h3 id="rehash"><a href="#rehash" class="headerlink" title="rehash"></a>rehash</h3><p>扩展和收缩哈希表的工作可以通过执行rehash（重新散列）操作来完成，Redis对字典的哈希表执行rehash的步骤如下：</p>
-<p>1）为字典的ht[1]哈希表分配空间，这个哈希表的空间大小取决于要执行的操作，以及ht[0]当前包含的键值对数量（也即是ht[0]。used属性的值）：</p>
-<ul>
-<li>如果执行的是扩展操作，那么ht[1]的大小为第一个大于等于ht[0].used*2的<code>2^n</code></li>
-<li>如果执行的是收缩操作，那么ht[1]的大小为第一个大于等于ht[0].used的<code>2^n</code></li>
-</ul>
-<p>2)将保存在ht[0]中的所有键值对rehash到ht[1]上面：rehash指的是重新计算键的哈希值和索引值，然后将键值对放置到ht[1]哈希表的指定位置上。</p>
-<p>3）当ht[0]包含的所有键值对都迁移到了ht[1]之后，释放ht[0]，将ht[1]设置为ht[0]，并在ht[1]新创建了一个空白哈希表，为下一次rehash做准备。</p>
-<h3 id="渐进式rehash"><a href="#渐进式rehash" class="headerlink" title="渐进式rehash"></a>渐进式rehash</h3><p>哈希表渐进式rehash的详细步骤：</p>
-<p>1）为ht[1]分配空间，让字典同时持有ht[0]和ht[1]两个哈希表。</p>
-<p>2）在字典中维持一个索引计数器变量rehashidx，并将它的值设置为0，表示rehash工作正式开始。</p>
-<p>3）在rehash进行期间，每次对字典执行添加、删除、查找或者更新操作时，程序除了执行指定的操作以外，还会顺带将ht[0]哈希表在rehashidx索引上的所有键值对rehash到ht[1]。当rehash工作完成之后，程序将rehashidx属性的值增一。</p>
-<p>4）随着字典操作的不断执行，最终在某个时间点上，ht[0]的所有键值对都会被rehash至ht[1]。这时程序将rehashidx属性的值设为-1，表示rehash操作完成。</p>
-<h2 id="跳跃表"><a href="#跳跃表" class="headerlink" title="跳跃表"></a>跳跃表</h2><p>跳跃表（skiplist）是一种有序数据结构，它通过在每个节点中维持多个指向其他节点的指针，从而达到快速访问节点的目的。</p>
-<p>跳跃表支持平均O(logN)、最坏O(N)复杂度的节点查找，还可以通过顺序性操作来批量处理节点。</p>
-<p>Redis使用跳跃表作为有序集合键的底层实现之一，如果一个有序集合包含的元素数量比较多，又或者有序结合中元素的成员(member)是比较长的字符串时，Redis就会使用跳跃表来作为有序集合键的底层实现。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">redis&gt;</span><span class="bash"> ZRANGE fruit-price 0 2 WITHSCORES</span></span><br><span class="line">1)&quot;banana&quot;</span><br><span class="line">2)&quot;5&quot;</span><br><span class="line">3)&quot;cherry&quot;</span><br><span class="line">4)&quot;6.5&quot;</span><br><span class="line">5)&quot;apple&quot;</span><br><span class="line">6)&quot;8&quot;</span><br><span class="line"></span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> ZCARD fruit-price</span></span><br><span class="line">(integer) 130</span><br></pre></td></tr></table></figure>
-
-<p>fruit-price有序集合的所有数据都保存在一个跳跃表里面，其中每个跳跃表节点（node）都保存了一款水果的价钱信息，所有水果按价钱的高低从低到高在跳跃表里面排序：</p>
-<ul>
-<li>跳跃表里的第一个元素的成员为“banana”，它的分值为5；</li>
-<li>跳跃表的第二个元素的成员为“cherry”，它的分值为6.5；</li>
-<li>跳跃表的第三个元素的成员为“apple”，它的分值为8；</li>
-</ul>
-<h3 id="跳跃表的实现"><a href="#跳跃表的实现" class="headerlink" title="跳跃表的实现"></a>跳跃表的实现</h3><p>Redis的跳跃表由redis.h/zskiplistNode和redis.h/zskiplist两个结构定义，其中zskiplistNode结构用于表示跳跃表节点，而zskiplist结构则用于保存跳跃表节点的相关信息，比如节点的数量，以及指向表头节点和表尾节点的指针等等。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201206125157968.png" alt="image-20201206125157968"></p>
-<p>图5-1展示了一个跳跃表示例，位于图片最左边的是zsiplist结构，该结构包含以下属性：</p>
-<ul>
-<li>header:指向跳跃表的表头节点。</li>
-<li>tail：指向跳跃表的表尾节点</li>
-<li>level：记录目前跳跃表内，层数最大的那个节点的层数。</li>
-<li>length:记录跳跃表的长度，也即是，跳跃表目前包含节点的数量。</li>
-</ul>
-<p>位于zskiplist结构右方的是四个zskiplistNode结构，该结构包含以下属性：</p>
-<ul>
-<li>层(level)：节点中用L1、L2、L3等字样标记节点的各个层，L1代表第一层，L代表第二层，以此类推。每个层都带有两个属性：前进指针和跨度。前进指针用于访问方向的其他节点，而跨度则记录了前进指针所指向节点和当前节点的距离。在上面的图片中，连线上带有数字的箭头就代表前进指针，而那个数字就是跨度。当程序从表头向表尾进行遍历时，访问会沿着层的前进指针进行。</li>
-<li>后退（backward）指针：节点中用BW字样标记节点的后退指针，它指向位于当前节点的前一个节点。后退指针在程序从表尾向表头遍历时使用。</li>
-<li>分值（score）：各个节点中的1.0、2.0和3.0是节点所保存的分值。在跳跃表中，节点按各自所保存的分值从小到大排列。</li>
-<li>成员对象（obj）：各个节点中的o1、o2和o3是节点所保存的成员的对象。</li>
-</ul>
-<h4 id="跳跃表节点"><a href="#跳跃表节点" class="headerlink" title="跳跃表节点"></a>跳跃表节点</h4><p>跳跃表节点的实现由redis.h/zskiplistNode结构定义：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span>&#123;</span></span><br><span class="line">    <span class="comment">//层</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistLevel</span>&#123;</span></span><br><span class="line">        <span class="comment">//前进指针</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">forward</span>;</span></span><br><span class="line">        <span class="comment">//跨度</span></span><br><span class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span> span;</span><br><span class="line">    &#125;level[];</span><br><span class="line">    <span class="comment">//后退指针</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">zskiplistNode</span> *<span class="title">backward</span>;</span></span><br><span class="line">    <span class="comment">//分值</span></span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line">    <span class="comment">//成员对象</span></span><br><span class="line">    robj *obj;</span><br><span class="line">&#125;zskiplistNode;</span><br></pre></td></tr></table></figure>
-
-<h3 id="跳跃表-1"><a href="#跳跃表-1" class="headerlink" title="跳跃表"></a>跳跃表</h3><p>靠多个跳跃表节点就可以组成一个跳跃表。</p>
-<p>zskiplist结构的定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">zkiplist</span>&#123;</span></span><br><span class="line">    <span class="comment">//表头节点和表尾节点</span></span><br><span class="line">    structz skiplistNode *header,*tail;</span><br><span class="line">    <span class="comment">//表中节点的数量</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> length;</span><br><span class="line">    <span class="comment">//表中层数最大的节点的层数</span></span><br><span class="line">    <span class="keyword">int</span> level;</span><br><span class="line">&#125;zskiplist；</span><br></pre></td></tr></table></figure>
-
-<h2 id="整数集合"><a href="#整数集合" class="headerlink" title="整数集合"></a>整数集合</h2><p>整数集合(intset)是集合键的底层实现之一，当一个集合只包含整数值元素，并且这个集合的元素数量不多时，Redis就会使用整数集合作为集合键的底层实现。</p>
-<p>举个栗子：如果我们创建一个只包含5个元素的集合键，并且集合中的所有元素都是整数值，那么这个集合键的底层实现就会是整数集合：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis&gt; SADD numbers <span class="number">1</span> <span class="number">3</span> <span class="number">5</span> <span class="number">7</span> <span class="number">9</span></span><br><span class="line">(integer) <span class="number">5</span></span><br><span class="line">redis&gt; OBJECT ENCODING numbers</span><br><span class="line"><span class="string">&quot;intset&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="整数集合的实现"><a href="#整数集合的实现" class="headerlink" title="整数集合的实现"></a>整数集合的实现</h3><p>整数集合（intset）是Redis用于保存整数值的集合抽象数据结构，它可以保存类型为int16_t、int32_t或者int64_t的整数值，并且保证集合中不会出现重复元素。</p>
-<p>每个intset.h/intset结构表示一个整数集合：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">intset</span>&#123;</span></span><br><span class="line">    <span class="comment">//编码方式</span></span><br><span class="line">    <span class="keyword">uint32_t</span> encoding;</span><br><span class="line">    <span class="comment">//集合包含的元素数量</span></span><br><span class="line">    <span class="keyword">uint32_t</span> length;</span><br><span class="line">    <span class="comment">//保存元素的数组</span></span><br><span class="line">    <span class="keyword">int8_t</span> contents[];</span><br><span class="line">&#125;intset;</span><br></pre></td></tr></table></figure>
-
-<p>contents数组是整数集合的底层实现：整数集合的每个元素都是contents数组的一个数组项（item）,g各个项在数组中按值的大小从小到大有序地排列，并且数据中不包含任何重复项。</p>
-<p>length属性记录了整数集合包含的元素数量，也即是contents数组的长度。</p>
-<p>虽然intset结构将contents属性声明为int8_t类型的数组，但实际上contents数组并不保存任何int8_t类型的值，contents数组的真正类型取决于encoding属性的值。</p>
-<h3 id="升级"><a href="#升级" class="headerlink" title="升级"></a>升级</h3><p>当将一个新元素添加到整数集合里面，并且新元素的类型比整数集合现有所有元素的类型都要长时，整数集合需要先进行升级（upgrade），然后才能将新元素添加到整数集合里面。</p>
-<p>升级整数集合并添加新元素共分为三步进行：</p>
-<p>1）根据新元素的类型，扩展整数集合底层数组的空间大小，并为新元素分配空间。</p>
-<p>2）将底层数组现有的所有元素都转换成与新元素相同的类型，并将类型转换后的元素放置到正确的位上，而且在放置元素的过程中，需要继续维持底层数组的有序性质不变。</p>
-<p>3）将新元素添加到底层数组里面。</p>
-<h2 id="压缩列表"><a href="#压缩列表" class="headerlink" title="压缩列表"></a>压缩列表</h2><p>压缩列表(ziplist)是列表和哈希键的底层实现之一。当一个列表键只包含少量列表项，并且每个列表项要么就是小整数值，要么就是长度比较短的字符串，那么redis就会使用压缩列表来做列表键的底层实现。</p>
-<p>栗子：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">redis&gt;</span><span class="bash"> RPUSH 1st 1 3 5 10086 <span class="string">&quot;hello&quot;</span> <span class="string">&quot;world&quot;</span></span></span><br><span class="line">(integer) 6</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> OBJECT ENCODING 1st</span></span><br><span class="line">&quot;ziplist&quot;</span><br></pre></td></tr></table></figure>
-
-<p>此外，当一个哈希键只包含少量键值对，并且每个键值对的键和值要么就是小整数值，要么就是长度比较短的字符串，那么Redis就会使用压缩列表来做哈希键的底层实现。</p>
-<p>栗子：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">redis&gt;</span><span class="bash"> HMSET profile <span class="string">&quot;name&quot;</span> <span class="string">&quot;Jack&quot;</span> <span class="string">&quot;age&quot;</span> 28 <span class="string">&quot;job&quot;</span> <span class="string">&quot;Programmer&quot;</span></span></span><br><span class="line">OK</span><br><span class="line"><span class="meta">redis&gt;</span><span class="bash"> OBJECT ENCODING profile</span></span><br><span class="line">&quot;ziplist&quot;</span><br></pre></td></tr></table></figure>
-
-<h3 id="压缩列表的构成"><a href="#压缩列表的构成" class="headerlink" title="压缩列表的构成"></a>压缩列表的构成</h3><p>压缩列表是由一系列特殊编码的连续内存块组成的顺序型（Sequential）数据结构。一个压缩列表可以包含任意多个节点（entry），每个节点可以保存一个字节数组或者一个整数值。</p>
-<h3 id="压缩列表节点的构成"><a href="#压缩列表节点的构成" class="headerlink" title="压缩列表节点的构成"></a>压缩列表节点的构成</h3><p>每个压缩列表节点可以保存一个字节数组或者一个整数值。每个压缩列表节点都由previous_entry_length、encoding、content三个部分组成。</p>
-<h4 id="previous-entry-length"><a href="#previous-entry-length" class="headerlink" title="previous_entry_length"></a>previous_entry_length</h4><p>节点的previous_entry_length属性以字节为单位，记录了压缩列表中前一个节点的长度。previous_entry_length属性的长度可以是1字节或者5字节。</p>
-<p>压缩列表的从表尾向表头遍历操作可以利用previous_entry_length来实现，只要拥有了一个指向某个节点起始地址的指针，那么通过这个指针以及这个节点的previous_entry_length属性，程序就可以一直向前一个节点回溯，最终到达压缩列表的表头节点。</p>
-<h4 id="encoding"><a href="#encoding" class="headerlink" title="encoding"></a>encoding</h4><p>节点的encoding属性记录了节点的content属性所保存数据的类型以及长度。</p>
-<h4 id="content"><a href="#content" class="headerlink" title="content"></a>content</h4><p>节点的content属性负责保存节点的值，节点值可以是一个字节数组或者整数，值的类型和长度由节点的encoding属性决定。</p>
-<h3 id="连锁更新"><a href="#连锁更新" class="headerlink" title="连锁更新"></a>连锁更新</h3><h2 id="对象"><a href="#对象" class="headerlink" title="对象"></a>对象</h2><h3 id="对象的类型与编码"><a href="#对象的类型与编码" class="headerlink" title="对象的类型与编码"></a>对象的类型与编码</h3><p>Redis使用对象来表示数据库中的键和值，每次当我们在Redis的数据库中新创建一个键值对时，我们至少会创建两个对象，一个对象用作键值对的键，另一个对象用作键值对的值。</p>
-<p>Redis中的每个对象都由一个redisObject结构表示，该结构中和保存数据有关的三个属性分别是type属性、encoding属性和ptr属性：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">redisObject</span>&#123;</span></span><br><span class="line">    <span class="comment">//类型</span></span><br><span class="line">    <span class="keyword">unsigned</span> type:<span class="number">4</span>;</span><br><span class="line">    <span class="comment">//编码</span></span><br><span class="line">    <span class="keyword">unsigned</span> encoding <span class="number">4</span>;</span><br><span class="line">    <span class="comment">//指向底层数据结构的指针</span></span><br><span class="line">    <span class="keyword">void</span> *ptr;</span><br><span class="line">&#125;robj;</span><br></pre></td></tr></table></figure>
-
-<h3 id="字符串对象"><a href="#字符串对象" class="headerlink" title="字符串对象"></a>字符串对象</h3><p>字符串对象的编码可以是int、raw或者embstr。</p>
-<p>如果一个字符串对象保存的是整数值，并且这个整数值可以用long类型来表示，那么字符串对象会将整数值保存在字符串对象结构的ptr属性里面，并将字符串对象的编码设置为int。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/03/JVM/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/03/JVM/" class="post-title-link" itemprop="url">JVM</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-03 22:12:40 / 修改时间：22:13:07" itemprop="dateCreated datePublished" datetime="2020-12-03T22:12:40+08:00">2020-12-03</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="JVM内存结构"><a href="#JVM内存结构" class="headerlink" title="JVM内存结构"></a>JVM内存结构</h2><p>java虚拟机的内存空间分为5个部分：</p>
-<ul>
-<li>程序计数器</li>
-<li>java虚拟机栈</li>
-<li>本地方法栈</li>
-<li>堆</li>
-<li>方法区</li>
-</ul>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201127094735134.png" alt="image-20201127094735134"></p>
-<p>JDK1.8同JDK1.7比，最大的差别就是：元数据取代了永久代。元空间的本质和永久代类似，都是对jvm规范方法区的实现。不过元空间与永久代之间最大的区别在于：元数据空间并不在虚拟机中，而是使用本地内存。</p>
-<h3 id="程序计数器（PC寄存器）"><a href="#程序计数器（PC寄存器）" class="headerlink" title="程序计数器（PC寄存器）"></a>程序计数器（PC寄存器）</h3><h4 id="程序计数器的定义"><a href="#程序计数器的定义" class="headerlink" title="程序计数器的定义"></a>程序计数器的定义</h4><p>程序计数器是一块较小的内存空间，是当前线程正在执行的那条字节码指令的地址。若当前线程正在执行的是一个本地方法，那么此时程序计数器为Undefined。</p>
-<h4 id="程序技术器的作用"><a href="#程序技术器的作用" class="headerlink" title="程序技术器的作用"></a>程序技术器的作用</h4><ul>
-<li>字节码解释器通过改变程序计数器来依次读取指令，从而实现代码的流程控制。</li>
-<li>在多线程情况下，程序计数器记录的是当前线程执行的位置，从而当线程切换回来时，就知道上次线程执行到哪了。</li>
-</ul>
-<h4 id="程序计数器的特点"><a href="#程序计数器的特点" class="headerlink" title="程序计数器的特点"></a>程序计数器的特点</h4><ul>
-<li>是一块较小的内存空间。</li>
-<li>线程私有，每条线程都有自己的程序计数器。</li>
-<li>生命周期：随着线程的创建而创建，随着线程的结束而销毁。</li>
-<li>是唯一一个不会出现OutOfMemoryError的内存区域。</li>
-</ul>
-<h3 id="Java虚拟机栈（Java栈）"><a href="#Java虚拟机栈（Java栈）" class="headerlink" title="Java虚拟机栈（Java栈）"></a>Java虚拟机栈（Java栈）</h3><p>java虚拟机栈是描述java方法运行过程的内存模型。</p>
-<p>java虚拟机栈会为每一个即将运行的java方法创建一块叫做“栈帧”的区域，用于存放该方法运行过程中的一些信息，如：</p>
-<ul>
-<li>局部变量表</li>
-<li>操作数栈</li>
-<li>动态链接</li>
-<li>方法出口信息</li>
-</ul>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201127100138795.png" alt="image-20201127100138795"></p>
-<h4 id="压栈出栈过程"><a href="#压栈出栈过程" class="headerlink" title="压栈出栈过程"></a>压栈出栈过程</h4><p>当方法运行过程中需要创建局部变量时，就将局部变量的值存入栈帧中的局部变量表中。</p>
-<p>java虚拟机栈的栈顶的栈帧是当前正在执行的活动栈，也就是当前正在执行的方法，PC寄存器也会指向这个地址，PC寄存器也会指向这个地址。只有这个活动的栈帧的本地变量可以被操作数栈使用，当在这个栈帧中调用另一个方法，与之对应的栈帧又会被创建，新创建的栈帧压入栈顶，变为当前的活动栈帧。</p>
-<p>方法结束后，当前栈帧被移出，栈帧的返回值变成新的活动栈帧中操作数栈的一个操作数。如果有返回值，那么新的活动栈帧中操作数栈的操作数没有变化。</p>
-<h4 id="java虚拟机栈的特点"><a href="#java虚拟机栈的特点" class="headerlink" title="java虚拟机栈的特点"></a>java虚拟机栈的特点</h4><ul>
-<li><p>局部变量表随着栈帧的创建而创建，它的大小在编译时确定，创建时只需分配事先规定的大小即可。在方法运行过程中，局部变量表的大小不会发生改变。</p>
-</li>
-<li><p>java虚拟机栈会出现两种异常：StackOverFlowError和OutOfMemoryError。</p>
-<ul>
-<li>StackOverFlowError，若java虚拟机栈的大小不允许动态扩展，那么当线程请求栈的深度超过当前java虚拟机栈的最大深度时，抛出StackOverFlow异常。</li>
-<li>OutOfMemoryError若允许动态扩展，那么当线程请求栈时内存用完了，无法再动态扩展时，抛出OutOfMemor异常。</li>
-</ul>
-</li>
-<li><p>java虚拟机栈也是线程私有，随着线程创建而创建，随着线程的结束而销毁。</p>
-</li>
-</ul>
-<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><h4 id="本地方法栈的定义"><a href="#本地方法栈的定义" class="headerlink" title="本地方法栈的定义"></a>本地方法栈的定义</h4><p>本地方法栈是为 JVM 运行 Native 方法准备的空间（Native方法就是一个java调用非java代码的接口），由于很多 Native 方法都是用 C 语言实现的，所以它通常又叫 C 栈。它与 Java 虚拟机栈实现的功能类似，只不过本地方法栈是描述本地方法运行过程的内存模型。</p>
-<h4 id="栈帧变化过程"><a href="#栈帧变化过程" class="headerlink" title="栈帧变化过程"></a>栈帧变化过程</h4><p>本地方法被执行时，在本地方法栈也会创建一块栈帧，用于存放该方法的局部变量表、操作数栈、动态链接、方法出口信息等。</p>
-<p>方法执行结束后，相应的栈帧也会出栈，并释放内存空间。也会抛出 StackOverFlowError 和 OutOfMemoryError 异常。</p>
-<blockquote>
-<p>如果 Java 虚拟机本身不支持 Native 方法，或是本身不依赖于传统栈，那么可以不提供本地方法栈。如果支持本地方法栈，那么这个栈一般会在线程创建的时候按线程分配。</p>
-</blockquote>
-<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><h4 id="堆的定义"><a href="#堆的定义" class="headerlink" title="堆的定义"></a>堆的定义</h4><p>堆是用来存放对象的内存空间，几乎所有的对象都存储在堆中。</p>
-<h4 id="堆的特点"><a href="#堆的特点" class="headerlink" title="堆的特点"></a>堆的特点</h4><ul>
-<li>线程共享，整个 Java 虚拟机只有一个堆，所有的线程都访问同一个堆。而程序计数器、Java 虚拟机栈、本地方法栈都是一个线程对应一个。</li>
-<li>在虚拟机启动时创建。</li>
-<li>是垃圾回收的主要场所</li>
-<li>进一步可分为：新生代、老年代。</li>
-</ul>
-<p>不同的区域存放不同生命周期的对象，这样可以根据不同的区域使用不同的垃圾回收算法，更具有针对性。</p>
-<p>堆的大小既可以固定也可以扩展，但对于主流的虚拟机，堆的大小是可扩展的，因此当线程请求分配内存，但堆已满，且内存已无法再扩展时，就抛出 OutOfMemoryError 异常。</p>
-<blockquote>
-<p>Java 堆所使用的内存不需要保证是连续的。而由于堆是被所有线程共享的，所以对它的访问需要注意同步问题，方法和对应的属性都需要保证一致性。</p>
-</blockquote>
-<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><h4 id="方法区的定义"><a href="#方法区的定义" class="headerlink" title="方法区的定义"></a>方法区的定义</h4><p>Java 虚拟机规范中定义方法区是堆的一个逻辑部分。方法区存放以下信息：</p>
-<ul>
-<li>已经被虚拟机加载的类信息</li>
-<li>常量</li>
-<li>静态变量</li>
-<li>即时编译器编译后的代码</li>
-</ul>
-<h4 id="方法区的特点"><a href="#方法区的特点" class="headerlink" title="方法区的特点"></a>方法区的特点</h4><ul>
-<li><p>线程共享。方法区是堆的一个逻辑部分，因此和堆一样，都是线程共享的。整个虚拟机中只有一个方法区。</p>
-</li>
-<li><p>永久代。方法区中的信息一般需要长期存在，而且它又是堆的逻辑分区，因此用堆的划分方法，把方法区称为“永久代”。</p>
-</li>
-<li><p>内存回收效率低。方法区中的信息一般需要长期存在，回收一遍之后可能只有少量信息无效。主要回收目标是：对常量池的回收；对类型的卸载。</p>
-</li>
-<li><p>java虚拟机规范对方法区的要求比较宽松，和堆一样，允许固定大小，也允许动态扩展，还不允许实现垃圾回收。</p>
-</li>
-</ul>
-<h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p>方法区中存放：类信息、常量、静态变量、即时编译器编译后的代码。常量就存放在运行时常量池中。</p>
-<p>当类被 Java 虚拟机加载后， .class 文件中的常量就存放在方法区的运行时常量池中。而且在运行期间，可以向常量池中添加新的常量。如 String 类的 intern() 方法就能在运行期间向常量池中添加字符串常量。</p>
-<h3 id="直接内存（堆外内存）"><a href="#直接内存（堆外内存）" class="headerlink" title="直接内存（堆外内存）"></a>直接内存（堆外内存）</h3><p>直接内存是除 Java 虚拟机之外的内存，但也可能被 Java 使用。</p>
-<h4 id="操作直接内存"><a href="#操作直接内存" class="headerlink" title="操作直接内存"></a>操作直接内存</h4><p>在 NIO 中引入了一种基于通道和缓冲的 IO 方式。它可以通过调用本地方法直接分配 Java 虚拟机之外的内存，然后通过一个存储在堆中的<code>DirectByteBuffer</code>对象直接操作该内存，而无须先将外部内存中的数据复制到堆中再进行操作，从而提高了数据操作的效率。</p>
-<p>直接内存的大小不受 Java 虚拟机控制，但既然是内存，当内存不足时就会抛出 OutOfMemoryError 异常。</p>
-<h4 id="直接内存与堆内存比较"><a href="#直接内存与堆内存比较" class="headerlink" title="直接内存与堆内存比较"></a>直接内存与堆内存比较</h4><ul>
-<li>直接内存申请空间耗费更高的性能</li>
-<li>直接内存读取 IO 的性能要优于普通的堆内存。</li>
-<li>直接内存作用链： 本地 IO -&gt; 直接内存 -&gt; 本地 IO</li>
-<li>堆内存作用链：本地 IO -&gt; 直接内存 -&gt; 非直接内存 -&gt; 直接内存 -&gt; 本地 IO</li>
-</ul>
-<blockquote>
-<p>服务器管理员在配置虚拟机参数时，会根据实际内存设置<code>-Xmx</code>等参数信息，但经常忽略直接内存，使得各个内存区域总和大于物理内存限制，从而导致动态扩展时出现<code>OutOfMemoryError</code>异常。</p>
-</blockquote>
-<h2 id="HotSpot虚拟机对象探秘"><a href="#HotSpot虚拟机对象探秘" class="headerlink" title="HotSpot虚拟机对象探秘"></a>HotSpot虚拟机对象探秘</h2><h3 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h3><p>在 HotSpot 虚拟机中，对象的内存布局分为以下 3 块区域：</p>
-<ul>
-<li>对象头（Header）</li>
-<li>实例数据（Instance Data）</li>
-<li>对齐填充（Padding）</li>
-</ul>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201127102938996.png" alt="image-20201127102938996"></p>
-<h4 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h4><p>对象头记录了对象在运行过程中所需要使用的一些数据：</p>
-<ul>
-<li>哈希码</li>
-<li>GC分代年龄</li>
-<li>锁状态标志</li>
-<li>线程持有的锁</li>
-<li>偏向线程ID</li>
-<li>偏向时间戳</li>
-</ul>
-<p>对象头可能包含类型指针，通过该指针能确定对象属于哪个类。如果对象是一个数组，那么对象头还会包括数组长度。</p>
-<h4 id="实例数据"><a href="#实例数据" class="headerlink" title="实例数据"></a>实例数据</h4><p>实例数据部分就是成员变量的值，其中包括父类成员变量和本类成员变量。</p>
-<h4 id="对齐填充"><a href="#对齐填充" class="headerlink" title="对齐填充"></a>对齐填充</h4><p>用于确保对象的总长度为8字节的整数倍。</p>
-<p>HotSpot VM的自动内存管理系统要求对象的大小必须是8字节的整数倍。而对象头部分正好是 8 字节的倍数（1 倍或 2 倍），因此，当对象实例数据部分没有对齐时，就需要通过对齐填充来补全。</p>
-<blockquote>
-<p>对齐填充并不是必然存在，也没有特别的含义，它仅仅起着占位符的作用。</p>
-</blockquote>
-<h3 id="对象的创建过程"><a href="#对象的创建过程" class="headerlink" title="对象的创建过程"></a>对象的创建过程</h3><h4 id="类加载检查"><a href="#类加载检查" class="headerlink" title="类加载检查"></a>类加载检查</h4><p>虚拟机在解析.class文件时，若遇到一条new指令，首先它会去检查常量池中是否有这个类的符号引用，并且检查这个符号引用所代表的类是否已被加载、解析和初始化过。如果没有，那么必须先执行相应的类加载过程。</p>
-<h4 id="为新生对象分配内存"><a href="#为新生对象分配内存" class="headerlink" title="为新生对象分配内存"></a>为新生对象分配内存</h4><p>对象所需内存的大小在类加载完成后便可完全确定，接下来从堆中划分一块对应大小的内存空间给新的对象。分配堆中内存有两种方式：</p>
-<ul>
-<li><strong>指针碰撞</strong><br>如果 Java <strong>堆中内存绝对规整</strong>（说明采用的是“<strong>复制算法</strong>”或“<strong>标记整理法</strong>”），空闲内存和已使用内存中间放着一个指针作为分界点指示器，那么分配内存时只需要把指针向空闲内存挪动一段与对象大小一样的距离，这种分配方式称为“<strong>指针碰撞</strong>”。</li>
-<li><strong>空闲列表</strong><br>如果 Java <strong>堆中内存并不规整</strong>，已使用的内存和空闲内存交错（说明采用的是<strong>标记-清除法</strong>，有碎片），此时没法简单进行指针碰撞， VM 必须维护一个列表，记录其中哪些内存块空闲可用。分配之时从空闲列表中找到一块足够大的内存空间划分给对象实例。这种方式称为“<strong>空闲列表</strong>”。</li>
-</ul>
-<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>分配完内存后，为对象中的成员变量赋上初始值，设置对象头信息，调用对象的构造函数方法进行初始化。至此，整个对象的创建过程就完成了。</p>
-<h3 id="对象的访问方式"><a href="#对象的访问方式" class="headerlink" title="对象的访问方式"></a>对象的访问方式</h3><p>所有对象的存储空间都是在堆中分配的，但是这个对象的引用却是在堆栈中分配的。也就是说在建立一个对象时两个地方都分配内存，在堆中分配的内存实际建立这个对象，而在堆栈中分配的内存只是一个指向这个堆对象的指针（引用）而已。 那么根据引用存放的地址类型的不同，对象有不同的访问方式。</p>
-<h4 id="句柄访问方式"><a href="#句柄访问方式" class="headerlink" title="句柄访问方式"></a>句柄访问方式</h4><p>堆中需要有一块叫做“句柄池”的内存空间，句柄中包含了对象实例数据与类型数据各自的具体地址信息。引用类型的变量存放的是该对象的句柄地址（reference）。访问对象时，首先需要通过引用类型的变量找到该对象的句柄，然后根据句柄中对象的地址找到对象。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201127104649930.png" alt="image-20201127104649930"></p>
-<h4 id="直接指针访问方式"><a href="#直接指针访问方式" class="headerlink" title="直接指针访问方式"></a>直接指针访问方式</h4><p>引用类型的变量直接存放对象的地址，从而不需要句柄池，通过引用能够直接访问对象。但对象所在的内存空间需要额外的策略存储对象所属的类信息的地址。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201127104923692.png" alt="image-20201127104923692"></p>
-<p>需要说明的是，HotSpot 采用第二种方式，即直接指针方式来访问对象，只需要一次寻址操作，所以在性能上比句柄访问方式快一倍。但像上面所说，它需要<strong>额外的策略</strong>来存储对象在方法区中类信息的地址。</p>
-<h2 id="垃圾收集策略与算法"><a href="#垃圾收集策略与算法" class="headerlink" title="垃圾收集策略与算法"></a>垃圾收集策略与算法</h2><p>程序计数器、虚拟机栈、本地方法栈随线程而生，也随线程而灭；栈帧随着方法的开始而入栈，随着方法的结束而出栈。这几个区域的内存分配和回收都具有确定性，在这几个区域内不需要过多考虑回收的问题，因为方法结束或者线程结束时，内存自然就跟随着回收了。</p>
-<p>而对于 Java 堆和方法区，我们只有在程序运行期间才能知道会创建哪些对象，这部分内存的分配和回收都是动态的，垃圾收集器所关注的正是这部分内存。</p>
-<h3 id="判断对象是否存活"><a href="#判断对象是否存活" class="headerlink" title="判断对象是否存活"></a>判断对象是否存活</h3><p>若一个对象不被任何对象或变量引用，那么它就是无效对象，需要被回收。</p>
-<h4 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h4><p>在对象头维护着一个counter计数器，对象被引用一次则计数器+1；若引用失效则计数器-1。当计数器为0时，就认为该对象无效了。</p>
-<p>引用计数算法的实现简单，判定效率也很高，在大部分情况下它都是一个不错的算法。但是主流的 Java 虚拟机里没有选用引用计数算法来管理内存，主要是因为它很难解决对象之间循环引用的问题。</p>
-<blockquote>
-<p>举个栗子 👉 对象 objA 和 objB 都有字段 instance，令 objA.instance = objB 并且 objB.instance = objA，由于它们互相引用着对方，导致它们的引用计数都不为 0，于是引用计数算法无法通知 GC 收集器回收它们。</p>
-</blockquote>
-<h4 id="可达性分析法"><a href="#可达性分析法" class="headerlink" title="可达性分析法"></a>可达性分析法</h4><p>所有和GC Roots直接或间接关联的对象都是有效对象，和GC Roots没有关联的对象就是无效对象。</p>
-<p>GC Roots是指：</p>
-<ul>
-<li>java虚拟机栈中引用的对象</li>
-<li>本地方法栈中引用的对象</li>
-<li>方法区中常量引用的对象</li>
-<li>方法区中类静态属性引用的对象</li>
-</ul>
-<p>GC Roots并不包括堆中对象所引用的对象，这样就不会有循环引用的问题。</p>
-<h3 id="引用的种类"><a href="#引用的种类" class="headerlink" title="引用的种类"></a>引用的种类</h3><h4 id="强引用（Strong-Reference）"><a href="#强引用（Strong-Reference）" class="headerlink" title="强引用（Strong Reference）"></a>强引用（Strong Reference）</h4><p>类似“Object obj=new Object()”这类的引用，就是强引用，只要强引用存在，垃圾收集器永远不会回收被引用的对象。但是，如果我们错误地保持了强引用，比如：赋值给了static变量，那么对象在很长一段时间内不会被回收，会产生内存泄漏。</p>
-<h4 id="软引用（Soft-Reference）"><a href="#软引用（Soft-Reference）" class="headerlink" title="软引用（Soft Reference）"></a>软引用（Soft Reference）</h4><p>软引用是一种相对强引用弱化一些的引用，可以让对象豁免一些垃圾收集，只有当JVM认为内存不足时，才会去试图回收软引用指向的对象。JVM 会确保在抛出 OutOfMemoryError 之前，清理软引用指向的对象。软引用通常用来<strong>实现内存敏感的缓存</strong>，如果还有空闲内存，就可以暂时保留缓存，当内存不足时清理掉，这样就保证了使用缓存的同时，不会耗尽内存。</p>
-<h4 id="弱引用（Weak-Reference）"><a href="#弱引用（Weak-Reference）" class="headerlink" title="弱引用（Weak Reference）"></a>弱引用（Weak Reference）</h4><p>弱引用的<strong>强度比软引用更弱</strong>一些。当 JVM 进行垃圾回收时，<strong>无论内存是否充足，都会回收</strong>只被弱引用关联的对象。</p>
-<h4 id="虚引用（Phantom-Reference）"><a href="#虚引用（Phantom-Reference）" class="headerlink" title="虚引用（Phantom Reference）"></a>虚引用（Phantom Reference）</h4><p>虚引用也称幽灵引用或者幻影引用，它是<strong>最弱</strong>的一种引用关系。一个对象是否有虚引用的存在，完全不会对其生存时间构成影响。它仅仅是提供了一种确保对象被 finalize 以后，做某些事情的机制，比如，通常用来做所谓的 Post-Mortem 清理机制。</p>
-<h3 id="回收堆中无效对象"><a href="#回收堆中无效对象" class="headerlink" title="回收堆中无效对象"></a>回收堆中无效对象</h3><p>对于可达性分析中不可达的对象，也并不是没有存活的可能。</p>
-<h4 id="判定finalize-是否有必要执行"><a href="#判定finalize-是否有必要执行" class="headerlink" title="判定finalize()是否有必要执行"></a>判定finalize()是否有必要执行</h4><p>JVM 会判断此对象是否有必要执行 finalize() 方法，如果对象没有覆盖 finalize() 方法，或者 finalize() 方法已经被虚拟机调用过，那么视为“没有必要执行”。那么对象基本上就真的被回收了。</p>
-<p>如果对象被判定为有必要执行 finalize() 方法，那么对象会被放入一个 F-Queue 队列中，虚拟机会以较低的优先级执行这些 finalize()方法，但不会确保所有的 finalize() 方法都会执行结束。如果 finalize() 方法出现耗时操作，虚拟机就直接停止指向该方法，将对象清除。</p>
-<h4 id="对象重生或死亡"><a href="#对象重生或死亡" class="headerlink" title="对象重生或死亡"></a>对象重生或死亡</h4><p>如果在执行 finalize() 方法时，将 this 赋给了某一个引用，那么该对象就重生了。如果没有，那么就会被垃圾收集器清除。</p>
-<blockquote>
-<p>任何一个对象的 finalize() 方法只会被系统自动调用一次，如果对象面临下一次回收，它的 finalize() 方法不会被再次执行，想继续在 finalize() 中自救就失效了。</p>
-</blockquote>
-<h3 id="回收方法区内存"><a href="#回收方法区内存" class="headerlink" title="回收方法区内存"></a>回收方法区内存</h3><p>方法区中存放生命周期教长的类信息、常量、静态变量，每次垃圾收集只有少量的垃圾被清除。方法区中主要清楚两种垃圾：</p>
-<ul>
-<li>废弃常量</li>
-<li>无用的类</li>
-</ul>
-<h4 id="判定废弃常量"><a href="#判定废弃常量" class="headerlink" title="判定废弃常量"></a>判定废弃常量</h4><p>只要常量池中的常量不被任何变量或对象引用，那么这些常量就会被清除掉。比如，一个字符串 “bingo” 进入了常量池，但是当前系统没有任何一个 String 对象引用常量池中的 “bingo” 常量，也没有其它地方引用这个字面量，必要的话，”bingo”常量会被清理出常量池。</p>
-<h4 id="判定无用的类"><a href="#判定无用的类" class="headerlink" title="判定无用的类"></a>判定无用的类</h4><p>判定一个类是否是“无用的类”，条件较为苛刻。</p>
-<ul>
-<li>该类的所有对象都已经被清除</li>
-<li>加载该类的ClassLoader已经被回收</li>
-<li>该类的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
-</ul>
-<p>一个类被虚拟机加载进方法区，那么在堆中就会有一个代表该类的对象：java.lang.Class。这个对象在类被加载进方法区时创建，在方法区该类被删除时清除。</p>
-<h3 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h3><p>常见的垃圾收集算法有以下几个：</p>
-<h4 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h4><p><strong>标记</strong>的过程是：遍历所有的GC Roots，然后将所有GC Roots可达的对象标记为存活的对象。</p>
-<p><strong>清除</strong>的过程将遍历堆中所有的对象，将没有标记的对象全部清除掉。与此同时，清除那些被标记过的对象的标记，以便下次的垃圾回收。</p>
-<p>这种方法有两个<strong>不足</strong>：</p>
-<ul>
-<li>效率问题：标记和清除两个过程的效率都不高。</li>
-<li>空间问题：标记清除之后会产生大量不连续的内存碎片，碎片太多可能导致以后需要分配较大对象时，无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作。</li>
-</ul>
-<h4 id="复制算法-新生代"><a href="#复制算法-新生代" class="headerlink" title="复制算法(新生代)"></a>复制算法(新生代)</h4><p>为了解决效率问题，“复制”收集算法出现了。它将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这一块内存用完，需要进行垃圾收集时，就将存活者的对象复制到另一块上面，然后将第一块内存全部清除。这种算法有优有劣：</p>
-<ul>
-<li>优点：不会有内存碎片的问题。</li>
-<li>缺点：内存缩小为原来的一半，浪费空间。</li>
-</ul>
-<p>为了解决空间利用率问题，可以将内存分为三块： Eden、From Survivor、To Survivor，比例是 8:1:1，每次使用 Eden 和其中一块 Survivor。回收时，将 Eden 和 Survivor 中还存活的对象一次性复制到另外一块 Survivor 空间上，最后清理掉 Eden 和刚才使用的 Survivor 空间。这样只有 10% 的内存被浪费。</p>
-<p>但是我们无法保证每次回收都只有不多于 10% 的对象存活，当 Survivor 空间不够，需要依赖其他内存（指老年代）进行分配担保。</p>
-<p><strong>分配担保</strong></p>
-<p>为对象分配内存空间时，如果Eden+Survivor中空闲区域无法装下该对象，会触发MinorGC进行垃圾收集。但如果Minor GC过后依然有超过10%的对象存活，这样存活的对象直接通过分配担保机制进入老年代，然后再将新对象存入Eden区。</p>
-<h4 id="标记-整理算法（老年代）"><a href="#标记-整理算法（老年代）" class="headerlink" title="标记-整理算法（老年代）"></a>标记-整理算法（老年代）</h4><p><strong>标记</strong>：它的第一个阶段与<strong>标记/清除算法</strong>是一模一样的，均是遍历 <code>GC Roots</code>，然后将存活的对象标记。</p>
-<p><strong>整理</strong>：移动所有<strong>存活的对象</strong>，且按照内存地址次序依次排列，然后将末端内存地址以后的内存全部回收。因此，第二阶段才称为整理阶段。</p>
-<p>这是一种老年代的垃圾收集算法。老年代的对象一般寿命比较长，因此每次垃圾回收会有大量对象存活，如果采用复制算法，每次需要复制大量存活的对象，效率很低。</p>
-<h4 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h4><p>根据对象存活周期的不同，将内存划分为几块。一般是把 Java 堆分为新生代和老年代，针对各个年代的特点采用最适当的收集算法。</p>
-<ul>
-<li>新生代：复制算法</li>
-<li>老年代：标记-清除算法、标记-整理算法</li>
-</ul>
-<h2 id="HotSpot垃圾收集器"><a href="#HotSpot垃圾收集器" class="headerlink" title="HotSpot垃圾收集器"></a>HotSpot垃圾收集器</h2><p>HotSpot虚拟机提供了多种垃圾收集器，每种收集器都有各自的特点，虽然我们要对各个收集器进行比较，但并非为了挑选出一个最好的收集器。我们选择的只是对具体应用最合适的收集器。</p>
-<h3 id="新生代垃圾收集器"><a href="#新生代垃圾收集器" class="headerlink" title="新生代垃圾收集器"></a>新生代垃圾收集器</h3><h4 id="Serial垃圾收集器（单线程）"><a href="#Serial垃圾收集器（单线程）" class="headerlink" title="Serial垃圾收集器（单线程）"></a>Serial垃圾收集器（单线程）</h4><p>只开启一条GC线程进行垃圾回收，并且在垃圾收集过程中停止一切用户线程（Stop The World）.</p>
-<p>一般客户端应用所需内存较小，不会创建太多对象，而且堆内存不大，因此垃圾收集器回收时间短，即使在这段时间停止一切用户线程，也不会感觉明显卡顿。因此Serial垃圾收集器适合客户端使用。</p>
-<p>由于Serial收集器只使用一条GC线程，避免了线程切换的开销，从而简单高效。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201129192022548.png" alt="image-20201129192022548"></p>
-<h4 id="ParNew垃圾收集器（多线程）"><a href="#ParNew垃圾收集器（多线程）" class="headerlink" title="ParNew垃圾收集器（多线程）"></a>ParNew垃圾收集器（多线程）</h4><p>ParNews是Serial的多线程版本。由多条GC线程并行地进行垃圾清理。但清理过程依然需要Stop The World。</p>
-<p>ParNew追求<strong>低停顿时间</strong>，与Serial唯一区别就是使用了多线程进行垃圾收集，在多CPU环境下性能比Serial会有一定程度的提升；但<strong>线程切换需要额外的开销</strong>，因此在单CPU环境中表现不如Serial。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201129192544370.png" alt="image-20201129192544370"></p>
-<h4 id="Parallel-Scavenge垃圾收集器（多线程）"><a href="#Parallel-Scavenge垃圾收集器（多线程）" class="headerlink" title="Parallel Scavenge垃圾收集器（多线程）"></a>Parallel Scavenge垃圾收集器（多线程）</h4><p>Parallel Scavenge和ParNew一样，都是多线程、新生代垃圾收集器。但是两者有巨大的不同点：</p>
-<ul>
-<li>Parallel Scavenge：追求CPU吞吐量，能够在较短时间内完成指定任务，因此适合没有交互的后台计算。</li>
-<li>ParNew:追求降低用户停顿时间，适合交互式应用。</li>
-</ul>
-<p>吞吐量 = 运行用户代码时间 / (运行用户代码时间 + 垃圾收集时间)</p>
-<p>追求高吞吐量，可以通过减少 GC 执行实际工作的时间，然而，仅仅偶尔运行 GC 意味着每当 GC 运行时将有许多工作要做，因为在此期间积累在堆中的对象数量很高。单个 GC 需要花更多的时间来完成，从而导致更高的暂停时间。而考虑到低暂停时间，最好频繁运行 GC 以便更快速完成，反过来又导致吞吐量下降。</p>
-<ul>
-<li>通过参数 -XX:GCTimeRadio 设置垃圾回收时间占总 CPU 时间的百分比。</li>
-<li>通过参数 -XX:MaxGCPauseMillis 设置垃圾处理过程最久停顿时间。</li>
-<li>通过命令 -XX:+UseAdaptiveSizePolicy 开启自适应策略。我们只要设置好堆的大小和 MaxGCPauseMillis 或 GCTimeRadio，收集器会自动调整新生代的大小、Eden 和 Survivor 的比例、对象进入老年代的年龄，以最大程度上接近我们设置的 MaxGCPauseMillis 或 GCTimeRadio。</li>
-</ul>
-<h3 id="老年代垃圾收集器"><a href="#老年代垃圾收集器" class="headerlink" title="老年代垃圾收集器"></a>老年代垃圾收集器</h3><h4 id="Serial-Old垃圾收集器（单线程）"><a href="#Serial-Old垃圾收集器（单线程）" class="headerlink" title="Serial Old垃圾收集器（单线程）"></a>Serial Old垃圾收集器（单线程）</h4><p>Serial Old 收集器是 Serial 的老年代版本，都是单线程收集器，只启用一条 GC 线程，都适合客户端应用。它们唯一的区别就是：Serial Old 工作在老年代，使用“标记-整理”算法；Serial 工作在新生代，使用“复制”算法。</p>
-<h4 id="Parallel-Old垃圾收集器（多线程）"><a href="#Parallel-Old垃圾收集器（多线程）" class="headerlink" title="Parallel Old垃圾收集器（多线程）"></a>Parallel Old垃圾收集器（多线程）</h4><p>Parallel Old收集器是Parallel Scavenge的老年代版本，追求CPU吞吐量。</p>
-<h4 id="CMS垃圾收集器"><a href="#CMS垃圾收集器" class="headerlink" title="CMS垃圾收集器"></a>CMS垃圾收集器</h4><p>CMS(Concurrent Mark Sweep，并发标记清除)收集器是以获取最短回收停顿时间为目标的收集器（追求低停顿），它在垃圾收集时使得用户线程和 GC 线程并发执行，因此在垃圾收集过程中用户也不会感到明显的卡顿。</p>
-<ul>
-<li>初始标记：Stop The World，仅使用一条初始标记线程对所有与 GC Roots 直接关联的对象进行标记。</li>
-<li>并发标记：使用<strong>多条</strong>标记线程，与用户线程并发执行。此过程进行可达性分析，标记出所有废弃对象。速度很慢。</li>
-<li>重新标记：Stop The World，使用多条标记线程并发执行，将刚才并发标记过程中新出现的废弃对象标记出来。</li>
-<li>并发清除：只使用一条 GC 线程，与用户线程并发执行，清除刚才标记的对象。这个过程非常耗时。</li>
-</ul>
-<p>并发标记与并发清除过程耗时最长，且可以与用户线程一起工作，因此，<strong>总体上说</strong>，CMS 收集器的内存回收过程是与用户线程<strong>一起并发执行</strong>的。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201129193825966.png" alt="image-20201129193825966"></p>
-<p>CMS的缺点：</p>
-<ul>
-<li>吞吐量低</li>
-<li>无法处理浮动垃圾，导致频繁Full GC</li>
-<li>使用“标记-清除”算法产生碎片空间。</li>
-</ul>
-<p>对于产生碎片空间的问题，可以通过开启 -XX:+UseCMSCompactAtFullCollection，在每次Full GC完成后都会进行一次内存压缩整理，将零散在各处的对象整理到一块。设置参数-XX:CMSFullGCsBeforeCompaction告诉CMS，经过了N次Full GC之后再进行一次内存整理。</p>
-<h4 id="G1通用垃圾收集器"><a href="#G1通用垃圾收集器" class="headerlink" title="G1通用垃圾收集器"></a>G1通用垃圾收集器</h4><p>G1 是一款面向服务端应用的垃圾收集器，它没有新生代和老年代的概念，而是将堆划分为一块块独立的 Region。当要进行垃圾收集时，首先估计每个 Region 中垃圾的数量，每次都从垃圾回收价值最大的 Region 开始回收，因此可以获得最大的回收效率。</p>
-<p>从整体上看，G1是基于“标记-整理”算法实现的收集器，从局部上看是基于“复制”算法实现的，这意味着运行期间不会产生内存空间碎片。</p>
-<p>这里抛个问题👇<br>一个对象和它内部所引用的对象可能不在同一个 Region 中，那么当垃圾回收时，是否需要扫描整个堆内存才能完整地进行一次可达性分析？</p>
-<p>并不！每个 Region 都有一个 Remembered Set，用于记录本区域中所有对象引用的对象所在的区域，进行可达性分析时，只要在 GC Roots 中再加上 Remembered Set 即可防止对整个堆内存进行遍历。</p>
-<p>如果不计算维护 Remembered Set 的操作，G1 收集器的工作过程分为以下几个步骤：</p>
-<ul>
-<li>初始标记：Stop The World，仅使用一条初始标记线程对所有与 GC Roots 直接关联的对象进行标记。</li>
-<li>并发标记：使用<strong>一条</strong>标记线程与用户线程并发执行。此过程进行可达性分析，速度很慢。</li>
-<li>最终标记：Stop The World，使用多条标记线程并发执行。</li>
-<li>筛选回收：回收废弃对象，此时也要 Stop The World，并使用多条筛选回收线程并发执行。</li>
-</ul>
-<h2 id="内存分配与回收策略"><a href="#内存分配与回收策略" class="headerlink" title="内存分配与回收策略"></a>内存分配与回收策略</h2><p>对象的内存分配，就是在堆上分配，对象主要分配在新生代的Eden区上，少数情况下可能直接分配在老年代，<strong>分配规则不固定</strong>，取决于当前使用的垃圾收集器组合以及相关的参数配置。</p>
-<p>以下为几条最普遍的内存分配规则：</p>
-<h4 id="对象优先在Eden分配"><a href="#对象优先在Eden分配" class="headerlink" title="对象优先在Eden分配"></a>对象优先在Eden分配</h4><p>大多数情况下，对象在新生代 Eden 区中分配。当 Eden 区没有足够空间进行分配时，虚拟机将发起一次 Minor GC。</p>
-<p>👇<strong>Minor GC</strong> vs <strong>Major GC</strong>/<strong>Full GC</strong>：</p>
-<ul>
-<li>Minor GC：回收新生代（包括 Eden 和 Survivor 区域），因为 Java 对象大多都具备朝生夕灭的特性，所以 Minor GC 非常频繁，一般回收速度也比较快。</li>
-<li>Major GC / Full GC: 回收老年代，出现了 Major GC，经常会伴随至少一次的 Minor GC，但这并非绝对。Major GC 的速度一般会比 Minor GC 慢 10 倍 以上。</li>
-</ul>
-<h4 id="大对象直接进入老年代"><a href="#大对象直接进入老年代" class="headerlink" title="大对象直接进入老年代"></a>大对象直接进入老年代</h4><p>大对象是指需要大量连续内存空间的java对象，如很长的字符串或数据。</p>
-<p>一个大对象能够存入Eden区的概率比较小，发生分配担保的概率比较大，而分配担保需要涉及大量的复制，就会造成效率低下。</p>
-<p>虚拟机提供了一个 -XX:PretenureSizeThreshold 参数，令大于这个设置值的对象直接在老年代分配，这样做的目的是避免在 Eden 区及两个 Survivor 区之间发生大量的内存复制。（还记得吗，新生代采用复制算法回收垃圾）</p>
-<h4 id="长期存活的对象将进入老年代"><a href="#长期存活的对象将进入老年代" class="headerlink" title="长期存活的对象将进入老年代"></a>长期存活的对象将进入老年代</h4><p>JVM给每个对象定义了一个对象年龄计数器。当新生代发生一次Minor GC后，存活下来的对象年龄+1，当年龄超过一定值时，就将超过该值的所有对象转移到老年代中去。</p>
-<p>使用 -XXMaxTenuringThreshold 设置新生代的最大年龄，只要超过该参数的新生代对象都会被转移到老年代中去。</p>
-<h4 id="动态对象年龄判定"><a href="#动态对象年龄判定" class="headerlink" title="动态对象年龄判定"></a>动态对象年龄判定</h4><p>如果当前新生代的Survivor中，相同年龄所有对象大小的总和大于Survivor空间的一半，年龄&gt;=该年龄的对象就可以直接进入老年代，无须等到MaxTenuringThreshold中要求的年龄。</p>
-<h4 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h4><p>JDK 6 Update 24 之前的规则是这样的：<br>在发生 Minor GC 之前，虚拟机会先检查<strong>老年代最大可用的连续空间是否大于新生代所有对象总空间</strong>， 如果这个条件成立，Minor GC 可以确保是安全的； 如果不成立，则虚拟机会查看 HandlePromotionFailure 值是否设置为允许担保失败， 如果是，那么会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小， 如果大于，将尝试进行一次 Minor GC,尽管这次 Minor GC 是有风险的； 如果小于，或者 HandlePromotionFailure 设置不允许冒险，那此时也要改为进行一次 Full GC。</p>
-<p>JDK 6 Update 24 之后的规则变为：<br>只要老年代的连续空间大于新生代对象总大小或者历次晋升的平均大小，就会进行 Minor GC，否则将进行 Full GC。</p>
-<p>通过清除老年代中废弃数据来扩大老年代空闲空间，以便给新生代作担保。</p>
-<p>这个过程就是分配担保。</p>
-<p>👇总结一下有哪些情况可能会触发 JVM 进行 Full GC。</p>
-<p>1.System.GC()方法的调用</p>
-<p>此方法的调用是建议 JVM 进行 Full GC，注意这<strong>只是建议而非一定</strong>，但在很多情况下它会触发 Full GC，从而增加 Full GC 的频率。通常情况下我们只需要让虚拟机自己去管理内存即可，我们可以通过 -XX:+ DisableExplicitGC 来禁止调用 System.gc()。</p>
-<p>2.老年代空间不足</p>
-<p>老年代空间不足会触发 Full GC操作，若进行该操作后空间依然不足，则会抛出如下错误：<br><code>java.lang.OutOfMemoryError: Java heap space</code></p>
-<p>3.永久代空间不足</p>
-<p>JVM 规范中运行时数据区域中的方法区，在 HotSpot 虚拟机中也称为永久代（Permanet Generation），存放一些类信息、常量、静态变量等数据，当系统要加载的类、反射的类和调用的方法较多时，永久代可能会被占满，会触发 Full GC。如果经过 Full GC 仍然回收不了，那么 JVM 会抛出如下错误信息：<br><code>java.lang.OutOfMemoryError: PermGen space</code></p>
-<p>4.CMS GC时出现promotion failed和concurrent mode failure</p>
-<p>promotion failed，就是上文所说的担保失败，而 concurrent mode failure 是在执行 CMS GC 的过程中同时有对象要放入老年代，而此时老年代空间不足造成的。</p>
-<p>5.统计得到的Minor GC晋升到旧生代的平均大小大于老年代的剩余空间。</p>
-<h2 id="JVM性能调优"><a href="#JVM性能调优" class="headerlink" title="JVM性能调优"></a>JVM性能调优</h2><p>在高性能硬件上部署程序，目前主要有两种方式：</p>
-<ul>
-<li>通过64位JDK来使用大内存</li>
-<li>使用若干个32位虚拟机建立逻辑集群来利用硬件资源。</li>
-</ul>
-<h3 id="使用64位JDK来管理大内存"><a href="#使用64位JDK来管理大内存" class="headerlink" title="使用64位JDK来管理大内存"></a>使用64位JDK来管理大内存</h3><p>堆内存变大后，虽然垃圾收集的频率减少了，但每次垃圾回收的时间变长。如果堆内存为14G，那么每次Full GC将长达数十秒。如果Full GC频繁发生，那么对于一个网站来说是无法忍受的。</p>
-<p>对于用户交互性强、对停顿时间敏感的系统，可以给java虚拟机分配超大堆的前提是有把握把应用程序的 Full GC 频率控制得足够低，至少要低到不会影响用户使用。</p>
-<p>可能面临的问题：</p>
-<ul>
-<li>内存回收导致的长时间停顿</li>
-<li>现阶段，64位JDK的性能普遍比32位JDK低；</li>
-<li>需要保证程序足够稳定，因为这种应用要是产生堆溢出几乎就无法产生堆转储快照，哪怕产生了快照也几乎无法进行分析；</li>
-<li>相同程序在64位JDK消耗的内存一般比 32 位 JDK 大，这是由于指针膨胀，以及数据类型对齐补白等因素导致的。</li>
-</ul>
-<h3 id="使用32位JVM建立逻辑集群"><a href="#使用32位JVM建立逻辑集群" class="headerlink" title="使用32位JVM建立逻辑集群"></a>使用32位JVM建立逻辑集群</h3><p>在一台物理机器上启动多个应用服务器进程，每个服务器进程分配不同端口， 然后在前端搭建一个负载均衡器，以反向代理的方式来分配访问请求。</p>
-<p>考虑到在一台物理机器上建立逻辑集群的目的仅仅是为了尽可能利用硬件资源，并不需要关心状态保留、热转移之类的高可用性能需求， 也不需要保证每个虚拟机进程有绝对的均衡负载，因此使用无 Session 复制的亲合式集群是一个不错的选择。 我们仅仅需要保障集群具备亲合性，也就是均衡器按一定的规则算法（一般根据 SessionID 分配） 将一个固定的用户请求永远分配到固定的一个集群节点进行处理即可。</p>
-<p>可能遇到的问题：</p>
-<ul>
-<li>尽量避免节点竞争全局资源，如磁盘竞争，各个节点如果同时访问某个磁盘文件的话，很可能导致 IO 异常；</li>
-<li>很难高效利用资源池，如连接池，一般都是在节点建立自己独立的连接池，这样有可能导致一些节点池满了而另外一些节点仍有较多空余；</li>
-<li>各个节点受到 32 位的内存限制；</li>
-<li>大量使用本地缓存的应用，在逻辑集群中会造成较大的内存浪费，因为每个逻辑节点都有一份缓存，这时候可以考虑把本地缓存改成集中式缓存。</li>
-</ul>
-<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><h3 id="JVM的“无关性”"><a href="#JVM的“无关性”" class="headerlink" title="JVM的“无关性”"></a>JVM的“无关性”</h3><p>JVM的无关性，主要有以下两个：</p>
-<ul>
-<li>平台无关性：任何操作系统都能运行java代码。</li>
-<li>语言无关性：JVM能运行除Java以外的其他代码。</li>
-</ul>
-<p>java源代码首先需要使用javac编译器编译成.class文件，然后由JVM执行.class文件，从而程序开始运行。</p>
-<p>JVM只认识.class文件，它不关系是何种语言生成了.class文件，只要.class文件符合JVM的规范就能运行。目前已经有JRuby、Jython、Scala 等语言能够在 JVM 上运行。它们有各自的语法规则，不过它们的编译器 都能将各自的源码编译成符合 JVM 规范的 .class 文件，从而能够借助 JVM 运行它们。</p>
-<h3 id="Class文件结构"><a href="#Class文件结构" class="headerlink" title="Class文件结构"></a>Class文件结构</h3><p>Class文件是二进制文件，它的内容具有严格的规范，文件中没有任何空格，全都是连续的0/1。class文件中的所有内容被分为两种类型：无符号数，表。</p>
-<ul>
-<li>无符号数：无符号数表示class文件中的值，这些值没有任何类型，但有不同的长度。u1,u2,u4,u8分别代表1/2/4/8字节的无符号数。</li>
-<li>表：由多个无符号数或者其他表作为数据项构成的符合数据类型。</li>
-</ul>
-<p>class文件具体由以下几个构成：</p>
-<ul>
-<li>魔数</li>
-<li>版本信息</li>
-<li>常量池</li>
-<li>访问标志</li>
-<li>类索引、父类索引、接口索引集合</li>
-<li>字段表集合</li>
-<li>方法表集合</li>
-<li>属性表集合</li>
-</ul>
-<h4 id="魔数"><a href="#魔数" class="headerlink" title="魔数"></a>魔数</h4><p>class文件的头4个字节称为魔数，用来表示这个class文件的类型。</p>
-<p>Class文件的魔数是用16进制表示的“CAFE BABE”。</p>
-<h4 id="版本信息"><a href="#版本信息" class="headerlink" title="版本信息"></a>版本信息</h4><p>紧接着魔数的4个字节是版本信息，5-6字节表示次版本号，7-8字节表示主版本号，它们表示当前class文件中使用的是哪个版本的JDK。</p>
-<p>高版本的JDK能向下兼容以前版本的Class文件，但不能运行以后版本的Class文件，即使文件格式并未发生任何变化，虚拟机也必需拒绝执行超过其版本号的class文件。</p>
-<h4 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h4><p>版本信息之后就是常量池，常量池中存放两种类型的常量：</p>
-<ul>
-<li><p>字面值常量</p>
-<p>字面值常量就是我们在程序中定义的字符串、被final修饰的值。</p>
-</li>
-<li><p>符号引用</p>
-<p>符号引用就是我们定义的各种名字：类和接口的全限定名、字段的名字和描述符、方法的名字和描述符。</p>
-</li>
-</ul>
-<p><strong>常量池的特点：</strong></p>
-<ul>
-<li>常量池中常量数量不固定，因此常量池开头放置一个 u2 类型的无符号数，用来存储当前常量池的容量。</li>
-<li>常量池的每一项常量都是一个表，表开始的第一位是一个u1类型的标志位（tag），代表当前这个常量属于哪种常量类型。</li>
-</ul>
-<p><strong>常量池中常量类型</strong></p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>tag</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>CONSTANT_utf8_info</td>
-<td>1</td>
-<td>UTF-8编码的字符串</td>
-</tr>
-<tr>
-<td>CONSTANT_Integer_info</td>
-<td>3</td>
-<td>整型字面量</td>
-</tr>
-<tr>
-<td>CONSTANT_Float_info</td>
-<td>4</td>
-<td>浮点型字面量</td>
-</tr>
-<tr>
-<td>CONSTANT_Long_info</td>
-<td>5</td>
-<td>长整型字面量</td>
-</tr>
-<tr>
-<td>CONSTANT_Double_info</td>
-<td>6</td>
-<td>双精度浮点型字面量</td>
-</tr>
-<tr>
-<td>CONSTANT_Class_info</td>
-<td>7</td>
-<td>类或接口的符号引用</td>
-</tr>
-<tr>
-<td>CONSTANT_String_info</td>
-<td>8</td>
-<td>字符串类型字面量</td>
-</tr>
-<tr>
-<td>CONSTANT_Fieldref_info</td>
-<td>9</td>
-<td>字段的符号引用</td>
-</tr>
-<tr>
-<td>CONSTANT_Methodref_info</td>
-<td>10</td>
-<td>类中方法的符号引用</td>
-</tr>
-<tr>
-<td>CONSTANT_InterfaceMethodref_info</td>
-<td>11</td>
-<td>接口中方法的符号引用</td>
-</tr>
-<tr>
-<td>CONSTANT_NameAndType_info</td>
-<td>12</td>
-<td>字段或方法的符号引用</td>
-</tr>
-<tr>
-<td>CONSTANT_MethodHandle_info</td>
-<td>15</td>
-<td>表示方法句柄</td>
-</tr>
-<tr>
-<td>CONSTANT_MethodType_info</td>
-<td>16</td>
-<td>标识方法类型</td>
-</tr>
-<tr>
-<td>CONSTANT_InvokeDynamic_info</td>
-<td>18</td>
-<td>表示一个动态方法调用点</td>
-</tr>
-</tbody></table>
-<p>对于CONSTANT_Class_info（此类型的常量代表一个类或者接口的符号引用），它的二维表结构如下：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>名称</th>
-<th>数量</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>u1</td>
-<td>tag</td>
-<td>1</td>
-</tr>
-<tr>
-<td>u2</td>
-<td>name_index</td>
-<td>1</td>
-</tr>
-</tbody></table>
-<p>tag是标志位，用于区分常量类型；name_index是一个索引值，它指向常量池中一个CONSTANT_Utf8_info类型常量，此常量代表这个类或接口的全限定名，这里name_index值若为0x0002，也即是指向了常量池中的第二项常量。</p>
-<p>CONSTANT_Utf8_info 型常量的结构如下：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>名称</th>
-<th>数量</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>u1</td>
-<td>tag</td>
-<td>1</td>
-</tr>
-<tr>
-<td>u2</td>
-<td>length</td>
-<td>1</td>
-</tr>
-<tr>
-<td>u1</td>
-<td>bytes</td>
-<td>length</td>
-</tr>
-</tbody></table>
-<p>tag 是当前常量的类型；length 表示这个字符串的长度；bytes 是这个字符串的内容（采用缩略的 UTF8 编码）</p>
-<h4 id="访问标志"><a href="#访问标志" class="headerlink" title="访问标志"></a>访问标志</h4><p>在常量池结束之后，紧接着的两个字节代表访问标志，这个标志用于识别一些类或者接口层次的访问信息，包括：这个Class是类还是接口；是否定义为public类型；是否被abstract/final修饰。</p>
-<h4 id="类索引、父类索引、接口索引集合"><a href="#类索引、父类索引、接口索引集合" class="headerlink" title="类索引、父类索引、接口索引集合"></a>类索引、父类索引、接口索引集合</h4><p>类索引和父类索引都是一个u2类型的数据，而接口索引集合是一组u2类型的数据的集合，class文件中由这三项数据来确定类的继承关系。类索引用于确定这个类的全限定名，父类索引用于确定这个类的父类的全限定名。</p>
-<p>由于java不允许多重继承，所以父类索引只有一个，除了java.lang.object之外，所有的java类都有父类，因此除了java.lang.Object 外，所有 Java 类的父类索引都不为 0。一个类可能实现了多个接口，因此用接口索引集合来描述。这个集合第一项为 u2 类型的数据，表示索引表的容量，接下来就是接口的名字索引。</p>
-<p>类索引和父类索引用两个 u2 类型的索引值表示，它们各自指向一个类型为 CONSTANT_Class_info 的类描述符常量，通过该常量总的索引值可以找到定义在 CONSTANT_Utf8_info 类型的常量中的全限定名字符串。</p>
-<h4 id="字段表集合"><a href="#字段表集合" class="headerlink" title="字段表集合"></a>字段表集合</h4><p>字段表集合存储本类涉及到的成员变量，包括实例变量和类变量，但不包括方法中的局部变量。</p>
-<p>每一个字段表只表示一个成员变量，本类中的所有成员变量构成了字段表集合。字段表结构如下：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>名称</th>
-<th>数量</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>u2</td>
-<td>access_flags</td>
-<td>1</td>
-<td>字段的访问标志，与类稍有不同</td>
-</tr>
-<tr>
-<td>u2</td>
-<td>name_index</td>
-<td>1</td>
-<td>字段名字的索引</td>
-</tr>
-<tr>
-<td>u2</td>
-<td>descriptor_index</td>
-<td>1</td>
-<td>描述符，用于描述字段的数据类型。 基本数据类型用大写字母表示； 对象类型用“L 对象类型的全限定名”表示。</td>
-</tr>
-<tr>
-<td>u2</td>
-<td>attributes_count</td>
-<td>1</td>
-<td>属性表集合的长度</td>
-</tr>
-<tr>
-<td>u2</td>
-<td>attributes</td>
-<td>attributes_count</td>
-<td>属性表集合，用于存放属性的额外信息，如属性的值。</td>
-</tr>
-</tbody></table>
-<h4 id="方法表集合"><a href="#方法表集合" class="headerlink" title="方法表集合"></a>方法表集合</h4><p>方法表结构与属性表类似。</p>
-<p>volatile 关键字 和 transient 关键字不能修饰方法，所以方法表的访问标志中没有 ACC_VOLATILE 和 ACC_TRANSIENT 标志。</p>
-<p>方法表的属性表集合中有一张 Code 属性表，用于存储当前方法经编译器编译后的字节码指令。</p>
-<h4 id="属性表集合"><a href="#属性表集合" class="headerlink" title="属性表集合"></a>属性表集合</h4><p>每个属性对应一张属性表，属性表的结构如下：</p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>名称</th>
-<th>数量</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>u2</td>
-<td>attribute_name_index</td>
-<td>1</td>
-</tr>
-<tr>
-<td>u4</td>
-<td>attribute_length</td>
-<td>1</td>
-</tr>
-<tr>
-<td>u1</td>
-<td>info</td>
-<td>attribute_length</td>
-</tr>
-</tbody></table>
-<h2 id="类加载的时机"><a href="#类加载的时机" class="headerlink" title="类加载的时机"></a>类加载的时机</h2><p>类从被加载到虚拟机内存开始，到卸载出内存为止，它的整个生命周期包括以下7个阶段：</p>
-<ul>
-<li>加载</li>
-<li>验证</li>
-<li>准备</li>
-<li>解析</li>
-<li>初始化</li>
-<li>使用</li>
-<li>卸载</li>
-</ul>
-<p>验证、准备、解析3个阶段统称为连接。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201130093841013.png" alt="image-20201130093841013"></p>
-<p>加载、验证、准备、初始化和卸载这5个阶段的顺序是确定的，类的加载过程必须按照这种顺序按部就班地开始，而解析阶段则不一定：它在某些情况下可以在初始化后再开始，这是为了支持java语言的运行时绑定。</p>
-<h3 id="类加载过程中“初始化”开始的时机"><a href="#类加载过程中“初始化”开始的时机" class="headerlink" title="类加载过程中“初始化”开始的时机"></a>类加载过程中“初始化”开始的时机</h3><p>Java 虚拟机规范没有强制约束类加载过程的第一阶段（即：加载）什么时候开始，但对于“初始化”阶段，有着严格的规定。有且仅有 5 种情况必须立即对类进行“初始化”：</p>
-<ul>
-<li>在遇到new、putstatic、getstatic、invokestatic字节码指令时，如果类尚未初始化，则需要先触发其初始化。</li>
-<li>对类进行反射调用时，如果类还没有初始化，则需要先触发其初始化。</li>
-<li>初始化一个类时，如果其父类还没有初始化，则需要先初始化父类。</li>
-<li>虚拟机启动时，用于需要指定一个包含main()方法的主类，虚拟机会先初始化这个主类。</li>
-<li>当使用 JDK 1.7 的动态语言支持时，如果一个 java.lang.invoke.MethodHandle 实例最后的解析结果为 REF_getStatic、REF_putStatic、REF_invokeStatic 的方法句柄，并且这个方法句柄所对应的类还没初始化，则需要先触发其初始化</li>
-</ul>
-<p>这5种场景的行为称为对一个类进行<strong>主动引用</strong>，除此之外，其他所有引用类的方式都不会触发初始化，称为被动引用。</p>
-<h3 id="被动引用Demo"><a href="#被动引用Demo" class="headerlink" title="被动引用Demo"></a>被动引用Demo</h3><h4 id="Demo1"><a href="#Demo1" class="headerlink" title="Demo1"></a>Demo1</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 被动引用 Demo1:</span></span><br><span class="line"><span class="comment"> * 通过子类引用父类的静态字段，不会导致子类初始化。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SuperClass init!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> value = <span class="number">123</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SubClass</span> <span class="keyword">extends</span> <span class="title">SuperClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;SubClass init!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotInitialization</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(SubClass.value);</span><br><span class="line">        <span class="comment">// SuperClass init!</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>对于静态字段，只有直接定义这个字段的类才会被初始化，因此通过其子类来引用父类中定义的静态字段，只会触发父类的初始化而不会触发子类的初始化。</p>
-<h4 id="Demo2"><a href="#Demo2" class="headerlink" title="Demo2"></a>Demo2</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 被动引用 Demo2:</span></span><br><span class="line"><span class="comment"> * 通过数组定义来引用类，不会触发此类的初始化。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotInitialization</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SuperClass[] superClasses = <span class="keyword">new</span> SuperClass[<span class="number">10</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码不会触发父类的初始化，而会触发全类名这个类的初始化，它由虚拟机自动生成，直接继承自java.lang.Object，创建动作由字节码指令newarray触发。</p>
-<h4 id="Demo3"><a href="#Demo3" class="headerlink" title="Demo3"></a>Demo3</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 被动引用 Demo3:</span></span><br><span class="line"><span class="comment"> * 常量在编译阶段会存入调用类的常量池中，本质上并没有直接引用到定义常量的类，因此不会触发定义常量的类的初始化。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ConstClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;ConstClass init!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String HELLO_BINGO = <span class="string">&quot;Hello Bingo&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NotInitialization</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(ConstClass.HELLO_BINGO);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译通过之后，常量存储到 NotInitialization 类的常量池中，NotInitialization 的 Class 文件中并没有 ConstClass 类的符号引用入口，这两个类在编译成 Class 之后就没有任何联系了.</p>
-<h4 id="接口的加载过程"><a href="#接口的加载过程" class="headerlink" title="接口的加载过程"></a>接口的加载过程</h4><p>接口加载过程与类加载过程稍有不同。</p>
-<p>当一个类在初始化时，要求其父类全部都已经初始化过了，但是一个接口在初始化时，并不要求其父接口全部都完成了初始化，当真正用到父接口的时候才会初始化。</p>
-<h2 id="类加载的过程"><a href="#类加载的过程" class="headerlink" title="类加载的过程"></a>类加载的过程</h2><p>类加载过程包括5个阶段：加载、验证、准备、解析和初始化。</p>
-<h3 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h3><h4 id="加载的过程"><a href="#加载的过程" class="headerlink" title="加载的过程"></a>加载的过程</h4><p>“加载”是“类加载”过程的一个阶段，不能混淆这两个名词。在加载阶段，虚拟机需要完成3件事：</p>
-<ul>
-<li>通过类的全限定名获取该类的二进制字节流。</li>
-<li>将二进制字节流所代表的静态结构转化为方法区的运行时数据结构。</li>
-<li>在内存中创建一个代表该类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口。</li>
-</ul>
-<h3 id="获取二进制字节流"><a href="#获取二进制字节流" class="headerlink" title="获取二进制字节流"></a>获取二进制字节流</h3><p>对于Class文件，虚拟机没有指明要从哪里获取、怎样获取。除了直接从编译好的.class文件中读取，还有以下几种方式：</p>
-<ul>
-<li>从zip包中读取，如jar、war等。</li>
-<li>从网络中获取，如Applet。</li>
-<li>通过动态代理技术生成代理类的二进制字节流。</li>
-<li>由JSP文件生成对应的Class类</li>
-<li>从数据库中读取，如有些中间件服务器可以选择把程序安装到数据库中来完成程序代码在集群间的分发。</li>
-</ul>
-<h4 id="“非数组类”与“数组类”加载比较"><a href="#“非数组类”与“数组类”加载比较" class="headerlink" title="“非数组类”与“数组类”加载比较"></a>“非数组类”与“数组类”加载比较</h4><ul>
-<li>非数组类加载阶段可以使用系统提供的引导类加载器，也可以由用户自定的类加载器完成，开发人员可以通过定义自己的类加载器控制字节流的获取方式。</li>
-<li>数组类本身不通过类加载器创建，它是由java虚拟机直接创建的，再由类加载器创建数组中的元素类。</li>
-</ul>
-<h4 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h4><ul>
-<li>虚拟机规范未规定Class对象的存储位置，对于HotSpot虚拟机而言，class对象比较特殊，它虽然是对象，但存放在方法区中。</li>
-<li>加载阶段与连接阶段的部分内容交叉进行，加载阶段尚未完成，连接阶段可能已经开始。但这两个阶段的开始时间仍然保持着固定的先后顺序。</li>
-</ul>
-<h3 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h3><h4 id="验证的重要性"><a href="#验证的重要性" class="headerlink" title="验证的重要性"></a>验证的重要性</h4><p>验证阶段确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。</p>
-<h4 id="验证的过程"><a href="#验证的过程" class="headerlink" title="验证的过程"></a>验证的过程</h4><ul>
-<li>文件格式验证 验证字节流是否符合 Class 文件格式的规范，并且能被当前版本的虚拟机处理，验证点如下：<ul>
-<li>是否以魔数 0XCAFEBABE 开头</li>
-<li>主次版本号是否在当前虚拟机处理范围内</li>
-<li>常量池是否有不被支持的常量类型</li>
-<li>指向常量的索引值是否指向了不存在的常量</li>
-<li>CONSTANT_Utf8_info 型的常量是否有不符合 UTF8 编码的数据</li>
-<li>……</li>
-</ul>
-</li>
-<li>元数据验证 对字节码描述信息进行语义分析，确保其符合 Java 语法规范。</li>
-<li>字节码验证 本阶段是验证过程中最复杂的一个阶段，是对方法体进行语义分析，保证方法在运行时不会出现危害虚拟机的事件。</li>
-<li>符号引用验证 本阶段发生在解析阶段，确保解析正常执行。</li>
-</ul>
-<h3 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h3><p>准备阶段是正式为类变量分配内存并设置初始值的阶段。这些变量所使用的内存都在方法区进行分配。</p>
-<p>初始值“通常情况下”是数据类型的零值（0，null…），假设一个类变量的定义为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> value=<span class="number">123</span>;</span><br></pre></td></tr></table></figure>
-
-<p>那么变量value在准备阶段以后的初始值为0而不是123，因为这时候尚未开始执行任何java方法。</p>
-<p>存在“特殊情况”：如果类字段的字段属性表中存在 ConstantValue 属性，那么在准备阶段 value 就会被初始化为 ConstantValue 属性所指定的值，假设上面类变量 value 的定义变为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> value=<span class="number">123</span>;</span><br></pre></td></tr></table></figure>
-
-<p>那么在准备阶段虚拟机会根据ConstantValue的设置将value赋值为123.</p>
-<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程。</p>
-<h3 id="初始化-1"><a href="#初始化-1" class="headerlink" title="初始化"></a>初始化</h3><p>类初始化阶段是类加载过程的最后一步，是执行类构造器 <clinit>() 方法的过程。</p>
-<p><clinit>() 方法是由编译器自动收集类中的所有类变量的赋值动作和静态语句块（static {} 块）中的语句合并产生的，编译器收集的顺序是由语句在源文件中出现的顺序所决定的。</p>
-<p>静态语句块中只能访问定义在静态语句块之前的变量，定义在它之后的变量，在前面的静态语句块中可以赋值，但不能访问。如下方代码所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        i = <span class="number">0</span>;  <span class="comment">// 给变量赋值可以正常编译通过</span></span><br><span class="line">        System.out.println(i);  <span class="comment">// 这句编译器会提示“非法向前引用”</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><clinit>() 方法不需要显式调用父类构造器，虚拟机会保证在子类的 <clinit>() 方法执行之前，父类的 <clinit>() 方法已经执行完毕。</p>
-<p>由于父类的 <clinit>() 方法先执行，意味着父类中定义的静态语句块要优先于子类的变量赋值操作。如下方代码所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> A = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        A = <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Sub</span> <span class="keyword">extends</span> <span class="title">Parent</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> B = A;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    System.out.println(Sub.B); <span class="comment">// 输出 2</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><clinit>() 方法不是必需的，如果一个类没有静态语句块，也没有对类变量的赋值操作，那么编译器可以不为这个类生成 <clinit>() 方法。</p>
-<p>接口中不能使用静态代码块，但接口也需要通过 <clinit>() 方法为接口中定义的静态成员变量显式初始化。但接口与类不同，接口的 <clinit>() 方法不需要先执行父类的 <clinit>() 方法，只有当父接口中定义的变量使用时，父接口才会初始化。</p>
-<p>虚拟机会保证一个类的 <clinit>() 方法在多线程环境中被正确加锁、同步。如果多个线程同时去初始化一个类，那么只会有一个线程去执行这个类的 <clinit>() 方法。</p>
-<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><h3 id="类与类加载器"><a href="#类与类加载器" class="headerlink" title="类与类加载器"></a>类与类加载器</h3><h4 id="判断是否“相等”"><a href="#判断是否“相等”" class="headerlink" title="判断是否“相等”"></a>判断是否“相等”</h4><p>任意一个类，都由<strong>加载它的类加载器</strong>和这个<strong>类本身</strong>一同确立其在 Java 虚拟机中的唯一性，每一个类加载器，都有一个独立的类名称空间。</p>
-<p>因此，比较两个类是否“相等”，只有在这两个类是由同一个类加载器加载的前提下才有意义，否则，即使这两个类来源于同一个 Class 文件，被同一个虚拟机加载，只要加载它们的类加载器不同，那么这两个类就必定不相等。</p>
-<p>这里的“相等”，包括代表类的 Class 对象的 equals() 方法、isInstance() 方法的返回结果，也包括使用 instanceof 关键字做对象所属关系判定等情况。</p>
-<h3 id="加载器种类"><a href="#加载器种类" class="headerlink" title="加载器种类"></a>加载器种类</h3><p>系统提供了3种类加载器：</p>
-<ul>
-<li>启动类加载器（Bootstrap ClassLoader）： 负责将存放在 <code>&lt;JAVA_HOME&gt;\lib</code> 目录中的，并且能被虚拟机识别的（仅按照文件名识别，如 rt.jar，名字不符合的类库即使放在 lib 目录中也不会被加载）类库加载到虚拟机内存中。</li>
-<li>扩展类加载器（Extension ClassLoader）： 负责加载 <code>&lt;JAVA_HOME&gt;\lib\ext</code> 目录中的所有类库，开发者可以直接使用扩展类加载器。</li>
-<li>应用程序类加载器（Application ClassLoader）： 由于这个类加载器是 ClassLoader 中的 getSystemClassLoader() 方法的返回值，所以一般也称它为“系统类加载器”。它负责加载用户类路径（classpath）上所指定的类库，开发者可以直接使用这个类加载器，如果应用程序中没有自定义过自己的类加载器，一般情况下这个就是程序中默认的类加载器。</li>
-</ul>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201130103429911.png" alt="image-20201130103429911"></p>
-<p>当然，如果有必要，还可以加入自己定义的类加载器。</p>
-<h2 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h2><h3 id="什么是双亲委派模型"><a href="#什么是双亲委派模型" class="headerlink" title="什么是双亲委派模型"></a>什么是双亲委派模型</h3><p>双亲委派模型是描述类加载器之间的层次关系。它要求除了顶层的启动类加载器外，其余的类加载器都应当有自己的父类加载器。（父子关系一般不会以继承的关系实现，而是以组合关系来复用父加载器的代码）</p>
-<h3 id="工作过程"><a href="#工作过程" class="headerlink" title="工作过程"></a>工作过程</h3><p>如果一个类加载器收到了类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传送到顶层的启动类加载器中，只有当父加载器反馈自己无法完成这个加载请求（找不到所需的类）时，子加载器才会尝试自己去加载。</p>
-<p>在 java.lang.ClassLoader 中的 loadClass() 方法中实现该过程。</p>
-<h3 id="为什么使用双亲委派模型"><a href="#为什么使用双亲委派模型" class="headerlink" title="为什么使用双亲委派模型"></a>为什么使用双亲委派模型</h3><p>像 java.lang.Object 这些存放在 rt.jar 中的类，无论使用哪个类加载器加载，最终都会委派给最顶端的启动类加载器加载，从而使得不同加载器加载的 Object 类都是同一个。</p>
-<p>相反，如果没有使用双亲委派模型，由各个类加载器自行去加载的话，如果用户自己编写了一个称为 java.lang.Object 的类，并放在 classpath 下，那么系统将会出现多个不同的 Object 类，Java 类型体系中最基础的行为也就无法保证。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2661,12 +1823,12 @@ public class Client&#123;
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

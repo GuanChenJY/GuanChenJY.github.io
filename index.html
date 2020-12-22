@@ -150,6 +150,323 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/spring%E6%BA%90%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/22/spring%E6%BA%90%E7%A0%81/" class="post-title-link" itemprop="url">spring源码</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-22 13:22:01 / 修改时间：15:33:26" itemprop="dateCreated datePublished" datetime="2020-12-22T13:22:01+08:00">2020-12-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h1><h2 id="Spring-core"><a href="#Spring-core" class="headerlink" title="Spring-core"></a>Spring-core</h2><h3 id="基本"><a href="#基本" class="headerlink" title="基本"></a>基本</h3><p>配置文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>    </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;base.SimpleBean&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>启动代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ClassPathXmlApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;config.xml&quot;</span>);</span><br><span class="line">    SimpleBean bean = context.getBean(SimpleBean.class);</span><br><span class="line">    bean.send();</span><br><span class="line">    context.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>SimpleBean:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleBean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I am send method from SimpleBean!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ClassPathXmlApplicationContext"><a href="#ClassPathXmlApplicationContext" class="headerlink" title="ClassPathXmlApplicationContext"></a>ClassPathXmlApplicationContext</h4><p>整个继承体系如下：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/ResourceLoader.jpg" alt="ResourceLoader继承体系"></p>
+<p>ResourceLoader代表了<strong>加载资源的一种方式，正是策略模式的实现。</strong></p>
+<p>构造器源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ClassPathXmlApplicationContext</span><span class="params">(String[] configLocations, <span class="keyword">boolean</span> refresh, ApplicationContext 	         parent)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//null</span></span><br><span class="line">    <span class="keyword">super</span>(parent);</span><br><span class="line">    setConfigLocations(configLocations);</span><br><span class="line">    <span class="comment">//默认true</span></span><br><span class="line">    <span class="keyword">if</span> (refresh) &#123;</span><br><span class="line">        refresh();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h5><p>首先看父类构造器，沿着继承体系一直向上调用，直到AbstractApplicationContext:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractApplicationContext</span><span class="params">(ApplicationContext parent)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>();</span><br><span class="line">    setParent(parent);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractApplicationContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.resourcePatternResolver = getResourcePatternResolver();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>getResourcePatternResolver</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> ResourcePatternResolver <span class="title">getResourcePatternResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> PathMatchingResourcePatternResolver(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>PathMatchingResourcePatternResolver</code>支持Ant风格的路径解析。</p>
+<h4 id="设置配置文件路径"><a href="#设置配置文件路径" class="headerlink" title="设置配置文件路径"></a>设置配置文件路径</h4><p>即<code>AbstractRefreshableConfigApplicationContext.setConfigLocations</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setConfigLocations</span><span class="params">(String... locations)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (locations != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Assert.noNullElements(locations, <span class="string">&quot;Config locations must not be null&quot;</span>);</span><br><span class="line">        <span class="keyword">this</span>.configLocations = <span class="keyword">new</span> String[locations.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; locations.length; i++) &#123;</span><br><span class="line">            <span class="keyword">this</span>.configLocations[i] = resolvePath(locations[i]).trim();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.configLocations = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>resolvePath:</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">resolvePath</span><span class="params">(String path)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getEnvironment().resolveRequiredPlaceholder(path);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此方法的目的在于将占位符（placeholder）解析成实际的地址。比如可以这么写：<code>new ClassPathXmlApplicationContext(&quot;classpath:config.xml&quot;)</code>；那么classpath:就是需要被解析的。</p>
+<p><code>getEnvironment</code>方法来自于<code>ConfigurableApplicationContext</code>接口，源码很简单，如果为空就调用<code>createEnvironment</code>创建一个。</p>
+<p><code>AbstractApplicationContext:createEnvironment:</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> ConfigurableEnvironment <span class="title">createEnvironment</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StandardEnvironment();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="Environment接口"><a href="#Environment接口" class="headerlink" title="Environment接口"></a>Environment接口</h5><p>继承体系：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/Environment.jpg" alt="Environment继承体系"></p>
+<p>Environment接口<strong>代表了当前应用所处的环境。从此接口的方法可以看出，其主要和profile、Property相关</strong>。</p>
+<p><strong>profile</strong></p>
+<p>Spring Profile特性是从3.1开始的，其主要是为了解决这样一种问题：线上环境和测试环境使用不同的配置或是数据库或是其他。有了Profile便可以在不同环境之间无缝切换。<strong>Spring容器管理的所有bean都是和一个profile绑定在一起的。</strong>使用了Profile的配置示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;develop&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc-develop.properties&quot;</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;production&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc-production.properties&quot;</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;test&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc-test.properties&quot;</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在启动代码中可以用如下代码设置活跃Profile：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context.getEnvironment().setActiveProfiles(<span class="string">&quot;dev&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当然还可以使用注解的方式。</p>
+<p><strong>Property</strong></p>
+<p>这里的<code>Property</code>指的是程序运行时的一些参数，引用注释：properties files, JVM system properties，system environment variables, JNDI, servlet context parameters, ad-hoc Properties objects, Maps, and so on。</p>
+<h5 id="Environment构造器"><a href="#Environment构造器" class="headerlink" title="Environment构造器"></a>Environment构造器</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MutablePropertySources propertySources = <span class="keyword">new</span> MutablePropertySources(<span class="keyword">this</span>.logger);</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractEnvironment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    customizePropertySources(<span class="keyword">this</span>.propertySources);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>PropertySources接口</strong></p>
+<p>继承体系：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/PropertySources.jpg" alt="PropertySources继承体系"></p>
+<p>此接口实际上是<code>PropertySource</code>的容器，默认的<code>MutablePropertySources</code>实现内部含有一个<code>CopyOnWriteArrayList</code>作为存储载体。</p>
+<p><code>StandardEnvironment.customizePropertySources:</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** System environment property source name: &#123;<span class="doctag">@value</span>&#125; */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME = <span class="string">&quot;systemEnvironment&quot;</span>;</span><br><span class="line"><span class="comment">/** JVM system properties property source name: &#123;<span class="doctag">@value</span>&#125; */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME = <span class="string">&quot;systemProperties&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">customizePropertySources</span><span class="params">(MutablePropertySources propertySources)</span> </span>&#123;</span><br><span class="line">    propertySources.addLast(<span class="keyword">new</span> MapPropertySource</span><br><span class="line">        (SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties()));</span><br><span class="line">    propertySources.addLast(<span class="keyword">new</span> SystemEnvironmentPropertySource</span><br><span class="line">        (SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>PropertySource接口</strong></p>
+<p><code>PropertySource</code>接口代表了键值对的Property来源，继承体系：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/PropertySource.jpg" alt="PropertySource继承体系"></p>
+<p><code>AbstractEnvironment.getSystemProperties</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">getSystemProperties</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (Map) System.getProperties();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (AccessControlException ex) &#123;</span><br><span class="line">        <span class="keyword">return</span> (Map) <span class="keyword">new</span> ReadOnlySystemAttributesMap() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> String <span class="title">getSystemAttribute</span><span class="params">(String attributeName)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> System.getProperty(attributeName);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">catch</span> (AccessControlException ex) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">                        logger.info(format(<span class="string">&quot;Caught AccessControlException when accessing system &quot;</span> +</span><br><span class="line">                                <span class="string">&quot;property [%s]; its value will be returned [null]. Reason: %s&quot;</span>,</span><br><span class="line">                                attributeName, ex.getMessage()));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的实现很有意思，如果安全管理器阻止获取全部的系统属性，那么会尝试获取单个属性的可能性，如果还不行就抛异常了。</p>
+<p><code>getSystemEnvironment</code>方法也是一个套路，不过最终调用的是<code>System.getenv</code>，可以获取jvm和OS的一些版本信息。</p>
+<h5 id="路径Placeholder处理"><a href="#路径Placeholder处理" class="headerlink" title="路径Placeholder处理"></a>路径Placeholder处理</h5><p><code>AbstractEnvironment.resolveRequiredPlaceholders:</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">resolveRequiredPlaceholders</span><span class="params">(String text)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">    <span class="comment">//text即配置文件路径，比如classpath:config.xml</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.propertyResolver.resolveRequiredPlaceholders(text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>propertyResolver</code>是一个<code>PropertySourcesPropertyResolver</code>对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ConfigurablePropertyResolver propertyResolver = <span class="keyword">new</span> PropertySourcesPropertyResolver(<span class="keyword">this</span>.propertySources);</span><br></pre></td></tr></table></figure>
+
+<p><strong>PropertyResolver接口</strong></p>
+<p><code>PropertyResolver</code>继承体系（排斥Environment分支）：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/PropertyResolver.jpg" alt="PropertyResolver继承体系"></p>
+<p>此接口正是用来解析<code>PropertyResource</code>。</p>
+<p><strong>解析</strong></p>
+<p><code>AbstractPropertyResolver.resolveRequiredPlaceholders</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">resolveRequiredPlaceholders</span><span class="params">(String text)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.strictHelper == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.strictHelper = createPlaceholderHelper(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> doResolvePlaceholders(text, <span class="keyword">this</span>.strictHelper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> PropertyPlaceholderHelper <span class="title">createPlaceholderHelper</span><span class="params">(<span class="keyword">boolean</span> ignoreUnresolvablePlaceholders)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//三个参数分别是$&#123;, &#125;, :</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> PropertyPlaceholderHelper(<span class="keyword">this</span>.placeholderPrefix, <span class="keyword">this</span>.placeholderSuffix,</span><br><span class="line">        <span class="keyword">this</span>.valueSeparator, ignoreUnresolvablePlaceholders);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>doResolvePlaceholders</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">doResolvePlaceholders</span><span class="params">(String text, PropertyPlaceholderHelper helper)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//PlaceholderResolver接口依然是策略模式的体现</span></span><br><span class="line">    <span class="keyword">return</span> helper.replacePlaceholders(text, <span class="keyword">new</span> PropertyPlaceholderHelper.PlaceholderResolver() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">resolvePlaceholder</span><span class="params">(String placeholderName)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> getPropertyAsRawString(placeholderName);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实代码执行到这里的时候还没有进行xml配置文件的解析，那么这里的解析placeHolder是什么意思呢，原因在于可以这么写:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.setProperty(<span class="string">&quot;spring&quot;</span>, <span class="string">&quot;classpath&quot;</span>);</span><br><span class="line">ClassPathXmlApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;$&#123;spring&#125;:config.xml&quot;</span>);</span><br><span class="line">SimpleBean bean = context.getBean(SimpleBean.class);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以正确解析。<code>placeholder</code>的替换其实就是字符串操作，这里只说一下正确的属性是怎么来的。实现的关键在于<code>PropertySourcesPropertyResolver.getProperty</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">getPropertyAsRawString</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getProperty(key, String.class, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">protected</span> &lt;T&gt; <span class="function">T <span class="title">getProperty</span><span class="params">(String key, Class&lt;T&gt; targetValueType, <span class="keyword">boolean</span> resolveNestedPlaceholders)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.propertySources != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (PropertySource&lt;?&gt; propertySource : <span class="keyword">this</span>.propertySources) &#123;</span><br><span class="line">            Object value = propertySource.getProperty(key);</span><br><span class="line">            <span class="keyword">return</span> value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很明显了，就是从<code>System.getProxy</code>和<code>System.getenv</code>获取，但是由于环境变量是无法自定义的，所以其实此处只能通过<code>System.setProperty</code>指定。</p>
+<p>注意，classpath:xxx这种写法的classpath前缀到目前为止还没有被处理。</p>
+<h2 id="Spring-aop"><a href="#Spring-aop" class="headerlink" title="Spring-aop"></a>Spring-aop</h2><h2 id="Spring-context"><a href="#Spring-context" class="headerlink" title="Spring-context"></a>Spring-context</h2><h2 id="Spring-task"><a href="#Spring-task" class="headerlink" title="Spring-task"></a>Spring-task</h2><h2 id="Spring-transaction"><a href="#Spring-transaction" class="headerlink" title="Spring-transaction"></a>Spring-transaction</h2><h2 id="Spring-mvc"><a href="#Spring-mvc" class="headerlink" title="Spring-mvc"></a>Spring-mvc</h2><h2 id="guava-cache"><a href="#guava-cache" class="headerlink" title="guava-cache"></a>guava-cache</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/java%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/22/java%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">java基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-22 10:43:53 / 修改时间：11:27:02" itemprop="dateCreated datePublished" datetime="2020-12-22T10:43:53+08:00">2020-12-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="使用断言"><a href="#使用断言" class="headerlink" title="使用断言"></a>使用断言</h2><p>断言(Assertion)是一种调试程序的方式。在java中，使用<code>assert</code>关键字来实现断言。</p>
+<p>先看一个栗子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">    <span class="keyword">double</span> x=Math.abs(-<span class="number">123.45</span>);</span><br><span class="line">    <span class="keyword">assert</span> x&gt;=<span class="number">0</span>;</span><br><span class="line">    System.out.println(x);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>语句<code>assert x&gt;=0;</code>即为断言，断言条件<code>x&gt;=0</code>预期为<code>true</code>。如果计算结果为<code>false</code>，则断言失败，抛出<code>AssertionError</code>。</p>
+<p>使用<code>assert</code>语句时，还可以添加一个可选的断言消息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">assert</span> x&gt;=<span class="number">0</span> : <span class="string">&quot;x must &gt;=0 &quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这样，断言失败的时候，<code>AssertionError</code>会带上消息<code>x must &gt;=0</code>,更加便于调试。</p>
+<p>java断言的特点是：断言失败时会抛出<code>AssertionError</code>，导致程序结束退出。因此，断言不能用于可恢复的程序错误，只应该用于开发和测试阶段。</p>
+<p>对于可恢复的程序错误，不应该使用断言。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] arr)</span></span>&#123;</span><br><span class="line">    <span class="keyword">assert</span> arr!=<span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>应该抛出异常并在上层捕获：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] arr)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x==<span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;array cannot be null&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们在程序中使用<code>assert</code>时，例如，一个简单的断言：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//assert</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> x=-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">assert</span> x&gt;<span class="number">0</span>;</span><br><span class="line">        System.out.println(x);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>JVM默认关闭断言指令，即遇到<code>assert</code>语句就自动给忽略了，不执行。</p>
+<p>要执行<code>assert</code>语句，必须给java虚拟机传递<code>-enableassertions</code>（可简写为<code>-ea</code>）参数启用断言。所以，上述程序必须在命令行下运行才有效果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ java -ea Main.java</span><br><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.lang.AssertionError</span><br><span class="line">	at Main.main(Main.java:<span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+
+<p>还可以有选择地对特定类启用断言，命令行参数是：<code>-ea:com.itranswarp.sample.Main</code>，表示只对<code>com.itranswarp.sample.Main</code>这个类启用断言。</p>
+<p>或者对特定地包启用断言，命令行参数是：<code>-ea:com.itranswarp.sample...</code>（注意结尾有3个<code>.</code>），表示对<code>com.itranswarp.sample</code>这个包启动断言。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">JDBC基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-22 09:51:17 / 修改时间：10:18:22" itemprop="dateCreated datePublished" datetime="2020-12-22T09:51:17+08:00">2020-12-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="jdbc"><a href="#jdbc" class="headerlink" title="jdbc"></a>jdbc</h1><h2 id="数据库与数据源"><a href="#数据库与数据源" class="headerlink" title="数据库与数据源"></a>数据库与数据源</h2><p><strong>什么是数据源？</strong></p>
+<p>数据源定义的是连接到实际数据库的一条路径而已，数据源中并无真正的数据，它仅仅记录的是你连接到哪个数据库，以及如何连接的，如odbc数据源。也就是说数据源仅仅是数据库的连接名称，一个数据库可以有多个数据源连接。</p>
+<p>在java语言中，DataSource对象就是一个代表数据源实体的对象。一个数据源就是一个用来存储数据的工具，它可以是复杂的大型企业级数据库，也可以是简单得只有行和列得文件。数据源可以位于在服务器端，也可以位于客户端。</p>
+<p><strong>什么是数据库连接池？</strong></p>
+<p>数据库连接是负责分配、管理和释放数据库连接。使用数据库连接池是因为数据库连接是一种关键的有限的昂贵得资源，这一点在多用户的网页应用程序中体现得尤为突出。如weblogic、tomcat、WebSphere容器都实现了数据库连接池，但是数据库连接池是可以独立出来自己编码实现的。</p>
+<p>数据库连接池在系统启动时初始化了一定量maxIdle=idlenum的数据库连接，即没有他的使用中的链接被释放的情况下，连接池中保存的最大空闲链接数。数据库连接请求如果没有超过idle的值则直接去连接池中获取；如果超过了maxIdle的值则新建一个数据库连接；但如果数据库连接池中的连接总数超过了maxActive=activenum则（如下处理）：</p>
+<ol>
+<li>直接抛出错误</li>
+<li>让想要借出连接的线程等待一段时间，如果等不到，再抛错</li>
+<li>每隔一段检查一次pool，直到有可用连接，否则一直等下去</li>
+<li>永远可以拿到（视情况需要maxActive不设置或0或负）</li>
+</ol>
+<p>但当没有可以使用的数据库链接的时候，连接池将要等待一个链接被返回的最长时间（毫秒）</p>
+<p>maxWait=waitnum，超过这个时间就要抛出异常。</p>
+<p><strong>什么是jndi?</strong></p>
+<p>jndi全称是<code>java naming and directory interface</code>。简单点就是你按命名规则给一个东西命名然后你就可以通过该名字在特定环境下直接查找到该东西了。</p>
+<p>JNDI是用于向java程序提供目录和命名功能的API。可以简单地把JNDI理解为一种将对象和名字绑定的技术，对象工厂负责生产出对象，这些对象都和唯一的名字绑定。外部程序可以通过名字来获取对某个对象的引用。在一个文件系统中，文件名被绑定给文件。在DNS中，一个ip地址绑定一个url。在目录服务中，一个对象名被绑定给一个对象实体。</p>
+<p>在Intranets(企业内部网)和Internates（互联网）中目录服务(Directory service)都非常重要，它规范了命名规则，让人们容易理解实体及之间的关系。JNDI是Java平台的一个标准扩展，提供了一组接口、类和关于命名空间的概念。JNDI目前所支持的技术包括LDAP、CORBA Common Object Service（COS）名字服务、RMI、NDS、DNS、Windows注册表等等。</p>
+<p>jndi被设计成独立于特定的目录服务，所以各种各样的目录都可以通过相同的方式进行访问。这样使用jndi的java程序员不仅可以获得统一规整的命名和目录，而且可以通过多层的命名方案无缝访问(seamless acess)目录对象。</p>
+<p><strong>数据源与数据库连接池关系？</strong></p>
+<p>我们通过第三方工具来使用数据源来实现对数据库数据操作。一个数据库连接池可以给它创建多个数据源，如一个人有别名；如果单纯使用jdbc连接数据库是web容器你要什么就去连什么。这样做没人看不耗内存，量大了你就死机。可以这样理解，数据源表示一个与数据库的连接（传统）或者表示很多与数据库的连接（使用数据库连接池）。数据源是用于访问连接池或多池的JNDI对象，多池的主要目的是提高可用性和在一组连接池间实现负载均衡。</p>
+<p><strong>数据源与JNDI关系？</strong></p>
+<p>数据源是在JDBC 2.0中引入的一个概念。在JDBC 2.0扩展包中定义了javax.sql.DataSource接口来描述这个概念。如果用户希望建立一个数据库连接，通过查询在JNDI服务中的数据源，可以从数据源中获取相应的数据库连接。这样用户就只需要提供一个逻辑名称（Logic Name），而不是数据库登录的具体细节。即DataSource采用Java的JNDI技术，来获得DataSource对象的引用。当然各种web容器把DataSource作为一种可以配置的JNDI资源来处理如tomcat。生成DataSource对象的工厂为org.apache.commons.dbcp.BasicDataSourceFactory。</p>
+<p><strong>jdbc基础</strong></p>
+<p>java database connectivity standard 是一套规范的面向应用程序的接口，通过它可以访问各类关系数据库。各个数据库会实现该接口作为驱动如jtds.jar，当然可以自己写实现。</p>
+<p>jdbc是低级api，提供访问数据库的接口，是构建高级api的基础，利用纯java编写可以在任何操作系统任何java环境下工作。JDBC API 中定义了一些Java类分别用来表示与数据库的连接（connections）, SQL语句（SQL statements）, 结果集（result sets）以及其它的数据库对象, 使得Java程序能方便地与数据库交互并处理所得的结果。</p>
+<p>使用JDBC, 所有Java程序（包括Java applications , applets和servlet）都能通过SQL语句或存储在数据库中的过程（stored procedures）来存取数据库。要通过JDBC来存取某一特定的数据库，必须有相应的JDBC driver，它往往是由生产数据库的厂家提供，是连接JDBC API与具体数据库之间的桥梁。JDBC driver 是用于特定数据库的一套实施了JDBC接口的类集。</p>
+<p>简单的说，jdbc可以做三件事：与数据库建立连接，发送sql语句，处理结果。jdbc可以理解为odbc的纯java语言和面向对象的实现。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/21/java%E5%B8%B8%E8%A7%81%E6%8E%92%E5%BA%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1426,348 +1743,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/11/mqtt/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/11/mqtt/" class="post-title-link" itemprop="url">mqtt</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-11 16:16:56 / 修改时间：16:40:58" itemprop="dateCreated datePublished" datetime="2020-12-11T16:16:56+08:00">2020-12-11</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="简述"><a href="#简述" class="headerlink" title="简述"></a>简述</h2><p>MQTT（Message Queueing Telemetry Transport，消息队列遥测传输协议），是一种基于发布/订阅（publish/subscribe）模式的“轻量级”通讯协议，该协议构建与TCP/IP之上，由IBM在1999年发布。MQTT最大优点在于，可以以极少的代码和有限的带宽，为连接远程设备提供实时可靠的消息服务。作为一种低开销、低带宽占用的即时通讯协议，使其在物联网、小型设备、移动应用等方面有较广泛的应用。</p>
-<p>MQTT是一个基于客户端-服务器的消息发布/订阅传输协议。MQTT协议是轻量、简单、开放和易于实现的，这些特点使它适用范围非常广泛。在很多情况下，包括受限的环境中，如：机器与机器（M2M）通信和物联网（IoT）。其在，通过卫星链路通信传感器、偶尔拨号的医疗设备、智能家居、及一些小型化设备中已广泛使用。</p>
-<p><img src="https://static.runoob.com/images/mix/mqtt-fidge-2.svg" alt="img"></p>
-<h2 id="设计规范"><a href="#设计规范" class="headerlink" title="设计规范"></a>设计规范</h2><p>由于物联网的环境是非常特别的，所以MQTT遵循以下设计原则：</p>
-<ul>
-<li>（1）精简，不添加可有可无的功能；</li>
-<li>（2）发布/订阅（Pub/Sub）模式，方便消息在传感器之间传递；</li>
-<li>（3）允许用户动态创建主题，零运维成本；</li>
-<li>（4）把传输量降到最低以提高传输效率；</li>
-<li>（5）把低带宽、高延迟、不稳定的网络等因素考虑在内；</li>
-<li>（6）支持连续的会话控制；</li>
-<li>（7）理解客户端计算能力可能很低；</li>
-<li>（8）提供服务质量管理；</li>
-<li>（9）假设数据不可知，不强求传输数据的类型与格式，保持灵活性。</li>
-</ul>
-<h2 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h2><p>MQTT协议工作在低带宽、不可靠的网络的远程传感器和控制设备通讯而设计的协议，它具有以下主要的几项特性：</p>
-<ul>
-<li><p>（1）使用发布/订阅消息模式，提供一对多的消息发布，解除应用程序耦合。</p>
-<p>这一点很类似于XMPP，但是MQTT的信息冗余远小于XMPP，,因为XMPP使用XML格式文本来传递数据。</p>
-</li>
-<li><p>（2）对负载内容屏蔽的消息传输。</p>
-</li>
-<li><p>（3）使用TCP/IP提供网络连接。</p>
-<p>主流的MQTT是基于TCP连接进行数据推送的，但是同样有基于UDP的版本，叫做MQTT-SN。这两种版本由于基于不同的连接方式，优缺点自然也就各有不同了。</p>
-</li>
-<li><p>（4）有三种消息发布服务质量：</p>
-<p>“至多一次”，消息发布完全依赖底层TCP/IP网络。会发生消息丢失或重复。这一级别可用于如下情况，环境传感器数据，丢失一次读记录无所谓，因为不久后还会有第二次发送。这一种方式主要普通APP的推送，倘若你的智能设备在消息推送时未联网，推送过去没收到，再次联网也就收不到了。</p>
-<p>“至少一次”，确保消息到达，但消息重复可能会发生。</p>
-<p>“只有一次”，确保消息到达一次。在一些要求比较严格的计费系统中，可以使用此级别。在计费系统中，消息重复或丢失会导致不正确的结果。这种最高质量的消息发布服务还可以用于即时通讯类的APP的推送，确保用户收到且只会收到一次。</p>
-</li>
-<li><p>（5）小型传输，开销很小（固定长度的头部是2字节），协议交换最小化，以降低网络流量。</p>
-<p>这就是为什么在介绍里说它非常适合”在物联网领域，传感器与服务器的通信，信息的收集”，要知道嵌入式设备的运算能力和带宽都相对薄弱，使用这种协议来传递消息再适合不过了。</p>
-</li>
-<li><p>（6）使用Last Will和Testament特性通知有关各方客户端异常中断的机制。</p>
-<p>Last Will：即遗言机制，用于通知同一主题下的其他设备发送遗言的设备已经断开了连接。</p>
-<p>Testament：遗嘱机制，功能类似于Last Will。</p>
-</li>
-</ul>
-<h2 id="MQTT协议实现原理"><a href="#MQTT协议实现原理" class="headerlink" title="MQTT协议实现原理"></a>MQTT协议实现原理</h2><h3 id="MQTT协议实现方式"><a href="#MQTT协议实现方式" class="headerlink" title="MQTT协议实现方式"></a>MQTT协议实现方式</h3><p>实现MQTT协议需要客户端和服务器端通讯完成，在通讯过程中，MQTT协议中有三种身份：发布者（Publish）、代理（Broker）（服务器）、订阅者（Subscribe）。其中，消息的发布者和订阅者都是客户端，消息代理是服务器，消息发布者可以同时是订阅者。</p>
-<p>MQTT传输的消息分为：主题（Topic）和负载（payload）两部分：</p>
-<ul>
-<li>（1）Topic，可以理解为消息的类型，订阅者订阅（Subscribe）后，就会收到该主题的消息内容（payload）；</li>
-<li>（2）payload，可以理解为消息的内容，是指订阅者具体要使用的内容</li>
-</ul>
-<h3 id="网络传输与应用消息"><a href="#网络传输与应用消息" class="headerlink" title="网络传输与应用消息"></a>网络传输与应用消息</h3><p>MQTT会构建底层网络传输：它将建立客户端到服务器的连接，提供两者之间的一个有序的、无损的、基于字节流的双向传输。</p>
-<p>当应用数据通过MQTT网络发送时，MQTT会把与之相关的服务质量（QoS）和主题名（Topic）相关连。</p>
-<h3 id="MQTT客户端"><a href="#MQTT客户端" class="headerlink" title="MQTT客户端"></a>MQTT客户端</h3><p>一个使用MQTT协议的应用程序或者设备，它总是建立到服务器的网络连接。客户端可以：</p>
-<ul>
-<li>（1）发布其他客户端可能会订阅的信息；</li>
-<li>（2）订阅其它客户端发布的消息；</li>
-<li>（3）退订或删除应用程序的消息；</li>
-<li>（4）断开与服务器连接。</li>
-</ul>
-<h3 id="MQTT服务器"><a href="#MQTT服务器" class="headerlink" title="MQTT服务器"></a>MQTT服务器</h3><p>MQTT服务器以称为”消息代理”（Broker），可以是一个应用程序或一台设备。它是位于消息发布者和订阅者之间，它可以：</p>
-<ul>
-<li>（1）接受来自客户的网络连接；</li>
-<li>（2）接受客户发布的应用信息；</li>
-<li>（3）处理来自客户端的订阅和退订请求；</li>
-<li>（4）向订阅的客户转发应用程序消息。</li>
-</ul>
-<h3 id="MQTT协议中的订阅、主题、会话"><a href="#MQTT协议中的订阅、主题、会话" class="headerlink" title="MQTT协议中的订阅、主题、会话"></a>MQTT协议中的订阅、主题、会话</h3><h4 id="订阅"><a href="#订阅" class="headerlink" title="订阅"></a>订阅</h4><p>订阅包含主题筛选器（Topic Filter）和最大服务质量（QoS）。订阅会与一个会话（Session）关联。一个会话可以包含多个订阅。每一个会话中的每个订阅都有一个不同的主题筛选器。</p>
-<h4 id="会话（Session）"><a href="#会话（Session）" class="headerlink" title="会话（Session）"></a>会话（Session）</h4><p>每个客户端与服务器建立连接后就是一个会话，客户端和服务器之间有状态交互。会话存在于一个网络之间，也可能在客户端和服务器之间跨越多个连续的网络连接。</p>
-<h4 id="主题名（Topic-Name）"><a href="#主题名（Topic-Name）" class="headerlink" title="主题名（Topic Name）"></a>主题名（Topic Name）</h4><p>连接到一个应用程序消息的标签，该标签与服务器的订阅相匹配。服务器会将消息发送给订阅所匹配标签的每个客户端</p>
-<h4 id="主题筛选器-Topic-Filter"><a href="#主题筛选器-Topic-Filter" class="headerlink" title="主题筛选器(Topic Filter)"></a>主题筛选器(Topic Filter)</h4><p>一个对主题名通配符筛选器，在订阅表达式中使用，表示订阅所匹配到的多个主题。</p>
-<h4 id="负载（Payload）"><a href="#负载（Payload）" class="headerlink" title="负载（Payload）"></a>负载（Payload）</h4><p>消息订阅者所具体接收的内容。</p>
-<h3 id="MQTT协议中的方法"><a href="#MQTT协议中的方法" class="headerlink" title="MQTT协议中的方法"></a>MQTT协议中的方法</h3><p>MQTT协议中定义了一些方法（也被称为动作），来于表示对确定资源所进行操作。这个资源可以代表预先存在的数据或动态生成数据，这取决于服务器的实现。通常来说，资源指服务器上的文件或输出。主要方法有：</p>
-<ul>
-<li>（1）Connect。等待与服务器建立连接。</li>
-<li>（2）Disconnect。等待MQTT客户端完成所做的工作，并与服务器断开TCP/IP会话。</li>
-<li>（3）Subscribe。等待完成订阅。</li>
-<li>（4）UnSubscribe。等待服务器取消客户端的一个或多个topics订阅。</li>
-<li>（5）Publish。MQTT客户端发送消息请求，发送完成后返回应用程序线程。</li>
-</ul>
-<h2 id="MQTT协议数据包结构"><a href="#MQTT协议数据包结构" class="headerlink" title="MQTT协议数据包结构"></a>MQTT协议数据包结构</h2><p>在MQTT协议中，一个MQTT数据包由：固定头（Fixed header）、可变头（Variable header）、消息体（payload）三部分构成。MQTT数据包结构如下：</p>
-<ul>
-<li>（1）固定头（Fixed header）。存在于所有MQTT数据包中，表示数据包类型及数据包的分组类标识。</li>
-<li>（2）可变头（Variable header）。存在于部分MQTT数据包中，数据包类型决定了可变头是否存在及其具体内容。</li>
-<li>（3）消息体（Payload）。存在于部分MQTT数据包中，表示客户端收到的具体内容。</li>
-</ul>
-<h4 id="MQTT固定头"><a href="#MQTT固定头" class="headerlink" title="MQTT固定头"></a>MQTT固定头</h4><p>固定头存在于所有MQTT数据包中，其结构如下：</p>
-<h5 id="MQTT数据包类型"><a href="#MQTT数据包类型" class="headerlink" title="MQTT数据包类型"></a>MQTT数据包类型</h5><p>位置：Byte 1中bits 7-4。</p>
-<p>相于一个4位的无符号值，类型、取值及描述如下：</p>
-<h5 id="标识位"><a href="#标识位" class="headerlink" title="标识位"></a>标识位</h5><p>位置：Byte 1中bits 3-0。</p>
-<p>在不使用标识位的消息类型中，标识位被作为保留位。如果收到无效的标志时，接收端必须关闭网络连接：</p>
-<p>（1）DUP：发布消息的副本。用来在保证消息的可靠传输，如果设置为1，则在下面的变长中增加MessageId，并且需要回复确认，以保证消息传输完成，但不能用于检测消息重复发送。</p>
-<p>（2）QoS：发布消息的服务质量，即：保证消息传递的次数</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Ø00：最多一次，即：&lt;&#x3D;1</span><br><span class="line"></span><br><span class="line">Ø01：至少一次，即：&gt;&#x3D;1</span><br><span class="line"></span><br><span class="line">Ø10：一次，即：&#x3D;1</span><br><span class="line"></span><br><span class="line">Ø11：预留</span><br></pre></td></tr></table></figure>
-
-<p>（3）RETAIN： 发布保留标识，表示服务器要保留这次推送的信息，如果有新的订阅者出现，就把这消息推送给它，如果设有那么推送至当前订阅者后释放。 5.1.3 剩余长度（Remaining Length）</p>
-<p>地址：Byte 2。</p>
-<p>固定头的第二字节用来保存变长头部和消息体的总大小的，但不是直接保存的。这一字节是可以扩展，其保存机制，前7位用于保存长度，后一部用做标识。当最后一位为1时，表示长度不足，需要使用二个字节继续保存。例如：计算出后面的大小为0</p>
-<h4 id="MQTT可变头"><a href="#MQTT可变头" class="headerlink" title="MQTT可变头"></a>MQTT可变头</h4><p>MQTT数据包中包含一个可变头，它驻位于固定的头和负载之间。可变头的内容因数据包类型而不同，较常的应用是作为包的标识：</p>
-<p>很多类型数据包中都包括一个2字节的数据包标识字段，这些类型的包有：PUBLISH (QoS &gt; 0)、PUBACK、PUBREC、PUBREL、PUBCOMP、SUBSCRIBE、SUBACK、UNSUBSCRIBE、UNSUBACK。</p>
-<h4 id="Payload消息体"><a href="#Payload消息体" class="headerlink" title="Payload消息体"></a>Payload消息体</h4><p>Payload消息体位MQTT数据包的第三部分，包含CONNECT、SUBSCRIBE、SUBACK、UNSUBSCRIBE四种类型的消息：</p>
-<ul>
-<li>（1）CONNECT，消息体内容主要是：客户端的ClientID、订阅的Topic、Message以及用户名和密码。</li>
-<li>（2）SUBSCRIBE，消息体内容是一系列的要订阅的主题以及QoS。</li>
-<li>（3）SUBACK，消息体内容是服务器对于SUBSCRIBE所申请的主题及QoS进行确认和回复。</li>
-<li>（4）UNSUBSCRIBE，消息体内容是要订阅的主题。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/10/%E4%BD%8D%E8%BF%90%E7%AE%97%E7%9A%84%E5%BA%94%E7%94%A8-%E7%AE%97%E6%B3%95/" class="post-title-link" itemprop="url">位运算的应用-算法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-10 11:48:12" itemprop="dateCreated datePublished" datetime="2020-12-10T11:48:12+08:00">2020-12-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-11 14:28:32" itemprop="dateModified" datetime="2020-12-11T14:28:32+08:00">2020-12-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="位运算"><a href="#位运算" class="headerlink" title="位运算"></a>位运算</h2><p>　　位操作是一种通过算法来处理bit或比单词短的数据片段的操作。需要位操作的计算机程序任务包括低级设备控制，错误检测和校正算法，数据压缩，加密算法和优化。对于大多数其他任务，现代程序语言允许编程者直接在抽象层面上工作，而不是去编程那些代表这些抽象的bit位（即我们现在编程都是用代码写程序，而不是0和1）。在源码中可以用的位操作包括：AND、OR、XOR、NOT和位移。<br>　　在某些情况中，位操作可以避免或者减少在一个数据结构上需要进行循环的次数，并且可以成倍的效率提升，因为位操作是并行处理的。但是位操作的代码比较难以编写和维护。</p>
-<p>这里我们先用一个简单的问题来感受一下位操作的威力。比如现在问题是要求判断一个数x是不是2的整数幂，普通的思路是用循环不断去判断x x<em>x</em>看是否能够被2整除，如果是，则除以2，否则这个数不是2的整数幂。代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isPowerOfTwo</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: bool</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">if</span> x &lt;= <span class="number">0</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">while</span> x % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">		x //= <span class="number">2</span></span><br><span class="line">		</span><br><span class="line">	<span class="keyword">return</span> x == <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>上面普通解法，需要进行的循环次数随着x的增大而增大，采用位运算的算法程序如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">isPowerOfTwo</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: bool</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">not</span> (x &amp; (x - <span class="number">1</span>))</span><br></pre></td></tr></table></figure>
-
-<p>代码中<code>x&amp;(x-1)</code>的作用是将x的二进制表示中右边第一个1置0。比如3原来的二进制表示是<code>11</code>，最右边的1置0后就变成了<code>10</code>，所以有<code>3&amp;(3-1)=2</code>。而2的整数幂的二进制表示肯定是只有一个1，如果将这个1置0，那么结果肯定是0。</p>
-<h2 id="位运算的应用实例"><a href="#位运算的应用实例" class="headerlink" title="位运算的应用实例"></a>位运算的应用实例</h2><p>位运算的几个核心操作符是&amp;（按位与）、|（按位或）、~（按位取反）、^（按位异或）、&lt;&lt;（左移）、&gt;&gt;（右移）。下面根据一些具体的问题，来看看位运算怎么应用。</p>
-<p>**Example 1:**计算给定整数的二进制表达中有多少个1</p>
-<p>最简单的思路就是每次判断数字的二进制表达的最后一位是否为1，如果是1就计数器加一，然后将数字右移一位，但是这样会有很多无效操作，比如100个0连在一起，需要右移100次才能遇到下一个1。这里可以用到上面提到的<code>x &amp; (x - 1)</code>，每次去掉最右边的一个1，x中有多少个1，就只要循环这么多次。代码如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">count1Bit</span>(<span class="params">x</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type x: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	count = <span class="number">0</span></span><br><span class="line">	<span class="keyword">while</span> x:</span><br><span class="line">		count += <span class="number">1</span></span><br><span class="line">		x &amp;= x - <span class="number">1</span></span><br><span class="line">	<span class="keyword">return</span> count</span><br></pre></td></tr></table></figure>
-
-<p>上面也提到过，<code>x &amp; (x - 1)</code>的作用是将x的二进制表示中右边第一个1置0，我们来分步看一下为什么会这样子。首先<code>x-1</code>的作用是将x最右边的1置0，并且这个1后面的所有0置1（如果这个1已经是最后一位则忽略不计）。如果将减一后的结果和原数按位相与，首先最右边一个1由于变成0了，肯定与的结果是0，最右边1后面的数字，原数都是0，现在都是1，那么与的结果肯定也还都是0。比如现在一个二进制数是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x:0010,0101,0000</span><br><span class="line">x-1:0010,0100,1111</span><br><span class="line">x&amp;(x-1):0010,0100,0000</span><br></pre></td></tr></table></figure>
-
-<p>这里就没有考虑负数的情况了，由于计算机中负数是补码形式存储，而Python中整数的位数又没有限制，感觉没啥意义，这里就pass了。</p>
-<p><strong>Example 2</strong>: 不使用加减法实现两个整数相加</p>
-<p>不能使用加减法，那就只能靠位运算了。可以将加法分解一下，每次先计算不考虑进位的加法，然后计算进位，最后把两个结果加在一起。看一下程序:honey_pot:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getSum</span>(<span class="params">a, b</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type a: int</span></span><br><span class="line"><span class="string">	:type b: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	<span class="keyword">while</span> b:</span><br><span class="line">		a, b = a ^ b, (a &amp; b) &lt;&lt; <span class="number">1</span></span><br><span class="line">		a &amp;= <span class="number">0xFFFFFFFF</span>		<span class="comment"># 32位整型</span></span><br><span class="line">		b &amp;= <span class="number">0xFFFFFFFF</span></span><br><span class="line">		<span class="keyword">if</span> a &gt; <span class="number">0x7FFFFFFF</span>:		<span class="comment"># 考虑负数的情况</span></span><br><span class="line">			a = ~(a ^ <span class="number">0xFFFFFFFF</span>)</span><br><span class="line">	<span class="keyword">return</span> a</span><br></pre></td></tr></table></figure>
-
-<p>上面程序，<code>a^b</code>的结果是不考虑进位的和，因为1+1和0+0的结果都是0，只有0+1或1+0才是1，这刚好符合异或的性质。而<code>(a &amp; b) &lt;&lt; 1</code>表示进位的结果，因为只有1+1才会发生进位，并且需要将这个进位左移1位（因为是进位往前一位加）。然后一直循环，直到进位为0，此时的<code>a</code>就是输入两个数的和了。</p>
-<p>以5和7为例：</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201210141043810.png" alt="image-20201210141043810"></p>
-<p>当<code>b=0</code>时停止循环，此时<code>a=0b1100=12</code>，结果正确。<br>　　不过因为在Python中，整型的长度没有限制，当一个整数超过32位时，Python会自动扩展，理论上可以表示无穷大的数（实际最大能够表示多大我也没有测试过）。这个就直接导致进位右移操作在Python算法中起不到效果，永远不可能出现<code>b=0</code>的情况。所以Python代码中需要判断整数<strong>溢出</strong>的情况。现在假设整数由32bit表示，<code>a &amp;= 0xFFFFFFFF</code>就是获取<code>a</code>的32位二进制表示，如果<code>a</code>为负数，那么得到的是<code>a</code>的无符号补码，这里需要注意一下。由于在计算机中，二进制第一位是符号位，0表示正数，1表示负数，所以32位能表示的最大的正数为0x7FFFFFF，即0111,1111,1111,1111,1111,1111,1111,1111</p>
-<p>如果<code>a &amp;= 0xFFFFFFFF</code>的结果大于0x7FFFFFFF，就说明<code>a</code>是个负数，需要进行转原码的处理</p>
-<p>我们如何根据无符号的负数补码得其有符号的原码呢？先回顾一下补码是如何计算的：正数的补码就是其本身；负数的补码是保持符号位不变，其他位按位取反，然后加1得到补码。现在最大的问题就是如果一个数和0xFFFFFFFF与运算之后，得到的数是无符号类型的，所以也不存在符号位这一说了。这里我们可以先将<code>a ^= 0xFFFFFFFF</code>，这其实也就是按位取反，不过这种形式的按位取反得到的还是无符号类型，如果先用<code>~</code>进行按位取反，Python会将得到一个有符号类型的数，这改变了数的大小，显然不行。所以第二次再用<code>~</code>进行按位取反，得到的有符号的<code>a</code>的补码了。<br>　　简而言之，如果<code>a</code>是负数，<code>a &amp;= 0xFFFFFFFF</code>得到的是<code>a</code>无符号的补码形式，如果先用<code>a ^= 0xFFFFFFFF</code>按位取反，再用<code>a = ~a</code>按位取反，得到的还是原来的数（两次取反相互抵消，负负得正），只不过变成<code>a</code>有符号的补码了。这时Python会将其当做负数的补码处理，会再对其进行一次求补码的操作，得到<code>a</code>的原码。</p>
-<p><strong>Example 3</strong>:给一个从0~n的连续整数数组，找出数组缺少的一个数，比如数组为[0,1,3]，缺少的数为2</p>
-<p>这个我们当然可以用等差数列求和公式算出理论上数组的和，再减去数组实际的和，就能得到缺少的这个数。如果用位运算应该怎么做呢？代码如下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">missingNumber</span>(<span class="params">nums</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type nums: list</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	ret = <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i, x <span class="keyword">in</span> <span class="built_in">enumerate</span>(nums):</span><br><span class="line">		ret ^= i</span><br><span class="line">		ret ^= x</span><br><span class="line">	<span class="keyword">return</span> ret ^ <span class="built_in">len</span>(nums)</span><br></pre></td></tr></table></figure>
-
-<p>这里用到的其实是异或的一个特性：两个同样的数异或结果为0。就以[0, 1, 3]为例，程序中<code>ret</code>初始值为0，<code>ret</code>每次循环分别同<code>i</code>和<code>x</code>进行了一次异或操作，这里<code>i</code>代表完整数组应该出现的值，<code>x</code>代表实际数组中的值。循环结束时，<code>ret</code>同[0, 0, 1, 1, 2, 3]进行了异或，因为完整数组是从0 ~ n的，循环结束时只访问了0 ~ n-1，所以<code>ret</code>需要再和<code>len(nums)</code>异或一次。<code>ret</code>就总共和[0, 0, 1, 1, 2, 3, 3]进行了异或，相同的数异或抵消为，2只出现了一次，所以2就是这个连续数组缺失的数字。<br>　　异或很适合“找不同”的问题，下面再看一个例子。</p>
-<p><strong>Example 4:</strong> 一个无序整数数组中，除了两个数字只出现过一次，其他数字都出现了两次，找出这两个只出现一次的数字出来</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">int</span>[] singleNumbers(<span class="keyword">int</span>[] nums) &#123;</span><br><span class="line">    <span class="keyword">int</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n:nums)&#123;</span><br><span class="line">        res^=n;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> div=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> ((div&amp;res)==<span class="number">0</span>)&#123;</span><br><span class="line">        div&lt;&lt;=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> a=<span class="number">0</span>,b=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n:nums)&#123;</span><br><span class="line">        <span class="keyword">if</span> ((div&amp;n)!=<span class="number">0</span>)&#123;</span><br><span class="line">            a^=n;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            b^=n;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;a,b&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>Example5:找出不大于N的最大的2的幂指数</strong></p>
-<p>这个问题本质上就是找到N的二进制表达中最左边的1所在的位置，然后将后面的1全部置0的问题。笨办法是循环判断找到最高位的1，这个问题还可以转化为将最左边的1后面全部置1，然后加1再右移一位。比如现在N=19，其二进制表示为<code>10011</code>，我们只要将其转化为<code>11111</code>然后加1变为<code>100000</code>，最后再右移一位变为<code>10000</code>即得到不大于19的最大二次幂为16。将最高位右边全部置1可以用或逻辑<code>|</code>来实现：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">largestPower</span>(<span class="params">N</span>):</span></span><br><span class="line">	<span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">	:type N: int</span></span><br><span class="line"><span class="string">	:rtype: int</span></span><br><span class="line"><span class="string">	&quot;&quot;&quot;</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">1</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">2</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">4</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">8</span></span><br><span class="line">	N |= N &gt;&gt; <span class="number">16</span></span><br><span class="line">	<span class="keyword">return</span> (N + <span class="number">1</span>) &gt;&gt; <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>位运算符<code>|</code>的一个作用就是尽可能多的保留1，这里我们默认用32bit来表示整数，所以上述代码中只考虑了除去符号位的后31位。</p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>常用的位运算包括&amp;（按位与）、|（按位或）、~（按位取反）、^（按位异或）、&lt;&lt;（左移）、&gt;&gt;（右移）。</p>
-<ul>
-<li><code>&amp;</code>通常用于需要选择特定的数位的情况，因为任何一个数位和1相与得到的是其本身；</li>
-<li><code>|</code>通常用于要求尽可能保留1的情况，因为只要有1，或运算的结果一定是1；</li>
-<li><code>~</code>按位取反会将符号位一同取反，得到的还是一个有符号整数；</li>
-<li><code>^</code>常用于去除重复元素的情况，和“负负得正”这种情况比较类似；</li>
-<li><code>&lt;&lt;</code>和<code>&gt;&gt;</code>通常和上面4种位运算符搭配使用，不过要注意在Python中左移是不会发生溢出的，需要人为判断溢出。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">网络杂谈</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-10 10:45:23 / 修改时间：11:23:28" itemprop="dateCreated datePublished" datetime="2020-12-10T10:45:23+08:00">2020-12-10</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="VPN的原理"><a href="#VPN的原理" class="headerlink" title="VPN的原理"></a>VPN的原理</h2><p>VPN：英文全称是“Virtual Private Network”，就是虚拟专用网络。VPN通常拿来做两个事情，一个是可以让世界上任意2台机器进入一个虚拟的局域网中（当然这个局域网的数据通讯是加密的，很安全，用起来和一个家庭局域网没有区别），一个是可以用来翻墙。</p>
-<p>VPN比SS更加底层，它通过操作系统的接口直接虚拟出一张网卡，后续整个操作系统的网络通讯都将通过这张虚拟的网卡进行收发。这和任何一个代理的实现思路都差不多，应用层并不知道网卡是虚拟的，这样vpn虚拟网卡将以中间人的身份对数据进行加工，从而实现各种神奇的效果。具体来说，vpn是通过编写一套网卡驱动并注册到操作系统实现的虚拟网卡，这样数据只要经过网卡收发就可以进行拦截处理。</p>
-<p>一句话，vpn在IP层工作，而ss在TCP层工作。</p>
-<p><strong>翻墙用途</strong></p>
-<p><img src="http://yuerblog.cc/wp-content/uploads/2017/01/baiviet000181.png" alt="baiviet000181"></p>
-<p>需要在vps上部署vpn server，客户端所有数据将经过虚拟网卡的加密封装后都转发给vps上的vpn server，由它来转发给目标服务器，这和ss server原理类似，由vpn协议加密从而绕过GFW实现访问墙外网站，下面将以pptp vpn协议为例说明。</p>
-<p>例如要访问谷歌，那么客户端发出的数据包首先通过协议栈处理封装成IP包，其源地址是虚拟网卡的地址，例如：192.168.0.2，而目标地址是谷歌的IP。</p>
-<p>原始IP包交给虚拟网卡发送时，PPTP网卡驱动会按PPP协议对这个IP包整体加密封装作为新的payload，用一层新的IP头封装这个payload发送出去，这个新IP头的目标地址是vpn server，源地址是客户端的外网IP。</p>
-<p>vpn server的协议栈会剥离掉新IP头，将内部PPP协议的payload交给pptpd进程处理，pptpd进程会按PPP协议解包得到原始的IP包，我们知道这个IP包的源地址是192.168.0.2，目标地址google。因此pptpd进程需要做的是将这个ip包的源ip地址改为VPS的地址，然后将IP包发给谷歌，从而和谷歌进行数据交换。最终，pptpd理所应当将谷歌的应答IP包的目标IP地址换成192.168.0.2，然后经过PPP协议封装并添加新的IP头后发回给客户端既可。</p>
-<p><strong>局域网用途</strong></p>
-<p><img src="http://yuerblog.cc/wp-content/uploads/2017/01/Drawing3.gif" alt="drawing3"></p>
-<p>大家知道，玩CS的时候都是局域网搜索房间的，要求大家坐在一个网吧里连着一台交换机。如果大家各自坐在家里玩CS想联机，通常要登录一个对战平台，其实对战平台做的事情就是VPN，也就是虚拟一个局域网，大家感受起来就和坐在一起一样。</p>
-<p>虚拟网卡的驱动会尽力伪装成一个物理网卡的样子，我们知道DHCP协议是局域网动态分配客户端IP的协议，那么VPN的虚拟网卡其实也会和vpn server进行一些协商得到一个虚拟局域网的IP，比如192.168.0.2。得到虚拟IP后，后续数据将通过虚拟网卡发送至vpn server所在的IP，最终被pptpd进程处理。</p>
-<p>既然各个客户端的虚拟网卡都是和同一个pptpd进程交互，那么这个pptpd进程自然知道这个虚拟的局域网内有哪些局域网用户，因此当2个虚拟局域网用户192.168.0.2和192.168.0.3之间想互相通讯的时候，pptpd会完成数据的中转。不过要注意，虚拟局域网用户间的通讯是不需要像访问谷歌那样修改数据包的源IP地址的，这个很容易想明白。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1839,12 +1814,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
