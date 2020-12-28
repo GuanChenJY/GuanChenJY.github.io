@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="this和super关键字的作用： this是对象内部指代自身的引用，同时也是解决成员变量和局部变量同名问题；this可以调用成员变量，不能调用局部变量；this也可以调用成员方法，但是在普通方法中可以省略this，在构造方法中不允许省略，必须是构造方法的第一条语句。而且在静态方法当中不允许出现this关键字。 super代表对当前对象的直接父类对象的引用，super可以调用直接父类的成员变量（注">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java知识点">
+<meta property="og:url" content="http://example.com/2020/12/27/java%E7%9F%A5%E8%AF%86%E7%82%B9/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="this和super关键字的作用： this是对象内部指代自身的引用，同时也是解决成员变量和局部变量同名问题；this可以调用成员变量，不能调用局部变量；this也可以调用成员方法，但是在普通方法中可以省略this，在构造方法中不允许省略，必须是构造方法的第一条语句。而且在静态方法当中不允许出现this关键字。 super代表对当前对象的直接父类对象的引用，super可以调用直接父类的成员变量（注">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-27T09:06:51.000Z">
+<meta property="article:modified_time" content="2020-12-28T02:01:12.087Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="java相关">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/12/27/java%E7%9F%A5%E8%AF%86%E7%82%B9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java知识点 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/27/java%E7%9F%A5%E8%AF%86%E7%82%B9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java知识点
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-27 17:06:51" itemprop="dateCreated datePublished" datetime="2020-12-27T17:06:51+08:00">2020-12-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-28 10:01:12" itemprop="dateModified" datetime="2020-12-28T10:01:12+08:00">2020-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>this和super关键字的作用：</strong></p>
+<p>this是对象内部指代自身的引用，同时也是解决成员变量和局部变量同名问题；<strong>this可以调用成员变量，不能调用局部变量</strong>；this也可以调用成员方法，但是在普通方法中可以省略this，在构造方法中不允许省略，必须是构造方法的第一条语句。而且在静态方法当中不允许出现this关键字。</p>
+<p>super代表对当前对象的直接父类对象的引用，super可以调用直接父类的成员变量（注意权限修饰符的影响，比如不能访问private成员）</p>
+<p>super可以调用直接父类的成员方法；super可以调用直接父类的构造方法，只限构造方法中使用，且必须是第一条语句。</p>
+<p><strong>static关键字的作用</strong></p>
+<p>static可以修饰变量、方法、代码块和内部类</p>
+<p>static属性属于这个类所有，即由该类创建的所有对象共享同一个static属性。可以对象创建后通过对象名.属性名和类名.属性名两种方式来访问。也可以在没有创建任何对象之前通过类名.属性名的方式来访问。</p>
+<p>.static变量和非static变量的区别（都是成员变量，不是局部变量）</p>
+<p><strong>1.在内存中份数不同</strong></p>
+<p>不管有多少个对象，static变量只有1份。对于每个对象，实例变量都会有单独的一份</p>
+<p>static变量是属于整个类的，也称为类变量。而非静态变量是属于对象的，也称为实例变量</p>
+<p><strong>2.在内存中存放的位置不同</strong></p>
+<p>静态变量存在方法区中，实例变量存在堆内存中</p>
+<p><strong>3.访问的方式不同</strong></p>
+<p>实例变量：对象名.变量名</p>
+<p>静态变量：类名.变量名</p>
+<p><strong>4.在内存中分配空间的时间不同</strong></p>
+<p><strong>实例变量：</strong>创建对象的时候才分配了空间。</p>
+<p>静态变量：第一次使用类的时候。</p>
+<p><strong>final和abstract关键字的作用：</strong></p>
+<p>final和abstract是功能相反的两个关键字，可以对比记忆</p>
+<p>abstract可以用来修饰类和方法，不能用来修饰属性和构造方法；使用abstract修饰的类是抽象类，需要被继承，使用abstract修饰的方法是抽象方法，需要子类被重写。</p>
+<p>final可以用来修饰类、方法和属性，不能修饰构造方法。使用final修饰的类不能被继承，使用final修饰的方法不能被重写，使用final修饰的变量的值不能被修改，所以就成了常量。</p>
+<p>特别注意：final修饰基本类型变量，其值不能改变，由原来的变量变为常量；但是final修饰引用类型变量，栈内存中的引用不能改变，但是所指向的堆内存中的对象的属性值仍旧可以改变。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">final</span> People people=<span class="keyword">new</span> People(<span class="string">&quot;gcc&quot;</span>);</span><br><span class="line">        dog.name=<span class="string">&quot;zq&quot;</span>;	<span class="comment">//正确</span></span><br><span class="line">        people=<span class="keyword">new</span> People(<span class="string">&quot;zq&quot;</span>);<span class="comment">//错误</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>final、finally、finalize的区别</strong></p>
+<p>final修饰符如果一个类被声明为final，意味着它不能再派生出新的子类，不能作为父类被继承例如：String类、Math类等。将变量或方法声明为final，可以保证它们在使用中不被改变。被声明为final的变量必须在声明时给定初值，而在以后的引用中只能读取，不可修改。被声明为final的方法也同样只能使用，不能重写，但是能够重载。使用final修饰的对象，对象的引用不能变，但是对象的值可以变！</p>
+<p>finally在异常处理视提供finally块来执行任何清楚操作。如果有finally的话，则不管是否发生异常，finally语句都会被执行。一般情况下，把关闭物理连接等相关操作，放入到此代码块中。</p>
+<p>finalize方法名。java技术允许使用finalize方法在垃圾收集器将对象从内存中清楚啊出去之前做必要清理工作。finalize()方法是在垃圾收集器删除对象之前被调用的。它是在Object类中定义的，因此所有的类都继承了它。子类覆盖finalize()方法以整理系统资源或者执行其他清理工作。一般情况下，此方法由JVM调用，程序员不要去调用。</p>
+<p><strong>继承条件下构造方法的执行过程</strong></p>
+<p><strong>情况1：</strong>如果子类的构造方法中没有通过super显式调用父类的有参构造方法，也没有通过this显示调用自身的其他构造方法，则系统会默认先调用父类的无参构造方法。在这种情况下，写不写”super()”语句，效果是一样的。</p>
+<p><strong>情况2：</strong>如果子类的构造方法中通过super显式调用父类的有参构造方法，那将执行父类相应构造方法，而不执行父类无参构造方法。</p>
+<p><strong>情况3：</strong>如果子类的构造方法中通过this显示调用自身的其他构造方法，在相应构造方法中应用以上两条规则。</p>
+<p><strong>==和equals的区别和联系</strong></p>
+<p>==是关系运算符，equals()是方法，同时它们的结果都返回布尔值；</p>
+<p><strong>==使用情况如下：</strong></p>
+<p>a)基本类型，比较的是值</p>
+<p>b)引用类型，比较的是地址</p>
+<p>c)不能比较没有父子关系的两个对象</p>
+<p><strong>equals()方法使用如下：</strong></p>
+<p>a)系统类一般已经覆盖了equals()，比较的是内容</p>
+<p>b)用户自定义类如果没有覆盖equals()，将调用父类的equals(比如是Object)，而Object的equals的比较是地址。</p>
+<p>c)用户自定义类需要覆盖父类的equals()</p>
+<p><strong>java的多态</strong></p>
+<p>多态性是OOP中的一个重要特性，主要是用来实现动态联编的，换句话说，就是程序的最终状态只有在执行过程中才被决定而非在编译期间就决定了。这对于大型系统来说能提高系统的灵活性和扩展性。</p>
+<p>多态可以让我们不用关系某个对象到底是什么具体类型，就可以使用该对象的某些方法，从而实现更加灵活的编程，提高系统的可扩展性。</p>
+<p><strong>实现多态的三个条件（前提条件，向下转型、向上转型）</strong></p>
+<p>1、继承的存在；（继承是多态的基础，没有继承就没有多态）</p>
+<p>2、子类重写父类的方法。（多态下会调用子类重写后的方法）</p>
+<p>3、父类引用变量指向子类对象（涉及子类到父类的类型转换）</p>
+<p><strong>向上转型 Animal a=new Cat();</strong></p>
+<p>将一个父类的引用指向一个子类对象，称为向上转型，自动进行类型转换。此时通过父类引用变量调用的方法是子类覆盖或继承父类的方法，而不是父类的方法，此时通过父类引用变量无法调用子类特有的方法。</p>
+<p><strong>向下转型 Cat a2=(Cat) a;</strong></p>
+<p>将一个指向子类对象的引用赋给一个子类的引用，成为向下转型，此时必须进行强制类型转换。向下转型必须转换为父类引用指向的真实子类类型，否则将出现ClassCastException，不是任意的强制转换。</p>
+<p><strong>内存泄漏和内存溢出的区别和联系</strong></p>
+<p>1、内存泄漏memory leak；</p>
+<p>是指程序在申请内存后，无法释放已申请的内存空间，一次内存泄漏似乎不会有大的影响，但内存泄漏堆积后的后果就是内存溢出。</p>
+<p>2、内存溢出out of memory；</p>
+<p>指程序申请内存时，没有足够的内存供申请者使用，或者说，给了你一块存储int类型数据的存储空间，但是你却存储long类型的数据，那么结果就是内存不够用，此时就会报错OOM，即所谓的内存溢出。</p>
+<p>3、二者的关系：</p>
+<p>内存泄漏的堆积最终会导致内存溢出 内存溢出就是你要的内存空间超过了系统实际分配给你的空间，此时系统相当于没法满足你的需求，就会报内存溢出的错误。内存泄漏是指你向系统申请分配内存进行使用(new)，可是使用完了以后却不归还(delete)，结果你申请到的那块内存你自己也不能再访问(也许你把它的地址给弄丢了)，而系统也不能再次将它分配给需要的程序。就相当于你租了个带钥匙的柜子，你存完东西之后把柜子锁上之后，把钥匙丢了或者没有将钥匙还回去，那么结果就是这个柜子将无法共给任何人使用，也无法被垃圾回收器回收，因为找不到他的任何信息。内存溢出：一个盘子用尽各种方法只能装4个果子，你装了5个，结果掉到地上不能吃了。这就是溢出。比方说栈，栈满时再做进栈必定会产生空间溢出，叫上溢，栈空时再做退栈也产生空间溢出，称为下溢。就是分配的内存不足以放下数据项序列，称为内存溢出。说白了就是我承受不了那么多，那我就报错。</p>
+<p>4、内存泄漏的分类</p>
+<p>常发性内存泄漏。发生内存泄漏的代码会被多次执行到，每次被执行的时候都会导致一块内存泄漏。 偶发性内存泄漏。发生内存泄漏的代码只有在某些特定环境或操作过程下才会发生。常发性和偶发性是相对的。对于特定的环境，偶发性的也许就变成了常发性的。所以测试环境和测试方法对检测内存泄漏至关重要。 一次性内存泄漏。发生内存泄漏的代码只会被执行一次，或者由于算法上的缺陷，导致总会有一块仅且一块内存发生泄漏。比如，在类的构造函数中分配内存，在析构函数中却没有释放该内存，所以内存泄漏只会发生一次。 隐式内存泄漏。程序在运行过程中不停的分配内存，但是直到结束的时候才释放内存。严格的说这里并没有发生内存泄漏，因为最终程序释放了所有申请的内存。但是对于一个服务器程序，需要运行几天，几周甚至几个月，不及时释放内存也可能导致最终耗尽系统的所有内存。所以，我们称这类内存泄漏为隐式内存泄漏。</p>
+<p>5、内存溢出的原因及解决办法：</p>
+<p>（1）内存溢出原因：</p>
+<p>内存中加载的数据量过于庞大，如一次从数据库取出过多数据； 集合类中有对对象的引用，使用完后未清空，使得JVM不能回收； 代码中存在死循环或循环产生过多重复的对象实体； 使用的第三方软件中的BUG； 启动参数内存值设定的过小</p>
+<p>（2）内存溢出的解决方案：</p>
+<p>第一步，修改JVM启动参数，直接增加内存。(-Xms，-Xmx参数一定不要忘记加。)<br>第二步，检查错误日志，查看“OutOfMemory”错误前是否有其 它异常或错误。<br>第三步，对代码进行走查和分析，找出可能发生内存溢出的位置。</p>
+<p>重点排查以下几点：<br>1.检查对数据库查询中，是否有一次获得全部数据的查询。一般来说，如果一次取十万条记录到内存，就可能引起内存溢出。这个问题比较隐蔽，在上线前，数据库中数据较少，不容易出问题，上线后，数据库中数据多了，一次查询就有可能引起内存溢出。因此对于数据库查询尽量采用分页的方式查询。<br>2.检查代码中是否有死循环或递归调用。<br>3.检查是否有大循环重复产生新对象实体。<br>4.检查对数据库查询中，是否有一次获得全部数据的查询。一般来说，如果一次取十万条记录到内存，就可能引起内存溢出。这个问题比较隐蔽，在上线前，数据库中数据较少，不容易出问题，上线后，数据库中数据多了，一次查询就有可能引起内存溢出。因此对于数据库查询尽量采用分页的方式查询。<br>5.检查List、MAP等集合对象是否有使用完后，未清除的问题。List、MAP等集合对象会始终存有对对象的引用，使得这些对象不能被GC回收。<br>第四步，使用内存查看工具动态查看内存使用情况</p>
+<p><strong>java序列化</strong></p>
+<p>对象的序列化主要有两种用途：</p>
+<p>1）把对象的字节序列永久地保存到硬盘上，通常存在在一个文件中；</p>
+<p>2）在网络上传送对象的字节序列</p>
+<p><strong>java创建对象的几种方式：</strong></p>
+<p>1、用new语句创建对象，这是最常见的创建对象的方法。</p>
+<p>2、运用反射手段，调用java.lang.Class或者java.lang.reflect.Constructor类的newInstance()实例方法</p>
+<p>3、运用对象的clone()方法。</p>
+<p>4、运用反序列化手段，调用java.io.ObjectInputStream对象的readObject()方法。</p>
+<p><strong>匿名内部类可不可以继承或实现接口，为什么？</strong></p>
+<p>匿名内部类时=是没有名字的内部类，不能继承其他类，但一个内部类可以作为一个接口，有另一个内部类实现。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E7%9B%B8%E5%85%B3/" rel="tag"># java相关</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/25/shiro%E6%A1%86%E6%9E%B6/" rel="prev" title="shiro框架">
+      <i class="fa fa-chevron-left"></i> shiro框架
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
