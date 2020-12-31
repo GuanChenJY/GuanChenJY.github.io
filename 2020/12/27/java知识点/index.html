@@ -28,7 +28,7 @@
 <meta property="og:description" content="this和super关键字的作用： this是对象内部指代自身的引用，同时也是解决成员变量和局部变量同名问题；this可以调用成员变量，不能调用局部变量；this也可以调用成员方法，但是在普通方法中可以省略this，在构造方法中不允许省略，必须是构造方法的第一条语句。而且在静态方法当中不允许出现this关键字。 super代表对当前对象的直接父类对象的引用，super可以调用直接父类的成员变量（注">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-27T09:06:51.000Z">
-<meta property="article:modified_time" content="2020-12-28T02:01:12.087Z">
+<meta property="article:modified_time" content="2020-12-31T07:21:00.786Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="java相关">
 <meta name="twitter:card" content="summary">
@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-28 10:01:12" itemprop="dateModified" datetime="2020-12-28T10:01:12+08:00">2020-12-28</time>
+                <time title="修改时间：2020-12-31 15:21:00" itemprop="dateModified" datetime="2020-12-31T15:21:00+08:00">2020-12-31</time>
               </span>
 
           
@@ -280,7 +280,104 @@
 <p>3、运用对象的clone()方法。</p>
 <p>4、运用反序列化手段，调用java.io.ObjectInputStream对象的readObject()方法。</p>
 <p><strong>匿名内部类可不可以继承或实现接口，为什么？</strong></p>
-<p>匿名内部类时=是没有名字的内部类，不能继承其他类，但一个内部类可以作为一个接口，有另一个内部类实现。</p>
+<p>匿名内部类是没有名字的内部类，不能继承其他类，但一个内部类可以作为一个接口，有另一个内部类实现。</p>
+<p>1、由于匿名内部类没有名字，所以它没有构造函数。因为没有构造函数，所以它必须完全借用父类的构造函数来实例化，换言之：匿名内部类完全把创建对象的任务交给了子类去完成。</p>
+<p>2、在匿名内部类里创建新的方法没有太大意义，但它可以通过覆盖父类的方法达到神奇效果，这是多态性的体现。</p>
+<p>3、因为匿名内部类没有名字，所以无法进行向下的强制类型转换，持有对一个匿名内部类对象引用的变量类型一定是它的直接或间接父类类型。</p>
+<p>匿名类是不能有名称的类，所以没办法引用它们。必须在创建时，作为new语句的一部分来声明它们。</p>
+<p><strong>java中，为什么基本类型不能作为HashMap的键值，而只能是引用类型，把引用类型作为HashMap的键值，需要注意哪些地方。</strong></p>
+<p>在java中是使用泛型来约束HashMap中的key和value的类型的，即HashMap&lt;K,V&gt;；而泛型在java的规定中必须是对象Object类型的，也就是说HashMap&lt;K,V&gt;可以理解为HashMap&lt;Object,Object&gt;，很显然基本数据类型不是Object类型的，因此不能作为键值，只能是引用类型。虽然我们在HashMap中可以这样添加数据：“map.put(1,”java”);”，但实际上是将其中的key值1进行了自动装箱操作，变味了Integer类型。</p>
+<p><strong>接口和抽象类的区别</strong></p>
+<p><strong>相同点：</strong></p>
+<ul>
+<li>抽象类和接口均包含抽象方法，类必须实现所有的抽象方法</li>
+<li>抽象类和接口都不能实例化，他们位于继承树的顶端，用来被其他类继承和实现</li>
+</ul>
+<p><strong>区别：</strong>语法和设计理念方面</p>
+<p>语法方面的区别是比较低层次的，非本质的，主要表现在：</p>
+<p>接口中只能定义全局静态常量，不能定义变量。抽象类中可以定义常量和变量。</p>
+<p>接口中所有的方法都是全局抽象方法。抽象类中可以有0个、1个或多个，甚至全部都是抽象方法。</p>
+<p>抽象类中可以有构造方法，但不能用来实例化，而在子类实例化是执行，完成属于抽象类的初始化操作。接口中不能定义构造方法。</p>
+<p>一个类只能有一个直接父类，但可以充实实现多个接口。一个类使用extends来继承抽象类，使用implements来实现接口。</p>
+<p>二者的主要区别还是在设计理念上，其决定了某些情况下到底使用抽象类还是接口。</p>
+<p>抽象类体现了一种继承关系，目的是复用代码，抽象类中定义了各个子类的相同代码，可以认为父类是一个实现了部分功能的中间产品，而子类是最终产品。父类和子类之间必须存在”is-a”继承的关系，即父类和子类在概念本质上应该是相同的。</p>
+<p>接口并不要求实现类和接口在概念本质上一致的，仅仅是实现了接口定义的约定或者能力而已。接口定义了“做什么”，而实现类负责完成“怎么做”，体现了功能（规范）和实现分离的原则。接口和实现之间可以认为是一种”has-a”组合的关系</p>
+<p><strong>同步代码块和同步方法有什么区别</strong></p>
+<p>相同点：</p>
+<p>同步方法就是在方法前加关键字synchronized，然后被同步的方法一次只能有一个线程进入，其他线程等待。而同步代码块则是在方法内部使用大括号使得一个代码块得到同步。同步代码块会有一个同步的目标，使得同步块更加灵活一些。一般情况下，如果此目标为this，那么同步方法和同步代码块没有太大的区别。</p>
+<p>区别：</p>
+<p>同步方法直接在方法上加synchronized实现加锁，同步代码块则在方法内部加锁。很明显，同步方法锁的范围比较大，而同步代码块范围要小点。一般同步的范围越大，性能就越差。所以一般需要加锁进行同步的时候，范围越小越好，这样性能更好。</p>
+<p><strong>静态内部类和内部类有什么区别</strong></p>
+<p>静态内部类不需要有指向外部类的引用。但非静态内部类需要持有对外部类的引用。</p>
+<p>静态内部类可以有静态成员（方法，属性），而非静态内部类则不能有静态成员（方法，属性）。</p>
+<p>非静态内部类能够访问外部类的静态和非静态成员。静态内部类不能访问外部类的非静态成员，只能访问外部类的静态成员。</p>
+<p><strong>实例方式不同：</strong></p>
+<p>（1）静态内部类：不依赖外部类的实例，直接实例化内部类对象</p>
+<p>（2）非静态内部类：通过外部类的对象实例生成内部类对象</p>
+<hr>
+<p>java创建对象的几种方式：</p>
+<p>1、用new语句创建对象，这是最常见的创建对象的方法。</p>
+<p>2、运用反射手段，调用java.lang.Class或者java.lang.reflect.Constructor类的newInstance()实例方法。</p>
+<p>3、调用对象的clone()方法</p>
+<p>4、运用反序列话手段，调用java.io.ObjectInputStream对象的readObject()方法</p>
+<p><strong>int和Integer有什么区别</strong></p>
+<p>int是java提供的8种原始数据类型之一。java为每个原始类型提供了封装类，Integer是java为int提供的封装类。int的默认值为0，而Integer的默认值为null，即Integer可以区分出未赋值和值为0的区别，int则无法表达出未赋值的情况，例如，要想表达出没有参加考试和考试成绩为0的区别，则只能使用Integer。在JSP开发中，Integer的默认为null，所以用el表达式在文本框中显示时，值为空白字符串，而int默认的默认值为0，所以用el表达式在文本框中显示时，结果为0，所以int不适合作为web层的表单数据的类型。</p>
+<p><strong>线程的三种创建方式</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thread class -&gt;继承Thread类</span><br><span class="line">Runnable接口 -&gt; 实现Runnable接口（重点）</span><br><span class="line">Callable接口 -&gt;实现Callable接口</span><br></pre></td></tr></table></figure>
+
+<p>第一种方式示例程序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建线程方式一：继承Thread类，重写run（）方法，调用start开启线程</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//总结：注意，线程开启不一定立即执行，由cpu调度执行</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThread1</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//run方法线程体</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我在看代码---&quot;</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//main线程，主线程</span></span><br><span class="line">        <span class="comment">//创建一个线程对象</span></span><br><span class="line">        TestThread1 testThread1=<span class="keyword">new</span> TestThread1();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用start()方法开启线程</span></span><br><span class="line">        testThread1.start();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我在学习多线程---&quot;</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     </div>
 
@@ -302,7 +399,10 @@
     <a href="/2020/12/25/shiro%E6%A1%86%E6%9E%B6/" rel="prev" title="shiro框架">
       <i class="fa fa-chevron-left"></i> shiro框架
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/29/%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E5%BB%BA%E8%AE%AE%E6%8A%8A%E6%95%B0%E6%8D%AE%E5%BA%93%E9%83%A8%E7%BD%B2%E5%9C%A8docker%E5%AE%B9%E5%99%A8%E5%86%85/" rel="next" title="为什么不建议把数据库部署在docker容器内">
+      为什么不建议把数据库部署在docker容器内 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -376,12 +476,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">34</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
