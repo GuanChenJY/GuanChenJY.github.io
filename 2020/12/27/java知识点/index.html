@@ -28,7 +28,7 @@
 <meta property="og:description" content="this和super关键字的作用： this是对象内部指代自身的引用，同时也是解决成员变量和局部变量同名问题；this可以调用成员变量，不能调用局部变量；this也可以调用成员方法，但是在普通方法中可以省略this，在构造方法中不允许省略，必须是构造方法的第一条语句。而且在静态方法当中不允许出现this关键字。 super代表对当前对象的直接父类对象的引用，super可以调用直接父类的成员变量（注">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-27T09:06:51.000Z">
-<meta property="article:modified_time" content="2020-12-31T07:21:00.786Z">
+<meta property="article:modified_time" content="2021-01-04T07:56:19.249Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="java相关">
 <meta name="twitter:card" content="summary">
@@ -186,7 +186,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-31 15:21:00" itemprop="dateModified" datetime="2020-12-31T15:21:00+08:00">2020-12-31</time>
+                <time title="修改时间：2021-01-04 15:56:19" itemprop="dateModified" datetime="2021-01-04T15:56:19+08:00">2021-01-04</time>
               </span>
 
           
@@ -328,56 +328,29 @@
 <p>第一种方式示例程序：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建线程方式一：继承Thread类，重写run（）方法，调用start开启线程</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//总结：注意，线程开启不一定立即执行，由cpu调度执行</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThread1</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//run方法线程体</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我在看代码---&quot;</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//main线程，主线程</span></span><br><span class="line">        <span class="comment">//创建一个线程对象</span></span><br><span class="line">        TestThread1 testThread1=<span class="keyword">new</span> TestThread1();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用start()方法开启线程</span></span><br><span class="line">        testThread1.start();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我在学习多线程---&quot;</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><strong>使用final关键字修饰符修饰一个变量时，是引用不能变，还是引用的对象不能变？</strong></p>
+<p>final修饰基本类型变量，其值不能改变。</p>
+<p>但是final修饰引用类型变量，栈内存中的引用不能改变，但是所指向的堆内存中的对象的属性值仍旧可以改变。例如</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Dog dog=<span class="keyword">new</span> Dog(<span class="string">&quot;狗子&quot;</span>);</span><br><span class="line">        dog.name=<span class="string">&quot;泰迪&quot;</span>;	<span class="comment">//正确</span></span><br><span class="line">        dog=<span class="keyword">new</span> Dog(<span class="string">&quot;田园犬&quot;</span>);	<span class="comment">//错误</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p><strong>解释继承、重载、覆盖</strong></p>
+<p>继承是面向对象软件技术当中的一个概念。如果一个类别A“继承自”另一个类别B，就把这个A称为“B的子类别”，而把B称为“A的父类别”，而把B称为“A的父类别”也可以称“B是A的超类”。继承可以使得子类别具有父类别的各种属性和方法，而不需要再次编写相同的代码。在令子类别继承父类别的同时，可以重新定义某些属性，并重写某些方法，即覆盖父类别的原有属性和方法，使其获得与父类别不同的功能。另外，为子类别追加新的属性和方法也是常见的做法。一般静态的面向对象编程语言，继承属于静态的。亦即在子类别的行为在编译器就已经决定，无法在执行期补充。</p>
+<p><strong>try{}里面有一个return语句，那么紧跟在这个try后的finally，里面的语句在异常出现后，都会执行么？为什么？</strong></p>
+<p>在异常处理时提供finally块来执行任何清除操作。如果有finally的话，则不管是否发生异常，finally语句都会被执行，包括遇到return语句。</p>
+<p>finally中语句不执行的唯一情况中执行了System.exit(0)语句。</p>
+<p><strong>不通过构造函数也能创建对象吗？</strong></p>
+<p>可以创建。java创建对象的几种方式：（1）用new语句创建对象，这是最常见的创建对象的方法。（2）运用反射手段，调用java.lang.Class或者java.lang.reflect.Constructor类的newInstance()实例方法。(3)调用对象的clone方法。(4)运用反序列化手段，调用java.io.ObjectInputStream对象的readObject()方法。</p>
+<p><strong>成员变量用static修饰和不用static修饰有什么区别？</strong></p>
+<p>1）两个变量的声明周期不同。成员变量随着对象的创建而存在，随着对象的被回收而释放。静态变量随着类的加载而存在，随着类的消失而消失。</p>
+<p>2）调用方式不同。成员变量只能被对象调用。静态变量可以被对象调用，还可以被类名调用。</p>
+<p>3）别名不同。成员变量也称为实例变量。静态变量称为类变量。</p>
+<p>4）数据存储位置不同。成员变量数据存储在堆内存的对象中，所以也叫对象的特有数据。静态变量数据存储在方法区的静态区，所以也叫对象的共享数据。</p>
+<p><strong>如果变量用final修饰，怎么样？如果方法用final修饰，则怎么样？</strong></p>
+<p>1、用final修饰的类不能被扩展，也就是说不可能有子类；</p>
+<p>2、用final修饰的方法不能被替换或隐藏：（1）使用final修饰的实例方法在其所属类的子类中不能被替换（overridden）；（2）使用final修饰的静态方法在其所属类的子类中不能被重定义而隐藏；</p>
+<p>3、用final修饰的变量最多只能赋值一次，在赋值方式上不同类型的变量或稍有不同：（1）静态变量必须明确赋值一次；作为类成员的静态变量，赋值可以在其声明中通过初始化表达式完成，也可以在静态初始化块中进行；作为接口成员的静态变量，赋值只能在其声明中通过初始化表达式完成；（2）实例变量同样必须明确赋值一次；赋值可以在其声明中通过初始化表达式完成，也可以在实例初始化块或构造器中进行；（3）方法参数变量在方法被调用时创建，同时被初始化为对应实参值，终止于方法体结束，在此期间其值不能改变。（4）构造器参数变量在构造器被调用时创建，同时被初始化为对应实参值，终止于构造器体结束，在此期间其值不能改变；（5）异常处理器参数变量在有异常被tru语句的catch子句捕捉到时创建，同时被初始化为实际的异常对象，终止于catch语句块结束，在此期间其值不能改变；（6）局部变量在其值被访问之前必须被明确赋值；</p>
+<p><strong>华为面试题中曾经问过这样一个问题：为什么不能根据返回类型来区分重载，为什么？</strong></p>
+<p>方法的重载，即使返回值类型不同，也不能改变实现功能相同或类似这一既定事实；同时方法的重载只是要求两同三不同，即在同一个类中，相同的方法名称，参数列表当中的参数类型、个数、顺序不同；跟权限修饰符和返回值类无关</p>
 
     </div>
 
@@ -476,7 +449,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">35</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -516,7 +489,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2020</span>
+  <span itemprop="copyrightYear">2021</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
