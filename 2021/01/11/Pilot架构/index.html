@@ -20,20 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="jdbc数据库与数据源什么是数据源？ 数据源定义的是连接到实际数据库的一条路径而已，数据源中并无真正的数据，它仅仅记录的是你连接到哪个数据库，以及如何连接的，如odbc数据源。也就是说数据源仅仅是数据库的连接名称，一个数据库可以有多个数据源连接。 在java语言中，DataSource对象就是一个代表数据源实体的对象。一个数据源就是一个用来存储数据的工具，它可以是复杂的大型企业级数据库，也可以是简">
+  <meta name="description" content="司令官PilotPilot的架构 平台适配器 抽象聚合层 xDS API  在Pilot与Envoy代理之间维护着一条gRPC长连接，所有配置的分发都基于此连接的一个Stream。配置的下发采用异步方式，主要基于底层注册中心服务的变化或者配置规则的更新事件。 Istio的服务模型Istio通用的服务模型包含Service（服务）和ServiceInstance(服务实例)。每个服务都有一个或多个实">
 <meta property="og:type" content="article">
-<meta property="og:title" content="JDBC基础">
-<meta property="og:url" content="http://example.com/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:title" content="Pilot架构">
+<meta property="og:url" content="http://example.com/2021/01/11/Pilot%E6%9E%B6%E6%9E%84/index.html">
 <meta property="og:site_name" content="Laplace">
-<meta property="og:description" content="jdbc数据库与数据源什么是数据源？ 数据源定义的是连接到实际数据库的一条路径而已，数据源中并无真正的数据，它仅仅记录的是你连接到哪个数据库，以及如何连接的，如odbc数据源。也就是说数据源仅仅是数据库的连接名称，一个数据库可以有多个数据源连接。 在java语言中，DataSource对象就是一个代表数据源实体的对象。一个数据源就是一个用来存储数据的工具，它可以是复杂的大型企业级数据库，也可以是简">
+<meta property="og:description" content="司令官PilotPilot的架构 平台适配器 抽象聚合层 xDS API  在Pilot与Envoy代理之间维护着一条gRPC长连接，所有配置的分发都基于此连接的一个Stream。配置的下发采用异步方式，主要基于底层注册中心服务的变化或者配置规则的更新事件。 Istio的服务模型Istio通用的服务模型包含Service（服务）和ServiceInstance(服务实例)。每个服务都有一个或多个实">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-12-22T01:51:17.000Z">
-<meta property="article:modified_time" content="2020-12-22T02:18:22.175Z">
+<meta property="article:published_time" content="2021-01-11T07:18:24.000Z">
+<meta property="article:modified_time" content="2021-01-11T08:49:08.909Z">
 <meta property="article:author" content="GCC">
-<meta property="article:tag" content="数据库相关">
+<meta property="article:tag" content="Istio">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/">
+<link rel="canonical" href="http://example.com/2021/01/11/Pilot%E6%9E%B6%E6%9E%84/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>JDBC基础 | Laplace</title>
+  <title>Pilot架构 | Laplace</title>
   
 
 
@@ -156,7 +156,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/11/Pilot%E6%9E%B6%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/test.jpg">
@@ -169,7 +169,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          JDBC基础
+          Pilot架构
         </h1>
 
         <div class="post-meta">
@@ -180,7 +180,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-22 09:51:17 / 修改时间：10:18:22" itemprop="dateCreated datePublished" datetime="2020-12-22T09:51:17+08:00">2020-12-22</time>
+              <time title="创建时间：2021-01-11 15:18:24 / 修改时间：16:49:08" itemprop="dateCreated datePublished" datetime="2021-01-11T15:18:24+08:00">2021-01-11</time>
             </span>
 
           
@@ -194,34 +194,36 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="jdbc"><a href="#jdbc" class="headerlink" title="jdbc"></a>jdbc</h1><h2 id="数据库与数据源"><a href="#数据库与数据源" class="headerlink" title="数据库与数据源"></a>数据库与数据源</h2><p><strong>什么是数据源？</strong></p>
-<p>数据源定义的是连接到实际数据库的一条路径而已，数据源中并无真正的数据，它仅仅记录的是你连接到哪个数据库，以及如何连接的，如odbc数据源。也就是说数据源仅仅是数据库的连接名称，一个数据库可以有多个数据源连接。</p>
-<p>在java语言中，DataSource对象就是一个代表数据源实体的对象。一个数据源就是一个用来存储数据的工具，它可以是复杂的大型企业级数据库，也可以是简单得只有行和列得文件。数据源可以位于在服务器端，也可以位于客户端。</p>
-<p><strong>什么是数据库连接池？</strong></p>
-<p>数据库连接是负责分配、管理和释放数据库连接。使用数据库连接池是因为数据库连接是一种关键的有限的昂贵得资源，这一点在多用户的网页应用程序中体现得尤为突出。如weblogic、tomcat、WebSphere容器都实现了数据库连接池，但是数据库连接池是可以独立出来自己编码实现的。</p>
-<p>数据库连接池在系统启动时初始化了一定量maxIdle=idlenum的数据库连接，即没有他的使用中的链接被释放的情况下，连接池中保存的最大空闲链接数。数据库连接请求如果没有超过idle的值则直接去连接池中获取；如果超过了maxIdle的值则新建一个数据库连接；但如果数据库连接池中的连接总数超过了maxActive=activenum则（如下处理）：</p>
-<ol>
-<li>直接抛出错误</li>
-<li>让想要借出连接的线程等待一段时间，如果等不到，再抛错</li>
-<li>每隔一段检查一次pool，直到有可用连接，否则一直等下去</li>
-<li>永远可以拿到（视情况需要maxActive不设置或0或负）</li>
-</ol>
-<p>但当没有可以使用的数据库链接的时候，连接池将要等待一个链接被返回的最长时间（毫秒）</p>
-<p>maxWait=waitnum，超过这个时间就要抛出异常。</p>
-<p><strong>什么是jndi?</strong></p>
-<p>jndi全称是<code>java naming and directory interface</code>。简单点就是你按命名规则给一个东西命名然后你就可以通过该名字在特定环境下直接查找到该东西了。</p>
-<p>JNDI是用于向java程序提供目录和命名功能的API。可以简单地把JNDI理解为一种将对象和名字绑定的技术，对象工厂负责生产出对象，这些对象都和唯一的名字绑定。外部程序可以通过名字来获取对某个对象的引用。在一个文件系统中，文件名被绑定给文件。在DNS中，一个ip地址绑定一个url。在目录服务中，一个对象名被绑定给一个对象实体。</p>
-<p>在Intranets(企业内部网)和Internates（互联网）中目录服务(Directory service)都非常重要，它规范了命名规则，让人们容易理解实体及之间的关系。JNDI是Java平台的一个标准扩展，提供了一组接口、类和关于命名空间的概念。JNDI目前所支持的技术包括LDAP、CORBA Common Object Service（COS）名字服务、RMI、NDS、DNS、Windows注册表等等。</p>
-<p>jndi被设计成独立于特定的目录服务，所以各种各样的目录都可以通过相同的方式进行访问。这样使用jndi的java程序员不仅可以获得统一规整的命名和目录，而且可以通过多层的命名方案无缝访问(seamless acess)目录对象。</p>
-<p><strong>数据源与数据库连接池关系？</strong></p>
-<p>我们通过第三方工具来使用数据源来实现对数据库数据操作。一个数据库连接池可以给它创建多个数据源，如一个人有别名；如果单纯使用jdbc连接数据库是web容器你要什么就去连什么。这样做没人看不耗内存，量大了你就死机。可以这样理解，数据源表示一个与数据库的连接（传统）或者表示很多与数据库的连接（使用数据库连接池）。数据源是用于访问连接池或多池的JNDI对象，多池的主要目的是提高可用性和在一组连接池间实现负载均衡。</p>
-<p><strong>数据源与JNDI关系？</strong></p>
-<p>数据源是在JDBC 2.0中引入的一个概念。在JDBC 2.0扩展包中定义了javax.sql.DataSource接口来描述这个概念。如果用户希望建立一个数据库连接，通过查询在JNDI服务中的数据源，可以从数据源中获取相应的数据库连接。这样用户就只需要提供一个逻辑名称（Logic Name），而不是数据库登录的具体细节。即DataSource采用Java的JNDI技术，来获得DataSource对象的引用。当然各种web容器把DataSource作为一种可以配置的JNDI资源来处理如tomcat。生成DataSource对象的工厂为org.apache.commons.dbcp.BasicDataSourceFactory。</p>
-<p><strong>jdbc基础</strong></p>
-<p>java database connectivity standard 是一套规范的面向应用程序的接口，通过它可以访问各类关系数据库。各个数据库会实现该接口作为驱动如jtds.jar，当然可以自己写实现。</p>
-<p>jdbc是低级api，提供访问数据库的接口，是构建高级api的基础，利用纯java编写可以在任何操作系统任何java环境下工作。JDBC API 中定义了一些Java类分别用来表示与数据库的连接（connections）, SQL语句（SQL statements）, 结果集（result sets）以及其它的数据库对象, 使得Java程序能方便地与数据库交互并处理所得的结果。</p>
-<p>使用JDBC, 所有Java程序（包括Java applications , applets和servlet）都能通过SQL语句或存储在数据库中的过程（stored procedures）来存取数据库。要通过JDBC来存取某一特定的数据库，必须有相应的JDBC driver，它往往是由生产数据库的厂家提供，是连接JDBC API与具体数据库之间的桥梁。JDBC driver 是用于特定数据库的一套实施了JDBC接口的类集。</p>
-<p>简单的说，jdbc可以做三件事：与数据库建立连接，发送sql语句，处理结果。jdbc可以理解为odbc的纯java语言和面向对象的实现。</p>
+        <h1 id="司令官Pilot"><a href="#司令官Pilot" class="headerlink" title="司令官Pilot"></a>司令官Pilot</h1><h2 id="Pilot的架构"><a href="#Pilot的架构" class="headerlink" title="Pilot的架构"></a>Pilot的架构</h2><ul>
+<li>平台适配器</li>
+<li>抽象聚合层</li>
+<li>xDS API</li>
+</ul>
+<p>在Pilot与Envoy代理之间维护着一条gRPC长连接，所有配置的分发都基于此连接的一个Stream。配置的下发采用异步方式，主要基于底层注册中心服务的变化或者配置规则的更新事件。</p>
+<h3 id="Istio的服务模型"><a href="#Istio的服务模型" class="headerlink" title="Istio的服务模型"></a>Istio的服务模型</h3><p>Istio通用的服务模型包含Service（服务）和ServiceInstance(服务实例)。每个服务都有一个或多个实例，服务实例是服务的实际表现形式，类似于Kubernetes中service与endpoint的概念。</p>
+<h3 id="xDS协议"><a href="#xDS协议" class="headerlink" title="xDS协议"></a>xDS协议</h3><p>xDS是一类发现服务的总称，包含LDS、RDS、CDS、EDS及SDS。</p>
+<h2 id="Pilot的工作流程"><a href="#Pilot的工作流程" class="headerlink" title="Pilot的工作流程"></a>Pilot的工作流程</h2><p>Pilot主要职责是获取注册中心的配置规则或者服务。Pilot主要包含服务发现、配置规则发现及服务器三大模块。</p>
+<h3 id="Pilot的启动与初始化"><a href="#Pilot的启动与初始化" class="headerlink" title="Pilot的启动与初始化"></a>Pilot的启动与初始化</h3><p>Pilot通过Pilot-discovery进程启动的，主要包括配置控制器、服务控制器、xDS服务器、HTTP服务器和性能监视器等模块。</p>
+<p>1）xDS服务器用于处理Envoy代理的xDS请求，以及控制相关配置的生成及下发。</p>
+<p>2） 配置控制器主要用于监视底层注册中心及更新配置规则，并通知xDS服务器异步更新xDS配置。</p>
+<p>3） 服务控制器主要用于监视底层注册中心、更新服务及服务实例，并通知xDS服务器异步更新xDS配置。</p>
+<p>4） HTTP服务器主要提供REST接口供管理员获取Debug信息；</p>
+<p>5） 性能监视器主要提供性能分析的接口，可通过此接口获取进程运行时内存、CPU占用等。</p>
+<p>Pilot的启动流程如下：</p>
+<p>1、命令行参数解析，解析所需的配置文件、服务器地址等日志系统配置；</p>
+<p>2、初始化Kubernetes客户端。在Kubernetes集群中，底层服务发现需要监视Kube-apiserver，所以这里需要创建Kubernetes客户端；</p>
+<p>3、加载服务网格配置，主要是网络中所有的Envoy实例共享的一些全局配置，包括Mixer服务器地址、连接管理相关的设置及访问日志格式等；</p>
+<p>4、加载服务网格网络配置，支持同一网络多网格之间的服务直接访问，例如Kubernetes多集群的场景；</p>
+<p>5、初始化Config Controller(配置控制器)、Pilot核心模块，监视底层注册中心的配置规则，并异步通知xDS服务器；</p>
+<p>6、初始化Service Controller（服务控制器）、Pilot核心模块，监视底层注册中心服务及服务实例，并异步通知xDS服务器；</p>
+<p>7、初始化Pilot服务器，主要涉及xDS Server、HTTP服务器，处理所有xDS连接，生成xDS配置并下发；</p>
+<p>8、初始化多集群服务发现，适用于多个Kubernetes集群共用同一套控制面的场景；</p>
+<p>9、启动所有Pilot Server及控制器，开始监听底层平台及处理下游xDS请求。</p>
+<h3 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h3><p>异步通知的实现依赖于回调函数，当有更新事件产生时，系统在捕获到事件的同时执行回调函数。如果事件回调函数的执行周期较长且事件更新频率较高，则为了保证事件接收不会阻塞，一般会先进行上半部处理，将事件发送到队列，然后通过下半部处理。</p>
+<p>EnvoyXdsServer在初始化时会通过AppendServiceHandler及AppendInstanceHandler分别向Aggregator注册服务、服务实例的更新事件处理回调函数。Aggregator实际上是分别调用各Adapter的回调注册接口，然后将回调函数注册到各个Adapter上。</p>
+<p>各平台的Adapter基于底层注册中心提供的资源监视方式来监控资源的变化。</p>
+<h3 id="配置规则发现"><a href="#配置规则发现" class="headerlink" title="配置规则发现"></a>配置规则发现</h3><p><strong>Kubernetes适配器</strong></p>
+<h3 id="Envoy的配置分发"><a href="#Envoy的配置分发" class="headerlink" title="Envoy的配置分发"></a>Envoy的配置分发</h3><p>从Pilot的角度来看，存在两种配置分发模式：主动模式和被动模式。主动模式指Pilot主动将配置下发到Sidecar，由config与服务更新事件触发。被动模式指由Pilot接收Sidecar的连接请求（DiscoveryRequest），然后做出响应（DiscoveryResponse）。主动模式是由底层注册中心的资源更新触发的，被动模式是由外部客户端的Envoy请求触发的。</p>
 
     </div>
 
@@ -231,7 +233,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9B%B8%E5%85%B3/" rel="tag"># 数据库相关</a>
+              <a href="/tags/Istio/" rel="tag"># Istio</a>
           </div>
 
         
@@ -240,13 +242,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/12/21/java%E5%B8%B8%E8%A7%81%E6%8E%92%E5%BA%8F/" rel="prev" title="java常见排序">
-      <i class="fa fa-chevron-left"></i> java常见排序
+    <a href="/2021/01/07/%E5%B9%B6%E6%9F%A5%E9%9B%86/" rel="prev" title="并查集">
+      <i class="fa fa-chevron-left"></i> 并查集
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/12/22/java%E5%9F%BA%E7%A1%80/" rel="next" title="java基础">
-      java基础 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -305,7 +304,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#jdbc"><span class="nav-number">1.</span> <span class="nav-text">jdbc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8E%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="nav-number">1.1.</span> <span class="nav-text">数据库与数据源</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%B8%E4%BB%A4%E5%AE%98Pilot"><span class="nav-number">1.</span> <span class="nav-text">司令官Pilot</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Pilot%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">Pilot的架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Istio%E7%9A%84%E6%9C%8D%E5%8A%A1%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.1.</span> <span class="nav-text">Istio的服务模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xDS%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.1.2.</span> <span class="nav-text">xDS协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pilot%E7%9A%84%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">Pilot的工作流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pilot%E7%9A%84%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">1.2.1.</span> <span class="nav-text">Pilot的启动与初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">服务发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%A7%84%E5%88%99%E5%8F%91%E7%8E%B0"><span class="nav-number">1.2.3.</span> <span class="nav-text">配置规则发现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Envoy%E7%9A%84%E9%85%8D%E7%BD%AE%E5%88%86%E5%8F%91"><span class="nav-number">1.2.4.</span> <span class="nav-text">Envoy的配置分发</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

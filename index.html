@@ -150,6 +150,94 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/11/Pilot%E6%9E%B6%E6%9E%84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/11/Pilot%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">Pilot架构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-11 15:18:24 / 修改时间：16:49:08" itemprop="dateCreated datePublished" datetime="2021-01-11T15:18:24+08:00">2021-01-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="司令官Pilot"><a href="#司令官Pilot" class="headerlink" title="司令官Pilot"></a>司令官Pilot</h1><h2 id="Pilot的架构"><a href="#Pilot的架构" class="headerlink" title="Pilot的架构"></a>Pilot的架构</h2><ul>
+<li>平台适配器</li>
+<li>抽象聚合层</li>
+<li>xDS API</li>
+</ul>
+<p>在Pilot与Envoy代理之间维护着一条gRPC长连接，所有配置的分发都基于此连接的一个Stream。配置的下发采用异步方式，主要基于底层注册中心服务的变化或者配置规则的更新事件。</p>
+<h3 id="Istio的服务模型"><a href="#Istio的服务模型" class="headerlink" title="Istio的服务模型"></a>Istio的服务模型</h3><p>Istio通用的服务模型包含Service（服务）和ServiceInstance(服务实例)。每个服务都有一个或多个实例，服务实例是服务的实际表现形式，类似于Kubernetes中service与endpoint的概念。</p>
+<h3 id="xDS协议"><a href="#xDS协议" class="headerlink" title="xDS协议"></a>xDS协议</h3><p>xDS是一类发现服务的总称，包含LDS、RDS、CDS、EDS及SDS。</p>
+<h2 id="Pilot的工作流程"><a href="#Pilot的工作流程" class="headerlink" title="Pilot的工作流程"></a>Pilot的工作流程</h2><p>Pilot主要职责是获取注册中心的配置规则或者服务。Pilot主要包含服务发现、配置规则发现及服务器三大模块。</p>
+<h3 id="Pilot的启动与初始化"><a href="#Pilot的启动与初始化" class="headerlink" title="Pilot的启动与初始化"></a>Pilot的启动与初始化</h3><p>Pilot通过Pilot-discovery进程启动的，主要包括配置控制器、服务控制器、xDS服务器、HTTP服务器和性能监视器等模块。</p>
+<p>1）xDS服务器用于处理Envoy代理的xDS请求，以及控制相关配置的生成及下发。</p>
+<p>2） 配置控制器主要用于监视底层注册中心及更新配置规则，并通知xDS服务器异步更新xDS配置。</p>
+<p>3） 服务控制器主要用于监视底层注册中心、更新服务及服务实例，并通知xDS服务器异步更新xDS配置。</p>
+<p>4） HTTP服务器主要提供REST接口供管理员获取Debug信息；</p>
+<p>5） 性能监视器主要提供性能分析的接口，可通过此接口获取进程运行时内存、CPU占用等。</p>
+<p>Pilot的启动流程如下：</p>
+<p>1、命令行参数解析，解析所需的配置文件、服务器地址等日志系统配置；</p>
+<p>2、初始化Kubernetes客户端。在Kubernetes集群中，底层服务发现需要监视Kube-apiserver，所以这里需要创建Kubernetes客户端；</p>
+<p>3、加载服务网格配置，主要是网络中所有的Envoy实例共享的一些全局配置，包括Mixer服务器地址、连接管理相关的设置及访问日志格式等；</p>
+<p>4、加载服务网格网络配置，支持同一网络多网格之间的服务直接访问，例如Kubernetes多集群的场景；</p>
+<p>5、初始化Config Controller(配置控制器)、Pilot核心模块，监视底层注册中心的配置规则，并异步通知xDS服务器；</p>
+<p>6、初始化Service Controller（服务控制器）、Pilot核心模块，监视底层注册中心服务及服务实例，并异步通知xDS服务器；</p>
+<p>7、初始化Pilot服务器，主要涉及xDS Server、HTTP服务器，处理所有xDS连接，生成xDS配置并下发；</p>
+<p>8、初始化多集群服务发现，适用于多个Kubernetes集群共用同一套控制面的场景；</p>
+<p>9、启动所有Pilot Server及控制器，开始监听底层平台及处理下游xDS请求。</p>
+<h3 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h3><p>异步通知的实现依赖于回调函数，当有更新事件产生时，系统在捕获到事件的同时执行回调函数。如果事件回调函数的执行周期较长且事件更新频率较高，则为了保证事件接收不会阻塞，一般会先进行上半部处理，将事件发送到队列，然后通过下半部处理。</p>
+<p>EnvoyXdsServer在初始化时会通过AppendServiceHandler及AppendInstanceHandler分别向Aggregator注册服务、服务实例的更新事件处理回调函数。Aggregator实际上是分别调用各Adapter的回调注册接口，然后将回调函数注册到各个Adapter上。</p>
+<p>各平台的Adapter基于底层注册中心提供的资源监视方式来监控资源的变化。</p>
+<h3 id="配置规则发现"><a href="#配置规则发现" class="headerlink" title="配置规则发现"></a>配置规则发现</h3><p><strong>Kubernetes适配器</strong></p>
+<h3 id="Envoy的配置分发"><a href="#Envoy的配置分发" class="headerlink" title="Envoy的配置分发"></a>Envoy的配置分发</h3><p>从Pilot的角度来看，存在两种配置分发模式：主动模式和被动模式。主动模式指Pilot主动将配置下发到Sidecar，由config与服务更新事件触发。被动模式指由Pilot接收Sidecar的连接请求（DiscoveryRequest），然后做出响应（DiscoveryResponse）。主动模式是由底层注册中心的资源更新触发的，被动模式是由外部客户端的Envoy请求触发的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/07/%E5%B9%B6%E6%9F%A5%E9%9B%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2192,221 +2280,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/27/java%E7%9F%A5%E8%AF%86%E7%82%B9/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/27/java%E7%9F%A5%E8%AF%86%E7%82%B9/" class="post-title-link" itemprop="url">java知识点</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-27 17:06:51" itemprop="dateCreated datePublished" datetime="2020-12-27T17:06:51+08:00">2020-12-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-04 15:56:19" itemprop="dateModified" datetime="2021-01-04T15:56:19+08:00">2021-01-04</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>this和super关键字的作用：</strong></p>
-<p>this是对象内部指代自身的引用，同时也是解决成员变量和局部变量同名问题；<strong>this可以调用成员变量，不能调用局部变量</strong>；this也可以调用成员方法，但是在普通方法中可以省略this，在构造方法中不允许省略，必须是构造方法的第一条语句。而且在静态方法当中不允许出现this关键字。</p>
-<p>super代表对当前对象的直接父类对象的引用，super可以调用直接父类的成员变量（注意权限修饰符的影响，比如不能访问private成员）</p>
-<p>super可以调用直接父类的成员方法；super可以调用直接父类的构造方法，只限构造方法中使用，且必须是第一条语句。</p>
-<p><strong>static关键字的作用</strong></p>
-<p>static可以修饰变量、方法、代码块和内部类</p>
-<p>static属性属于这个类所有，即由该类创建的所有对象共享同一个static属性。可以对象创建后通过对象名.属性名和类名.属性名两种方式来访问。也可以在没有创建任何对象之前通过类名.属性名的方式来访问。</p>
-<p>.static变量和非static变量的区别（都是成员变量，不是局部变量）</p>
-<p><strong>1.在内存中份数不同</strong></p>
-<p>不管有多少个对象，static变量只有1份。对于每个对象，实例变量都会有单独的一份</p>
-<p>static变量是属于整个类的，也称为类变量。而非静态变量是属于对象的，也称为实例变量</p>
-<p><strong>2.在内存中存放的位置不同</strong></p>
-<p>静态变量存在方法区中，实例变量存在堆内存中</p>
-<p><strong>3.访问的方式不同</strong></p>
-<p>实例变量：对象名.变量名</p>
-<p>静态变量：类名.变量名</p>
-<p><strong>4.在内存中分配空间的时间不同</strong></p>
-<p><strong>实例变量：</strong>创建对象的时候才分配了空间。</p>
-<p>静态变量：第一次使用类的时候。</p>
-<p><strong>final和abstract关键字的作用：</strong></p>
-<p>final和abstract是功能相反的两个关键字，可以对比记忆</p>
-<p>abstract可以用来修饰类和方法，不能用来修饰属性和构造方法；使用abstract修饰的类是抽象类，需要被继承，使用abstract修饰的方法是抽象方法，需要子类被重写。</p>
-<p>final可以用来修饰类、方法和属性，不能修饰构造方法。使用final修饰的类不能被继承，使用final修饰的方法不能被重写，使用final修饰的变量的值不能被修改，所以就成了常量。</p>
-<p>特别注意：final修饰基本类型变量，其值不能改变，由原来的变量变为常量；但是final修饰引用类型变量，栈内存中的引用不能改变，但是所指向的堆内存中的对象的属性值仍旧可以改变。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">final</span> People people=<span class="keyword">new</span> People(<span class="string">&quot;gcc&quot;</span>);</span><br><span class="line">        dog.name=<span class="string">&quot;zq&quot;</span>;	<span class="comment">//正确</span></span><br><span class="line">        people=<span class="keyword">new</span> People(<span class="string">&quot;zq&quot;</span>);<span class="comment">//错误</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>final、finally、finalize的区别</strong></p>
-<p>final修饰符如果一个类被声明为final，意味着它不能再派生出新的子类，不能作为父类被继承例如：String类、Math类等。将变量或方法声明为final，可以保证它们在使用中不被改变。被声明为final的变量必须在声明时给定初值，而在以后的引用中只能读取，不可修改。被声明为final的方法也同样只能使用，不能重写，但是能够重载。使用final修饰的对象，对象的引用不能变，但是对象的值可以变！</p>
-<p>finally在异常处理视提供finally块来执行任何清楚操作。如果有finally的话，则不管是否发生异常，finally语句都会被执行。一般情况下，把关闭物理连接等相关操作，放入到此代码块中。</p>
-<p>finalize方法名。java技术允许使用finalize方法在垃圾收集器将对象从内存中清楚啊出去之前做必要清理工作。finalize()方法是在垃圾收集器删除对象之前被调用的。它是在Object类中定义的，因此所有的类都继承了它。子类覆盖finalize()方法以整理系统资源或者执行其他清理工作。一般情况下，此方法由JVM调用，程序员不要去调用。</p>
-<p><strong>继承条件下构造方法的执行过程</strong></p>
-<p><strong>情况1：</strong>如果子类的构造方法中没有通过super显式调用父类的有参构造方法，也没有通过this显示调用自身的其他构造方法，则系统会默认先调用父类的无参构造方法。在这种情况下，写不写”super()”语句，效果是一样的。</p>
-<p><strong>情况2：</strong>如果子类的构造方法中通过super显式调用父类的有参构造方法，那将执行父类相应构造方法，而不执行父类无参构造方法。</p>
-<p><strong>情况3：</strong>如果子类的构造方法中通过this显示调用自身的其他构造方法，在相应构造方法中应用以上两条规则。</p>
-<p><strong>==和equals的区别和联系</strong></p>
-<p>==是关系运算符，equals()是方法，同时它们的结果都返回布尔值；</p>
-<p><strong>==使用情况如下：</strong></p>
-<p>a)基本类型，比较的是值</p>
-<p>b)引用类型，比较的是地址</p>
-<p>c)不能比较没有父子关系的两个对象</p>
-<p><strong>equals()方法使用如下：</strong></p>
-<p>a)系统类一般已经覆盖了equals()，比较的是内容</p>
-<p>b)用户自定义类如果没有覆盖equals()，将调用父类的equals(比如是Object)，而Object的equals的比较是地址。</p>
-<p>c)用户自定义类需要覆盖父类的equals()</p>
-<p><strong>java的多态</strong></p>
-<p>多态性是OOP中的一个重要特性，主要是用来实现动态联编的，换句话说，就是程序的最终状态只有在执行过程中才被决定而非在编译期间就决定了。这对于大型系统来说能提高系统的灵活性和扩展性。</p>
-<p>多态可以让我们不用关系某个对象到底是什么具体类型，就可以使用该对象的某些方法，从而实现更加灵活的编程，提高系统的可扩展性。</p>
-<p><strong>实现多态的三个条件（前提条件，向下转型、向上转型）</strong></p>
-<p>1、继承的存在；（继承是多态的基础，没有继承就没有多态）</p>
-<p>2、子类重写父类的方法。（多态下会调用子类重写后的方法）</p>
-<p>3、父类引用变量指向子类对象（涉及子类到父类的类型转换）</p>
-<p><strong>向上转型 Animal a=new Cat();</strong></p>
-<p>将一个父类的引用指向一个子类对象，称为向上转型，自动进行类型转换。此时通过父类引用变量调用的方法是子类覆盖或继承父类的方法，而不是父类的方法，此时通过父类引用变量无法调用子类特有的方法。</p>
-<p><strong>向下转型 Cat a2=(Cat) a;</strong></p>
-<p>将一个指向子类对象的引用赋给一个子类的引用，成为向下转型，此时必须进行强制类型转换。向下转型必须转换为父类引用指向的真实子类类型，否则将出现ClassCastException，不是任意的强制转换。</p>
-<p><strong>内存泄漏和内存溢出的区别和联系</strong></p>
-<p>1、内存泄漏memory leak；</p>
-<p>是指程序在申请内存后，无法释放已申请的内存空间，一次内存泄漏似乎不会有大的影响，但内存泄漏堆积后的后果就是内存溢出。</p>
-<p>2、内存溢出out of memory；</p>
-<p>指程序申请内存时，没有足够的内存供申请者使用，或者说，给了你一块存储int类型数据的存储空间，但是你却存储long类型的数据，那么结果就是内存不够用，此时就会报错OOM，即所谓的内存溢出。</p>
-<p>3、二者的关系：</p>
-<p>内存泄漏的堆积最终会导致内存溢出 内存溢出就是你要的内存空间超过了系统实际分配给你的空间，此时系统相当于没法满足你的需求，就会报内存溢出的错误。内存泄漏是指你向系统申请分配内存进行使用(new)，可是使用完了以后却不归还(delete)，结果你申请到的那块内存你自己也不能再访问(也许你把它的地址给弄丢了)，而系统也不能再次将它分配给需要的程序。就相当于你租了个带钥匙的柜子，你存完东西之后把柜子锁上之后，把钥匙丢了或者没有将钥匙还回去，那么结果就是这个柜子将无法共给任何人使用，也无法被垃圾回收器回收，因为找不到他的任何信息。内存溢出：一个盘子用尽各种方法只能装4个果子，你装了5个，结果掉到地上不能吃了。这就是溢出。比方说栈，栈满时再做进栈必定会产生空间溢出，叫上溢，栈空时再做退栈也产生空间溢出，称为下溢。就是分配的内存不足以放下数据项序列，称为内存溢出。说白了就是我承受不了那么多，那我就报错。</p>
-<p>4、内存泄漏的分类</p>
-<p>常发性内存泄漏。发生内存泄漏的代码会被多次执行到，每次被执行的时候都会导致一块内存泄漏。 偶发性内存泄漏。发生内存泄漏的代码只有在某些特定环境或操作过程下才会发生。常发性和偶发性是相对的。对于特定的环境，偶发性的也许就变成了常发性的。所以测试环境和测试方法对检测内存泄漏至关重要。 一次性内存泄漏。发生内存泄漏的代码只会被执行一次，或者由于算法上的缺陷，导致总会有一块仅且一块内存发生泄漏。比如，在类的构造函数中分配内存，在析构函数中却没有释放该内存，所以内存泄漏只会发生一次。 隐式内存泄漏。程序在运行过程中不停的分配内存，但是直到结束的时候才释放内存。严格的说这里并没有发生内存泄漏，因为最终程序释放了所有申请的内存。但是对于一个服务器程序，需要运行几天，几周甚至几个月，不及时释放内存也可能导致最终耗尽系统的所有内存。所以，我们称这类内存泄漏为隐式内存泄漏。</p>
-<p>5、内存溢出的原因及解决办法：</p>
-<p>（1）内存溢出原因：</p>
-<p>内存中加载的数据量过于庞大，如一次从数据库取出过多数据； 集合类中有对对象的引用，使用完后未清空，使得JVM不能回收； 代码中存在死循环或循环产生过多重复的对象实体； 使用的第三方软件中的BUG； 启动参数内存值设定的过小</p>
-<p>（2）内存溢出的解决方案：</p>
-<p>第一步，修改JVM启动参数，直接增加内存。(-Xms，-Xmx参数一定不要忘记加。)<br>第二步，检查错误日志，查看“OutOfMemory”错误前是否有其 它异常或错误。<br>第三步，对代码进行走查和分析，找出可能发生内存溢出的位置。</p>
-<p>重点排查以下几点：<br>1.检查对数据库查询中，是否有一次获得全部数据的查询。一般来说，如果一次取十万条记录到内存，就可能引起内存溢出。这个问题比较隐蔽，在上线前，数据库中数据较少，不容易出问题，上线后，数据库中数据多了，一次查询就有可能引起内存溢出。因此对于数据库查询尽量采用分页的方式查询。<br>2.检查代码中是否有死循环或递归调用。<br>3.检查是否有大循环重复产生新对象实体。<br>4.检查对数据库查询中，是否有一次获得全部数据的查询。一般来说，如果一次取十万条记录到内存，就可能引起内存溢出。这个问题比较隐蔽，在上线前，数据库中数据较少，不容易出问题，上线后，数据库中数据多了，一次查询就有可能引起内存溢出。因此对于数据库查询尽量采用分页的方式查询。<br>5.检查List、MAP等集合对象是否有使用完后，未清除的问题。List、MAP等集合对象会始终存有对对象的引用，使得这些对象不能被GC回收。<br>第四步，使用内存查看工具动态查看内存使用情况</p>
-<p><strong>java序列化</strong></p>
-<p>对象的序列化主要有两种用途：</p>
-<p>1）把对象的字节序列永久地保存到硬盘上，通常存在在一个文件中；</p>
-<p>2）在网络上传送对象的字节序列</p>
-<p><strong>java创建对象的几种方式：</strong></p>
-<p>1、用new语句创建对象，这是最常见的创建对象的方法。</p>
-<p>2、运用反射手段，调用java.lang.Class或者java.lang.reflect.Constructor类的newInstance()实例方法</p>
-<p>3、运用对象的clone()方法。</p>
-<p>4、运用反序列化手段，调用java.io.ObjectInputStream对象的readObject()方法。</p>
-<p><strong>匿名内部类可不可以继承或实现接口，为什么？</strong></p>
-<p>匿名内部类是没有名字的内部类，不能继承其他类，但一个内部类可以作为一个接口，有另一个内部类实现。</p>
-<p>1、由于匿名内部类没有名字，所以它没有构造函数。因为没有构造函数，所以它必须完全借用父类的构造函数来实例化，换言之：匿名内部类完全把创建对象的任务交给了子类去完成。</p>
-<p>2、在匿名内部类里创建新的方法没有太大意义，但它可以通过覆盖父类的方法达到神奇效果，这是多态性的体现。</p>
-<p>3、因为匿名内部类没有名字，所以无法进行向下的强制类型转换，持有对一个匿名内部类对象引用的变量类型一定是它的直接或间接父类类型。</p>
-<p>匿名类是不能有名称的类，所以没办法引用它们。必须在创建时，作为new语句的一部分来声明它们。</p>
-<p><strong>java中，为什么基本类型不能作为HashMap的键值，而只能是引用类型，把引用类型作为HashMap的键值，需要注意哪些地方。</strong></p>
-<p>在java中是使用泛型来约束HashMap中的key和value的类型的，即HashMap&lt;K,V&gt;；而泛型在java的规定中必须是对象Object类型的，也就是说HashMap&lt;K,V&gt;可以理解为HashMap&lt;Object,Object&gt;，很显然基本数据类型不是Object类型的，因此不能作为键值，只能是引用类型。虽然我们在HashMap中可以这样添加数据：“map.put(1,”java”);”，但实际上是将其中的key值1进行了自动装箱操作，变味了Integer类型。</p>
-<p><strong>接口和抽象类的区别</strong></p>
-<p><strong>相同点：</strong></p>
-<ul>
-<li>抽象类和接口均包含抽象方法，类必须实现所有的抽象方法</li>
-<li>抽象类和接口都不能实例化，他们位于继承树的顶端，用来被其他类继承和实现</li>
-</ul>
-<p><strong>区别：</strong>语法和设计理念方面</p>
-<p>语法方面的区别是比较低层次的，非本质的，主要表现在：</p>
-<p>接口中只能定义全局静态常量，不能定义变量。抽象类中可以定义常量和变量。</p>
-<p>接口中所有的方法都是全局抽象方法。抽象类中可以有0个、1个或多个，甚至全部都是抽象方法。</p>
-<p>抽象类中可以有构造方法，但不能用来实例化，而在子类实例化是执行，完成属于抽象类的初始化操作。接口中不能定义构造方法。</p>
-<p>一个类只能有一个直接父类，但可以充实实现多个接口。一个类使用extends来继承抽象类，使用implements来实现接口。</p>
-<p>二者的主要区别还是在设计理念上，其决定了某些情况下到底使用抽象类还是接口。</p>
-<p>抽象类体现了一种继承关系，目的是复用代码，抽象类中定义了各个子类的相同代码，可以认为父类是一个实现了部分功能的中间产品，而子类是最终产品。父类和子类之间必须存在”is-a”继承的关系，即父类和子类在概念本质上应该是相同的。</p>
-<p>接口并不要求实现类和接口在概念本质上一致的，仅仅是实现了接口定义的约定或者能力而已。接口定义了“做什么”，而实现类负责完成“怎么做”，体现了功能（规范）和实现分离的原则。接口和实现之间可以认为是一种”has-a”组合的关系</p>
-<p><strong>同步代码块和同步方法有什么区别</strong></p>
-<p>相同点：</p>
-<p>同步方法就是在方法前加关键字synchronized，然后被同步的方法一次只能有一个线程进入，其他线程等待。而同步代码块则是在方法内部使用大括号使得一个代码块得到同步。同步代码块会有一个同步的目标，使得同步块更加灵活一些。一般情况下，如果此目标为this，那么同步方法和同步代码块没有太大的区别。</p>
-<p>区别：</p>
-<p>同步方法直接在方法上加synchronized实现加锁，同步代码块则在方法内部加锁。很明显，同步方法锁的范围比较大，而同步代码块范围要小点。一般同步的范围越大，性能就越差。所以一般需要加锁进行同步的时候，范围越小越好，这样性能更好。</p>
-<p><strong>静态内部类和内部类有什么区别</strong></p>
-<p>静态内部类不需要有指向外部类的引用。但非静态内部类需要持有对外部类的引用。</p>
-<p>静态内部类可以有静态成员（方法，属性），而非静态内部类则不能有静态成员（方法，属性）。</p>
-<p>非静态内部类能够访问外部类的静态和非静态成员。静态内部类不能访问外部类的非静态成员，只能访问外部类的静态成员。</p>
-<p><strong>实例方式不同：</strong></p>
-<p>（1）静态内部类：不依赖外部类的实例，直接实例化内部类对象</p>
-<p>（2）非静态内部类：通过外部类的对象实例生成内部类对象</p>
-<hr>
-<p>java创建对象的几种方式：</p>
-<p>1、用new语句创建对象，这是最常见的创建对象的方法。</p>
-<p>2、运用反射手段，调用java.lang.Class或者java.lang.reflect.Constructor类的newInstance()实例方法。</p>
-<p>3、调用对象的clone()方法</p>
-<p>4、运用反序列话手段，调用java.io.ObjectInputStream对象的readObject()方法</p>
-<p><strong>int和Integer有什么区别</strong></p>
-<p>int是java提供的8种原始数据类型之一。java为每个原始类型提供了封装类，Integer是java为int提供的封装类。int的默认值为0，而Integer的默认值为null，即Integer可以区分出未赋值和值为0的区别，int则无法表达出未赋值的情况，例如，要想表达出没有参加考试和考试成绩为0的区别，则只能使用Integer。在JSP开发中，Integer的默认为null，所以用el表达式在文本框中显示时，值为空白字符串，而int默认的默认值为0，所以用el表达式在文本框中显示时，结果为0，所以int不适合作为web层的表单数据的类型。</p>
-<p><strong>线程的三种创建方式</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Thread class -&gt;继承Thread类</span><br><span class="line">Runnable接口 -&gt; 实现Runnable接口（重点）</span><br><span class="line">Callable接口 -&gt;实现Callable接口</span><br></pre></td></tr></table></figure>
-
-<p>第一种方式示例程序：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建线程方式一：继承Thread类，重写run（）方法，调用start开启线程</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//总结：注意，线程开启不一定立即执行，由cpu调度执行</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestThread1</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//run方法线程体</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我在看代码---&quot;</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//main线程，主线程</span></span><br><span class="line">        <span class="comment">//创建一个线程对象</span></span><br><span class="line">        TestThread1 testThread1=<span class="keyword">new</span> TestThread1();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用start()方法开启线程</span></span><br><span class="line">        testThread1.start();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;我在学习多线程---&quot;</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>使用final关键字修饰符修饰一个变量时，是引用不能变，还是引用的对象不能变？</strong></p>
-<p>final修饰基本类型变量，其值不能改变。</p>
-<p>但是final修饰引用类型变量，栈内存中的引用不能改变，但是所指向的堆内存中的对象的属性值仍旧可以改变。例如</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Dog dog=<span class="keyword">new</span> Dog(<span class="string">&quot;狗子&quot;</span>);</span><br><span class="line">        dog.name=<span class="string">&quot;泰迪&quot;</span>;	<span class="comment">//正确</span></span><br><span class="line">        dog=<span class="keyword">new</span> Dog(<span class="string">&quot;田园犬&quot;</span>);	<span class="comment">//错误</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><strong>解释继承、重载、覆盖</strong></p>
-<p>继承是面向对象软件技术当中的一个概念。如果一个类别A“继承自”另一个类别B，就把这个A称为“B的子类别”，而把B称为“A的父类别”，而把B称为“A的父类别”也可以称“B是A的超类”。继承可以使得子类别具有父类别的各种属性和方法，而不需要再次编写相同的代码。在令子类别继承父类别的同时，可以重新定义某些属性，并重写某些方法，即覆盖父类别的原有属性和方法，使其获得与父类别不同的功能。另外，为子类别追加新的属性和方法也是常见的做法。一般静态的面向对象编程语言，继承属于静态的。亦即在子类别的行为在编译器就已经决定，无法在执行期补充。</p>
-<p><strong>try{}里面有一个return语句，那么紧跟在这个try后的finally，里面的语句在异常出现后，都会执行么？为什么？</strong></p>
-<p>在异常处理时提供finally块来执行任何清除操作。如果有finally的话，则不管是否发生异常，finally语句都会被执行，包括遇到return语句。</p>
-<p>finally中语句不执行的唯一情况中执行了System.exit(0)语句。</p>
-<p><strong>不通过构造函数也能创建对象吗？</strong></p>
-<p>可以创建。java创建对象的几种方式：（1）用new语句创建对象，这是最常见的创建对象的方法。（2）运用反射手段，调用java.lang.Class或者java.lang.reflect.Constructor类的newInstance()实例方法。(3)调用对象的clone方法。(4)运用反序列化手段，调用java.io.ObjectInputStream对象的readObject()方法。</p>
-<p><strong>成员变量用static修饰和不用static修饰有什么区别？</strong></p>
-<p>1）两个变量的声明周期不同。成员变量随着对象的创建而存在，随着对象的被回收而释放。静态变量随着类的加载而存在，随着类的消失而消失。</p>
-<p>2）调用方式不同。成员变量只能被对象调用。静态变量可以被对象调用，还可以被类名调用。</p>
-<p>3）别名不同。成员变量也称为实例变量。静态变量称为类变量。</p>
-<p>4）数据存储位置不同。成员变量数据存储在堆内存的对象中，所以也叫对象的特有数据。静态变量数据存储在方法区的静态区，所以也叫对象的共享数据。</p>
-<p><strong>如果变量用final修饰，怎么样？如果方法用final修饰，则怎么样？</strong></p>
-<p>1、用final修饰的类不能被扩展，也就是说不可能有子类；</p>
-<p>2、用final修饰的方法不能被替换或隐藏：（1）使用final修饰的实例方法在其所属类的子类中不能被替换（overridden）；（2）使用final修饰的静态方法在其所属类的子类中不能被重定义而隐藏；</p>
-<p>3、用final修饰的变量最多只能赋值一次，在赋值方式上不同类型的变量或稍有不同：（1）静态变量必须明确赋值一次；作为类成员的静态变量，赋值可以在其声明中通过初始化表达式完成，也可以在静态初始化块中进行；作为接口成员的静态变量，赋值只能在其声明中通过初始化表达式完成；（2）实例变量同样必须明确赋值一次；赋值可以在其声明中通过初始化表达式完成，也可以在实例初始化块或构造器中进行；（3）方法参数变量在方法被调用时创建，同时被初始化为对应实参值，终止于方法体结束，在此期间其值不能改变。（4）构造器参数变量在构造器被调用时创建，同时被初始化为对应实参值，终止于构造器体结束，在此期间其值不能改变；（5）异常处理器参数变量在有异常被tru语句的catch子句捕捉到时创建，同时被初始化为实际的异常对象，终止于catch语句块结束，在此期间其值不能改变；（6）局部变量在其值被访问之前必须被明确赋值；</p>
-<p><strong>华为面试题中曾经问过这样一个问题：为什么不能根据返回类型来区分重载，为什么？</strong></p>
-<p>方法的重载，即使返回值类型不同，也不能改变实现功能相同或类似这一既定事实；同时方法的重载只是要求两同三不同，即在同一个类中，相同的方法名称，参数列表当中的参数类型、个数、顺序不同；跟权限修饰符和返回值类无关</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -2478,12 +2351,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-count">39</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">15</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
