@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="并查集的理解与实现什么是并查集并查集就是对集合三种常用操作的再一次抽象。分别是集合的合并（Union）、元素的搜索（Find）和对集合的分解。因为3种操作非常常用并且又不囿于集合，所以就把这一操作抽象成一个独立的数据结构。 标准定义： 在一些应用问题中，需要将n个不同的元素划分成一组不相交的集合。开始时每个元素自成一个单元素集合，然后按照一定规律将归于同一组元素的集合合并，在此过程需要反复查询某个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并查集">
+<meta property="og:url" content="http://example.com/2021/01/07/%E5%B9%B6%E6%9F%A5%E9%9B%86/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="并查集的理解与实现什么是并查集并查集就是对集合三种常用操作的再一次抽象。分别是集合的合并（Union）、元素的搜索（Find）和对集合的分解。因为3种操作非常常用并且又不囿于集合，所以就把这一操作抽象成一个独立的数据结构。 标准定义： 在一些应用问题中，需要将n个不同的元素划分成一组不相交的集合。开始时每个元素自成一个单元素集合，然后按照一定规律将归于同一组元素的集合合并，在此过程需要反复查询某个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTYzNDE0NDA4?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTY0MjU5NzI1?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTcwNzQzNDU4?x-oss-process=image/format,png">
+<meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTcyMDAwOTU0?x-oss-process=image/format,png">
+<meta property="article:published_time" content="2021-01-07T06:07:56.000Z">
+<meta property="article:modified_time" content="2021-01-07T07:40:35.581Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTYzNDE0NDA4?x-oss-process=image/format,png">
+
+<link rel="canonical" href="http://example.com/2021/01/07/%E5%B9%B6%E6%9F%A5%E9%9B%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>并查集 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/07/%E5%B9%B6%E6%9F%A5%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          并查集
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-07 14:07:56 / 修改时间：15:40:35" itemprop="dateCreated datePublished" datetime="2021-01-07T14:07:56+08:00">2021-01-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="并查集的理解与实现"><a href="#并查集的理解与实现" class="headerlink" title="并查集的理解与实现"></a>并查集的理解与实现</h1><h2 id="什么是并查集"><a href="#什么是并查集" class="headerlink" title="什么是并查集"></a>什么是并查集</h2><p>并查集就是对集合三种常用操作的再一次抽象。分别是集合的合并（Union）、元素的搜索（Find）和对集合的分解。因为3种操作非常常用并且又不囿于集合，所以就把这一操作抽象成一个独立的数据结构。</p>
+<p><strong>标准定义：</strong></p>
+<p>在一些应用问题中，需要将n个不同的元素划分成一组不相交的集合。开始时每个元素自成一个单元素集合，然后按照一定规律将归于同一组元素的集合合并，在此过程需要反复查询某个元素归属于哪个集合的运算，适合于描述着类问题的抽象数据类型称为并查集（union-find set）</p>
+<h2 id="并查集的3种操作"><a href="#并查集的3种操作" class="headerlink" title="并查集的3种操作"></a>并查集的3种操作</h2><p>并查集的三种操作是：</p>
+<blockquote>
+<p>(1)Union(Root1,Root2):把子集合Root2并入集合Root1中。要求这两个集合互不相交，否则不执行合并。</p>
+<p>(2)Find(x):搜索单元素x所在的集合，并返回该集合的名字。</p>
+<p>(3)UnionFindSets(s):构造函数，将并查集中s个元素初始化为s个只有一个单元素的子集合。</p>
+</blockquote>
+<h2 id="并查集的实现方案"><a href="#并查集的实现方案" class="headerlink" title="并查集的实现方案"></a>并查集的实现方案</h2><p>实现并查集的方式有多种，这里主要总结用<strong>树结构</strong>来实现并查集纪其相关操作。</p>
+<p>用这种实现方式，每个集合用一棵树表示，树的每一个节点代表集合的一个单元素。所有各个集合的全集合构成一个森林，并用树与森林的父指针表示法来实现。其下标代表元素名。第一个数组元素代表包含集合元素I的树节点。树的根节点的下标代表集合名，根节点的父为-1，表示集合中元素个数。</p>
+<p>下面看一个例子：<br>全集合是S = {0，1，2，3，4，5，6，7，8，9}，初始化每个元素自成为一个单元素子集合</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTYzNDE0NDA4?x-oss-process=image/format,png" alt="这里写图片描述"></p>
+<p>经过一段时间的计算，这些子集合并成3个集合，他们是全集合S的子集合：S1 = {0，6，7，8}，S2= {1，4，9}，S3 = {2，3，5}。则表示他们并查集的树形结构如下图：</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTY0MjU5NzI1?x-oss-process=image/format,png" alt="这里写图片描述"></p>
+<p>上面数组中的元素值有两种含义：<br>（1）负数表示当前节点是树的根节点，负数的绝对值表示树中节点的个数，也即集合中元素的个数。<br>（2）正数表示其所属的树的根节点，由树形表示很容易理解，这也是树的父指针表示的定义。<br>经过上面对相关数据的组织，再回头来看并查集的3中核心操作是怎样依托于树来实现的：</p>
+<p>（1）将root2并入到root1中，其实就可以直接把root2的数组元素（就是他的父节点）改成root1的名字（就是他所在的数组下标）。<br>下面的图表示了合并两个子集合的过程：</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTcwNzQzNDU4?x-oss-process=image/format,png" alt="这里写图片描述"></p>
+<p>（2）查找x所属于的根节点（或者说是x所属于的集合），就可以一直找array[x]，直到array[x]小于0，则证明找到了根（所在集合）。<br>下面的图示意了查找一个节点所属集合的过程：</p>
+<p><img src="https://imgconvert.csdnimg.cn/aHR0cDovL2ltZy5ibG9nLmNzZG4ubmV0LzIwMTcxMTI1MTcyMDAwOTU0?x-oss-process=image/format,png" alt="这里写图片描述"></p>
+<p>（3）将整个集合初始化为单元素集合，其实就是建立树的父指针数组的过程，把数组元素全初始化为-1，也就表示了每个元素都各占一个集合。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">*树结构构建并查集，其中树用父指针形式表示</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> DefaultSize = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UFSets</span> &#123;</span>										<span class="comment">//集合中的各个子集合互不相交</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	UFSets(<span class="keyword">int</span> sz = DefaultSize);					<span class="comment">//构造函数       (并查集的基本操作)</span></span><br><span class="line">	~UFSets() &#123; <span class="keyword">delete</span>[] parent; &#125;					<span class="comment">//析构函数</span></span><br><span class="line">	UFSets&amp; <span class="keyword">operator</span> = (UFSets&amp; R);					<span class="comment">//重载函数：集合赋值</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Union</span><span class="params">(<span class="keyword">int</span> Root1, <span class="keyword">int</span> Root2)</span></span>;				<span class="comment">//两个子集合合并 (并查集的基本操作)</span></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">Find</span><span class="params">(<span class="keyword">int</span> x)</span></span>;								<span class="comment">//搜寻x所在集合	 (并查集的基本操作)</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">WeightedUnion</span><span class="params">(<span class="keyword">int</span> Root1, <span class="keyword">int</span> Root2)</span></span>;		<span class="comment">//加权的合并算法 </span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">int</span> *parent;		<span class="comment">//集合元素数组(父指针数组)</span></span><br><span class="line">	<span class="keyword">int</span> size;			<span class="comment">//集合元素的数目</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">UFSets::UFSets(<span class="keyword">int</span> sz) &#123;</span><br><span class="line">	<span class="comment">//构造函数，sz是集合元素的个数,父指针数组的范围0到sz-1</span></span><br><span class="line">	size = sz;										<span class="comment">//集合元素的个数</span></span><br><span class="line">	parent = <span class="keyword">new</span> <span class="keyword">int</span>[size];							<span class="comment">//开辟父指针数组</span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i ++) &#123;				<span class="comment">//初始化父指针数组</span></span><br><span class="line">		parent[i] = <span class="number">-1</span>;								<span class="comment">//每个自成单元素集合</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">UFSets::Find</span><span class="params">(<span class="keyword">int</span> x)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//函数搜索并返回包含元素x的树的根</span></span><br><span class="line">	<span class="keyword">while</span> (parent[x] &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">		x = parent[x];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> x;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UFSets::Union</span><span class="params">(<span class="keyword">int</span> Root1, <span class="keyword">int</span> Root2)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//函数求两个不相交集合的并，要求Root1与Root2是不同的，且表示了子集合的名字</span></span><br><span class="line">	parent[Root1] += parent[Root2];					<span class="comment">//更新Root1的元素个数</span></span><br><span class="line">	parent[Root2] = Root1;							<span class="comment">//令Root1作为Root2的父节点</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">UFSets::WeightedUnion</span><span class="params">(<span class="keyword">int</span> Root1, <span class="keyword">int</span> Root2)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//使用节点个数探查方法求两个UFSets集合的并</span></span><br><span class="line">	<span class="keyword">int</span> r1 = Find(Root1);							<span class="comment">//找到root1集合的根</span></span><br><span class="line">	<span class="keyword">int</span> r2 = Find(Root2);							<span class="comment">//找到root2集合的根</span></span><br><span class="line">	<span class="keyword">if</span> (r1 != r2) &#123;									<span class="comment">//两个集合不属于同一树</span></span><br><span class="line">		<span class="keyword">int</span> temp = parent[r1] + parent[r2];			<span class="comment">//计算总节点数</span></span><br><span class="line">		<span class="keyword">if</span> (parent[r2] &lt; parent[r1]) &#123;				<span class="comment">//注意比较的是负数，越小元素越多,此处是r2元素多</span></span><br><span class="line">			parent[r1] = r2;						<span class="comment">//r1作为r2的孩子 </span></span><br><span class="line">			parent[r2] = temp;						<span class="comment">//更新r2的节点个数</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> &#123;</span><br><span class="line">			parent[r2] = r1;						<span class="comment">//...</span></span><br><span class="line">			parent[r1] = temp;						<span class="comment">//...</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/07/ajax%E6%8A%80%E6%9C%AF/" rel="prev" title="ajax技术">
+      <i class="fa fa-chevron-left"></i> ajax技术
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%84%E7%90%86%E8%A7%A3%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.</span> <span class="nav-text">并查集的理解与实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%B9%B6%E6%9F%A5%E9%9B%86"><span class="nav-number">1.1.</span> <span class="nav-text">什么是并查集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%843%E7%A7%8D%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">并查集的3种操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E6%9F%A5%E9%9B%86%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.</span> <span class="nav-text">并查集的实现方案</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">38</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
