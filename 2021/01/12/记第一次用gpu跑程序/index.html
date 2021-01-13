@@ -20,15 +20,22 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Laplace">
-<meta property="og:url" content="http://example.com/tags/%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/index.html">
+  <meta name="description" content="1、首先cmd执行nvidia-smi命令查看一下显卡配置。  可以看到服务器是有GPU并有一些后台应用使用了GPU资源。确定有GPU之后下一步就是想办法如何让自己的python程序跑在指定的GPU上。 2、keras使用CPU和GPU运算没有任何的语法差别，它能自动地判断能不能使用GPU运算，能的话就用GPU，不能则CPU（所以之前没配置GPU之前都是跑在CPU上）。 12import osos">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记第一次用gpu跑程序">
+<meta property="og:url" content="http://example.com/2021/01/12/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%94%A8gpu%E8%B7%91%E7%A8%8B%E5%BA%8F/index.html">
 <meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="1、首先cmd执行nvidia-smi命令查看一下显卡配置。  可以看到服务器是有GPU并有一些后台应用使用了GPU资源。确定有GPU之后下一步就是想办法如何让自己的python程序跑在指定的GPU上。 2、keras使用CPU和GPU运算没有任何的语法差别，它能自动地判断能不能使用GPU运算，能的话就用GPU，不能则CPU（所以之前没配置GPU之前都是跑在CPU上）。 12import osos">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210112153848320.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210112160308759.png">
+<meta property="article:published_time" content="2021-01-12T07:35:31.000Z">
+<meta property="article:modified_time" content="2021-01-12T08:03:35.627Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210112153848320.png">
 
-<link rel="canonical" href="http://example.com/tags/%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF/">
+<link rel="canonical" href="http://example.com/2021/01/12/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%94%A8gpu%E8%B7%91%E7%A8%8B%E5%BA%8F/">
 
 
 <script id="page-configurations">
@@ -36,12 +43,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>标签: 网络相关技术 | Laplace</title>
+  <title>记第一次用gpu跑程序 | Laplace</title>
   
 
 
@@ -144,51 +151,101 @@
         <div class="content-wrap">
           
 
-          <div class="content tag">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <h2 class="collection-header">网络相关技术
-          <small>标签</small>
-        </h2>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/12/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%94%A8gpu%E8%B7%91%E7%A8%8B%E5%BA%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          记第一次用gpu跑程序
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-12 15:35:31 / 修改时间：16:03:35" itemprop="dateCreated datePublished" datetime="2021-01-12T15:35:31+08:00">2021-01-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+        <p>1、首先cmd执行<code>nvidia-smi</code>命令查看一下显卡配置。</p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20210112153848320.png" alt="image-20210112153848320"></p>
+<p>可以看到服务器是有GPU并有一些后台应用使用了GPU资源。确定有GPU之后下一步就是想办法如何让自己的python程序跑在指定的GPU上。</p>
+<p>2、keras使用CPU和GPU运算没有任何的语法差别，它能自动地判断能不能使用GPU运算，能的话就用GPU，不能则CPU（所以之前没配置GPU之前都是跑在CPU上）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>]=<span class="string">&quot;0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>在python程序头部敲上以上命令即可在GPU配置好的情况下使用0号GPU跑程序。</p>
+<p>3、如何配置GPU呢？主要需要四个部分。</p>
+<ul>
+<li><code>tensorflow-gpu</code>（运行<code>pip install tensorflow-gpu==1.14.0</code>）</li>
+<li>适合版本的NVDIA驱动（师傅已经安装好）</li>
+<li>CUDA(待安装)</li>
+<li>cuDNN（待安装）</li>
+</ul>
+<p>服务器上的环境配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tensorflow-gpu: 1.14.0</span><br><span class="line">keras: 2.2.4</span><br><span class="line">nvidia driver: 451.67 (驱动显卡工作的程序)</span><br><span class="line">CUDA: 10.0 (英伟达开发的用于GPU运算的框架)</span><br><span class="line">cuDNN: 7.6.4 (专用于深度神经网络的库)</span><br></pre></td></tr></table></figure>
+
+<p><strong>踩的坑：</strong></p>
+<p>一开始下载<code>CUDA v11.0</code>和8.0.4的<code>cuDNN</code>。在执行train.py程序时报错<code>ImportError: Could not find cudart64_100.dll</code>。报错信息为<code>CUDA</code>与<code>tensorflow-gpu</code>的版本不匹配，所以这里将<code>CUDA</code>进行降级，重新下10.0的<code>CUDA</code>。</p>
+<p>卸载过程主要就是将<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA</code>中v11.0的文件夹进行删除并删除CUDA的两个环境变量。</p>
+<p><code>cuDNN</code>也进行降级与<code>CUDA</code>的版本进行适配。</p>
+<p>下载完成之后，将<code>cuDNN</code>中的bin、include、lib文件夹中文件拷贝到<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0</code>中对应的文件夹即可。</p>
+<p>4、测试python程序</p>
+<p>在train.py中引入上述的两行程序点击RUN。之后就可以看到飞快的训练速度了~</p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20210112160308759.png" alt="image-20210112160308759"></p>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-10T10:45:23+08:00"
-              content="2020-12-10">
-          12-10
-        </time>
-      </div>
+      <footer class="post-footer">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/" itemprop="url">
-            <span itemprop="name">网络杂谈</span>
-          </a>
-      </div>
+        
 
-    </header>
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/11/Pilot%E6%9E%B6%E6%9E%84/" rel="prev" title="Pilot架构">
+      <i class="fa fa-chevron-left"></i> Pilot架构
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
   </article>
-
-    </div>
-  </div>
   
   
-  
-
   
 
 
