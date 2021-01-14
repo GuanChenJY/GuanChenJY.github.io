@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1.Statement的作用  用于执行不带参数的简单SQL语句 Prepared Statement对象用于执行预编译SQL语句。 Callable Statement对象用于执行对存储过程的调用。  2.在java中，对于不再使用的内存资源，如调用完成的方法，“垃圾回收器”会自动将其释放么？ 不会。方法调用时，会创建栈帧在栈中，调用完是程序自动出栈释放，而不是gc释放。JVM内存可简单分为三个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="牛客刷题">
+<meta property="og:url" content="http://example.com/2021/01/14/%E7%89%9B%E5%AE%A2%E5%88%B7%E9%A2%98/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="1.Statement的作用  用于执行不带参数的简单SQL语句 Prepared Statement对象用于执行预编译SQL语句。 Callable Statement对象用于执行对存储过程的调用。  2.在java中，对于不再使用的内存资源，如调用完成的方法，“垃圾回收器”会自动将其释放么？ 不会。方法调用时，会创建栈帧在栈中，调用完是程序自动出栈释放，而不是gc释放。JVM内存可简单分为三个">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537222061_12B6233B6EA3C9956865918F5E9B7240">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537178275_256EC3581646F19915DBB5C9F4D80330">
+<meta property="article:published_time" content="2021-01-14T07:01:53.000Z">
+<meta property="article:modified_time" content="2021-01-14T08:22:15.720Z">
+<meta property="article:author" content="GCC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537222061_12B6233B6EA3C9956865918F5E9B7240">
+
+<link rel="canonical" href="http://example.com/2021/01/14/%E7%89%9B%E5%AE%A2%E5%88%B7%E9%A2%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>牛客刷题 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/14/%E7%89%9B%E5%AE%A2%E5%88%B7%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          牛客刷题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-14 15:01:53 / 修改时间：16:22:15" itemprop="dateCreated datePublished" datetime="2021-01-14T15:01:53+08:00">2021-01-14</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>1.Statement的作用</strong></p>
+<ul>
+<li>用于执行不带参数的简单SQL语句</li>
+<li>Prepared Statement对象用于执行预编译SQL语句。</li>
+<li>Callable Statement对象用于执行对存储过程的调用。</li>
+</ul>
+<p><strong>2.在java中，对于不再使用的内存资源，如调用完成的方法，“垃圾回收器”会自动将其释放么？</strong></p>
+<p>不会。方法调用时，会创建栈帧在栈中，调用完是程序自动出栈释放，而不是gc释放。JVM内存可简单分为三个区：</p>
+<ul>
+<li>堆区，用于存放所有对象，是线程共享的。（数组也属于对象）</li>
+<li>栈区，用于存放基本数据类型的数据和对象的引用，是线程私有的。</li>
+<li>方法区，用于存放类信息、常量、静态变量、编译后的字节码等，是线程共享的</li>
+</ul>
+<p>gc主要针对堆区。</p>
+<p><strong>3.字符流</strong></p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537222061_12B6233B6EA3C9956865918F5E9B7240" alt="img"></p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537178275_256EC3581646F19915DBB5C9F4D80330" alt="img"></p>
+<p><strong>4.java创建对象的方式</strong></p>
+<p>5种方式：</p>
+<ul>
+<li>使用new关键字</li>
+<li>使用反射的Class类的newInstance方法</li>
+<li>使用反射的Constructor类的newInstance（）方法</li>
+<li>使用对象克隆clone（）方法</li>
+<li>使用反序列化（ObjectInputStream）的readObject()方法</li>
+</ul>
+<p><strong>5.java包的作用</strong></p>
+<p>为了更好地组织类，java提供了包机制，用于区别类名的命名空间。</p>
+<p>包的作用：</p>
+<ul>
+<li>把功能相似或相关的类或接口组织在同一个包中，方便类的查找和使用。</li>
+<li>如同文件夹一样，包也采用了树形目录的存储方式。同一个包中的类名字是不同的，不同的包中的类的名字是可以相同的，当同时调用两个不同包中相同类名的类时，应该加上包名加以区别。因此包可以避免名字冲突。</li>
+<li>包也限定了访问权限，拥有包访问权限的类才能访问某个包中的类。java使用包（package）这种机制是为了防止命名冲突，访问控制，提供搜索和定位类（class）、接口、枚举（enumerations）和注释（annotation）等。</li>
+</ul>
+<p><strong>6.File类的常用方法和说明</strong></p>
+<p>1.访问文件名相关方法：</p>
+<ul>
+<li><p>String getName(); 返回此File对象所表示的文件名和路径名（如果是路径，则返回最后一级子路径名）。</p>
+</li>
+<li><p>String getPath(); 返回此File对象所对应的路径名。</p>
+</li>
+<li><p>File getAbsolutePath(); 返回此File对象所对应的绝对路径名。</p>
+</li>
+<li><p>String getParent(); 返回此File对象所对应目录（最后一级子目录）的父路径名。</p>
+</li>
+<li><p>boolean renameTo(File newName); 重命名此File对象所对应的文件或目录，如果重命名成功，则返回true:否则返回false.<strong>（A）</strong></p>
+</li>
+</ul>
+<p>2.文件检测相关方法</p>
+<ul>
+<li>boolean exists(); 判断File对象所对应的文件或目录是否存在。</li>
+<li>boolean canWrite(); 判断File对象所对应的目录或文件是否可写。</li>
+<li>boolean canRead(); 判断File对象所对应的目录或文件是否可读。</li>
+<li>boolean isFile(); 判断File对象所对应的是否是文件，而不是目录。</li>
+<li>boolean isDirectory(); 判断File对象所对应的是否是目录，而不是文件。</li>
+<li>boolean isAbsolute(); 判断File对象所对应的文件或目录是否是绝对路径。该方法消除了不同平台的差异，可以直接判断File对象是否为绝对路径。在UNIX/Linux/BSD等系统上，如果路径名开头是一条斜线（/）,则表明该File对象对应一个绝对路径；在Windows等系统上，如果路径开头是盘符，则说明它是绝对路径。</li>
+</ul>
+<p>3.获取常规文件信息</p>
+<ul>
+<li>long lastModified(); 返回文件最后修改时间。</li>
+<li>long length(); 返回文件内容的长度。</li>
+</ul>
+<p>4.文件操作相关的方法</p>
+<ul>
+<li>boolean createNewFile(); 当此File对象所对应的文件不存在时，该方法将新建的一个该File对象所指定的新文件，如果创建成功则返回true；否则返回false.<strong>(C)</strong></li>
+<li>boolean delete(); 删除File对象所对应的文件或路径。</li>
+<li>static File CreateTempFile(String prefix,String suffix);在默认的临时文件目录创建一个临时空文件，使用给定前缀、系统生成的随机数和给定后缀作为文件名。这是一个静态方法，可以直接通过File来调用。preFix参数必须至少是3个字节长。建议前缀使用一个短的、有意义的字符串。建议前缀使用一个短的、有意义的字符串，比如”hjb“ 或”main”. suffix参数可以为null,在这种情况下，将使用默认的后缀”.tmp”.</li>
+<li>static File CreateTempFile(String prefix,String suffix,File directory);在directory所指定的目录中创建一个临时空文件，使用给定前缀、系统生成的随机数和给定后缀作为文件名。这是一个静态方法，可以直接通过File来调用。</li>
+<li>void deleteOnExit(); 注册一个删除钩子，指定当Java虚拟机退出时，删除File对象随对应的文件和目录。</li>
+</ul>
+<p>5.目录操作相关方法<strong>（D）</strong></p>
+<ul>
+<li>boolean mkdir(); 试图创建一个File对象所对应的目录，如果创建成功，则返回true;否则返回false. 调用该方法时File对象必须对应一个路径，而不是一个文件。</li>
+<li>String[] list(); 列出File对象的所有子文件名和路径名，返回String数组。</li>
+<li>File[] listFiles(); 列出File对象的所有子文件和路径，返回File数组。</li>
+<li>static File[] listRoots(); 列出系统所有的根路径。这是一个静态方法，可以直接通过File类来调用。</li>
+</ul>
+<p><strong>7.几种内部类</strong></p>
+<p>在java中，可以将一个类定义在另一个类里面或者一个方法里面，这样的类称为内部类，广泛意义上的内部类一般包括四种：成员内部类，局部内部类，匿名内部类，静态内部类。</p>
+<p>1、成员内部类</p>
+<ul>
+<li>该类像是外部类的一个成员，可以无条件的访问外部类的所有成员属性和成员方法（包括private成员和静态成员）；</li>
+<li>成员内部类拥有与外部类同名的成员变量时，会发生隐藏现象，即默认情况下访问的是成员内部类中的成员。如果要访问外部类中的成员，需要以下形式访问：【外部类.this.成员变量或外部类.this.成员方法】</li>
+<li>在外部类中如果要访问内部类的成员，必须先创建一个成员内部类的对象，再通过指向这个对象的引用来访问；</li>
+<li>成员内部类是依附外部类而存在的，也就是说，如果要创建成员内部类的对象，前提是必须存在一个外部类的对象；</li>
+<li>内部类可以拥有private访问权限，protected访问权限，public访问权限及包访问权限。如果成员内部类用private修饰，则只能在外部类的内部访问；如果用public修饰，则任何地方都能访问；如果用protected修饰，则只能在同一个包下或者继承外部类的情况下访问；如果是默认访问权限，则只能在同一个包下访问。外部类只能被public和包访问两种权限。</li>
+</ul>
+<p>2、局部内部类</p>
+<ul>
+<li>局部内部类是定义在一个方法或者一个作用域里面的类，它和成员内部类的区别在于局部内部类的访问权限于方法内或者该作用域内；</li>
+<li>局部内部类就像是方法里面的一个局部变量一样，是不能有public、protected、private以及static修饰符的。</li>
+</ul>
+<p>3、匿名内部类</p>
+<ul>
+<li>一般使用匿名内部类的方法来编写事件监听代码；</li>
+<li>匿名内部类是不能有访问修饰符和static修饰符的；</li>
+<li>匿名内部类是唯一一种没有构造器的类；</li>
+<li>匿名内部类用于继承其他类或是实现接口，并不需要增加额外的方法，只是对继承方法的实现或是重写。</li>
+</ul>
+<p>4、内部静态类</p>
+<ul>
+<li>静态内部类是不需要依赖于外部类的，这点和类的静态成员属性有点类似；</li>
+<li>不能使用外部类的非static成员变量或者方法。</li>
+</ul>
+<p><strong>8.关于值相等</strong></p>
+<p>1、int与Integer、new Integer()进行==比较时，结果永远为true；</p>
+<p>2、Integer与new Integer()进行==比较时，结果永远为false</p>
+<p>3、Integer与Integer进行==比较时，看范围；在大于等于-128小于等于127的范围内为true，在此范围外为false。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a1=<span class="number">127</span>;</span><br><span class="line">Integer a2=<span class="number">127</span>;</span><br><span class="line">System.out.println(a1==a2);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a3=<span class="number">127</span>;</span><br><span class="line">Integer a4=<span class="keyword">new</span> Integer;</span><br><span class="line">System.out.println(a3==a4);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a5=<span class="number">128</span>;</span><br><span class="line">Integer a6=<span class="number">128</span>;</span><br><span class="line">System.out.println(a5==a6);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a7=<span class="number">128</span>;</span><br><span class="line">Integer a8=<span class="keyword">new</span> Integer(<span class="number">128</span>);</span><br><span class="line">System.out.println(a7==a8);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//Integer与Integer比较</span></span><br><span class="line">Integer a9=<span class="number">127</span>;</span><br><span class="line">Integer a10=<span class="number">127</span>;</span><br><span class="line">System.out.println(a9==a10);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">Integer a11=<span class="number">128</span>;</span><br><span class="line">Integer a12=<span class="number">128</span>;</span><br><span class="line">System.out.println(a11==a12);	<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//new Integer()与Integer比较</span></span><br><span class="line">Integer a13=<span class="number">127</span>;</span><br><span class="line">Integer a14=<span class="keyword">new</span> Integer(<span class="number">127</span>);</span><br><span class="line">System.out.println(a13==a14);	<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line">Integer a15=<span class="number">128</span>;</span><br><span class="line">Integer a16=<span class="number">127</span>;</span><br><span class="line">System.out.println(a15==a16);	<span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>9.执行顺序</strong></p>
+<p>父类静态代码块-&gt;子类静态代码块-&gt;父类构造代码块-&gt;父类构造函数-&gt;子类构造代码块-&gt;子类构造函数</p>
+<p><strong>10.String,StringBuilder,StringBuffer</strong></p>
+<p>StringBuilder，StringBuffer，String都是final的，但是为什么StringBuilder，StringBuffer可以进行修改呢，因为不可变包括的是，引用不可变及对象不可变，而这三个都是属于引用不可变，（也就是地址不要变，里面的内容随心所欲），而StringBuilder，StringBuffer中都包含append方法，可对对象中的内容进行增加。</p>
+<p><strong>11.HashMap与HashTable区别</strong></p>
+<p>HashMap是map接口的实现类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而Hashtable不允许。</p>
+<p>HashTable是线程安全Collection。</p>
+<p>区别如下：</p>
+<ul>
+<li>HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。</li>
+<li>HashMap把Hashtable的contains方法去掉了，改成containsValue和containsKey。因为contains方法容易让人引起误解。</li>
+<li>HashTable继承自Dictionary类，而HashMap是java1.2引进的Map interface的一个实现。</li>
+<li>HashTable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap就必须为之提供外同步。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/12/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%94%A8gpu%E8%B7%91%E7%A8%8B%E5%BA%8F/" rel="prev" title="记第一次用gpu跑程序">
+      <i class="fa fa-chevron-left"></i> 记第一次用gpu跑程序
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
