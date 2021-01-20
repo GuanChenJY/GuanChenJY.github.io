@@ -150,6 +150,106 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/30/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/30/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/" class="post-title-link" itemprop="url">动态规划</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-30 14:54:25 / 修改时间：15:17:42" itemprop="dateCreated datePublished" datetime="2020-12-30T14:54:25+08:00">2020-12-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><h2 id="动态规划与递归"><a href="#动态规划与递归" class="headerlink" title="动态规划与递归"></a>动态规划与递归</h2><h3 id="啥叫自顶向下"><a href="#啥叫自顶向下" class="headerlink" title="啥叫自顶向下"></a>啥叫自顶向下</h3><p>自顶向下是从上向下延伸，都是从一个规模较大的原问题，向下逐渐分解规模，直到触底，然后逐层返回答案，这就叫自顶向下。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Fibonacci</span><span class="params">(<span class="keyword">size_t</span> n)</span> </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="keyword">if</span>(n == <span class="number">1</span> || n == <span class="number">2</span>) </span><br><span class="line">    &#123; <span class="keyword">return</span> n; &#125; </span><br><span class="line">    <span class="keyword">return</span> Fibonacci1(n<span class="number">-1</span>) + Fibonacci1(n<span class="number">-2</span>); </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>递归实现看起来很优雅，实际上有很大的限制。计算的数值稍微大一点，基本上是算不出来的。</p>
+<h3 id="啥叫自底向上"><a href="#啥叫自底向上" class="headerlink" title="啥叫自底向上"></a>啥叫自底向上</h3><p>反过来，直接从最底下，最简单，问题规模最小的f(1)和f(2)开始往上推，直到推到我们想要的答案f(20)，这就是动态规划的思路，这也是为什么动态规划一般都脱离了递归，而是由循环迭代完成计算。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 动态规划法计算斐波那契数列</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fib</span><span class="params">(<span class="keyword">int</span> N)</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; <span class="title">dp</span><span class="params">(N + <span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">    dp[<span class="number">1</span>] = dp[<span class="number">2</span>] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">3</span>; i &lt;= N; i++)</span><br><span class="line">        dp[i] = dp[i - <span class="number">1</span>] + dp[i - <span class="number">2</span>];</span><br><span class="line">    <span class="keyword">return</span> dp[N];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="状态转移方程"><a href="#状态转移方程" class="headerlink" title="状态转移方程"></a>状态转移方程</h3><p>这里，引出状态转移方程这个名字，实际上就是描述问题结构的数学形式：</p>
+<p>列出状态转移方程是解决问题的核心。很容易发现，其实状态转移方程直接代表着暴力解法。动态规划最困难的就是写出状态转移方程。</p>
+<h3 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">7</span><br><span class="line">3 8</span><br><span class="line">8 1 0</span><br><span class="line">2 7 4 4</span><br><span class="line">4 5 2 6 5</span><br></pre></td></tr></table></figure>
+
+<p>从上到下选择一条路，使得经过的数字之和最大。</p>
+<p>路径上的每一步只能往左下走或者右下走。</p>
+<p><strong>递归解法</strong></p>
+<p>可以看出每走第n行第m列时有两种后续：向下或者向右下</p>
+<p>由于最后一行可以确当，当作边界条件，所以可以采用递归求解：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMax</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> MAX = <span class="number">101</span>;</span><br><span class="line">		<span class="keyword">int</span>[][] D = <span class="keyword">new</span> <span class="keyword">int</span>[MAX][MAX];   <span class="comment">//存储数字三角形</span></span><br><span class="line">		<span class="keyword">int</span> n;              <span class="comment">//n表示层数</span></span><br><span class="line">		<span class="keyword">int</span> i = <span class="number">0</span>; <span class="keyword">int</span> j = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">int</span> maxSum = getMaxSum(D,n,i,j);</span><br><span class="line">		<span class="keyword">return</span> maxSum;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getMaxSum</span><span class="params">(<span class="keyword">int</span>[][] D,<span class="keyword">int</span> n,<span class="keyword">int</span> i,<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">		<span class="keyword">if</span>(i == n)&#123;</span><br><span class="line">			<span class="keyword">return</span> D[i][j];</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">int</span> x = getMaxSum(D,n,i+<span class="number">1</span>,j);</span><br><span class="line">		<span class="keyword">int</span> y = getMaxSum(D,n,i+<span class="number">1</span>,j+<span class="number">1</span>);</span><br><span class="line">		<span class="keyword">return</span> Math.max(x,y)+D[i][j];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>重复计算</strong></p>
+<p>上面的解答过程时间复杂度难以想象的大，那是因为他对有的数字的解进行了多次的重复计算，具体如下图：</p>
+<p>括号中代表计算次数，默认为1次。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">7</span><br><span class="line">3 8</span><br><span class="line">8 1(2) 0</span><br><span class="line">2 7(3) 4(3) 4</span><br><span class="line">4 5(4) 2(6) 6(4) 5</span><br></pre></td></tr></table></figure>
+
+<p>如果每次都把结果保存下来，复杂度就会大大降低。</p>
+<p><strong>动态规划解法</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = n-<span class="number">1</span>; i &gt;= <span class="number">1</span>; i--) &#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= i; j++&gt;) &#123;</span><br><span class="line">		maxSum[i][j] = Math.max(maxSum[i+<span class="number">1</span>][j], maxSum[i+<span class="number">1</span>][j+<span class="number">1</span>]);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><p>动态规划一般可分为线性动规、区域动规、树形动规、背包动规四类。</p>
+<p>举例：</p>
+<p>线性动规：拦截导弹、合唱队形、挖地雷、建学校、剑客决斗等；</p>
+<p>区域动规：石子合并、加分二叉树、统计单词个数、炮兵布阵等；</p>
+<p>树形动规：贪吃的九头龙、二分查找树、聚会的欢乐、数字三角形等；</p>
+<p>背包问题：01背包问题、完全背包问题、分组背包问题、二维背包、装箱问题等</p>
+<h3 id="基本思想"><a href="#基本思想" class="headerlink" title="基本思想"></a>基本思想</h3><p>动态规划算法通常用于求解具有某种最优性质的问题。</p>
+<p>在这类问题中，可能会有许多可行解。每一个解都对应于一个值，我们希望找到具有最优值得解。</p>
+<p>动态规划算法与分治法类似，其基本思想也是将待求问题分解成若干个子问题，先求解子问题，然后从这些子问题的解得到原问题的解。</p>
+<p><strong>与分治法不同的是，适合用于动态规划求解的问题，经分解得到子问题往往不是互相独立的。</strong></p>
+<p>若用分治法来解这类问题，则分解得到的子问题数目太多，有些子问题被重复计算了很多次。</p>
+<p><strong>如果我们能够保存已解决的子问题的答案，而在需要时再找出已求得的答案，这样就可以避免大量的重复计算，节省时间。</strong></p>
+<p>我们可以用一个表来记录所有已解的子问题的答案。</p>
+<p>不管该子问题以后是否被用到，只要它被计算过，就将其结果填入表中。这就是动态规划法的基本思路。</p>
+<p>具体的动态规划算法多种多样，但它们具有相同的填表格式。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/29/gRPC%E4%BB%8B%E7%BB%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1707,92 +1807,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">JDBC基础</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-12-22 09:51:17 / 修改时间：10:18:22" itemprop="dateCreated datePublished" datetime="2020-12-22T09:51:17+08:00">2020-12-22</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="jdbc"><a href="#jdbc" class="headerlink" title="jdbc"></a>jdbc</h1><h2 id="数据库与数据源"><a href="#数据库与数据源" class="headerlink" title="数据库与数据源"></a>数据库与数据源</h2><p><strong>什么是数据源？</strong></p>
-<p>数据源定义的是连接到实际数据库的一条路径而已，数据源中并无真正的数据，它仅仅记录的是你连接到哪个数据库，以及如何连接的，如odbc数据源。也就是说数据源仅仅是数据库的连接名称，一个数据库可以有多个数据源连接。</p>
-<p>在java语言中，DataSource对象就是一个代表数据源实体的对象。一个数据源就是一个用来存储数据的工具，它可以是复杂的大型企业级数据库，也可以是简单得只有行和列得文件。数据源可以位于在服务器端，也可以位于客户端。</p>
-<p><strong>什么是数据库连接池？</strong></p>
-<p>数据库连接是负责分配、管理和释放数据库连接。使用数据库连接池是因为数据库连接是一种关键的有限的昂贵得资源，这一点在多用户的网页应用程序中体现得尤为突出。如weblogic、tomcat、WebSphere容器都实现了数据库连接池，但是数据库连接池是可以独立出来自己编码实现的。</p>
-<p>数据库连接池在系统启动时初始化了一定量maxIdle=idlenum的数据库连接，即没有他的使用中的链接被释放的情况下，连接池中保存的最大空闲链接数。数据库连接请求如果没有超过idle的值则直接去连接池中获取；如果超过了maxIdle的值则新建一个数据库连接；但如果数据库连接池中的连接总数超过了maxActive=activenum则（如下处理）：</p>
-<ol>
-<li>直接抛出错误</li>
-<li>让想要借出连接的线程等待一段时间，如果等不到，再抛错</li>
-<li>每隔一段检查一次pool，直到有可用连接，否则一直等下去</li>
-<li>永远可以拿到（视情况需要maxActive不设置或0或负）</li>
-</ol>
-<p>但当没有可以使用的数据库链接的时候，连接池将要等待一个链接被返回的最长时间（毫秒）</p>
-<p>maxWait=waitnum，超过这个时间就要抛出异常。</p>
-<p><strong>什么是jndi?</strong></p>
-<p>jndi全称是<code>java naming and directory interface</code>。简单点就是你按命名规则给一个东西命名然后你就可以通过该名字在特定环境下直接查找到该东西了。</p>
-<p>JNDI是用于向java程序提供目录和命名功能的API。可以简单地把JNDI理解为一种将对象和名字绑定的技术，对象工厂负责生产出对象，这些对象都和唯一的名字绑定。外部程序可以通过名字来获取对某个对象的引用。在一个文件系统中，文件名被绑定给文件。在DNS中，一个ip地址绑定一个url。在目录服务中，一个对象名被绑定给一个对象实体。</p>
-<p>在Intranets(企业内部网)和Internates（互联网）中目录服务(Directory service)都非常重要，它规范了命名规则，让人们容易理解实体及之间的关系。JNDI是Java平台的一个标准扩展，提供了一组接口、类和关于命名空间的概念。JNDI目前所支持的技术包括LDAP、CORBA Common Object Service（COS）名字服务、RMI、NDS、DNS、Windows注册表等等。</p>
-<p>jndi被设计成独立于特定的目录服务，所以各种各样的目录都可以通过相同的方式进行访问。这样使用jndi的java程序员不仅可以获得统一规整的命名和目录，而且可以通过多层的命名方案无缝访问(seamless acess)目录对象。</p>
-<p><strong>数据源与数据库连接池关系？</strong></p>
-<p>我们通过第三方工具来使用数据源来实现对数据库数据操作。一个数据库连接池可以给它创建多个数据源，如一个人有别名；如果单纯使用jdbc连接数据库是web容器你要什么就去连什么。这样做没人看不耗内存，量大了你就死机。可以这样理解，数据源表示一个与数据库的连接（传统）或者表示很多与数据库的连接（使用数据库连接池）。数据源是用于访问连接池或多池的JNDI对象，多池的主要目的是提高可用性和在一组连接池间实现负载均衡。</p>
-<p><strong>数据源与JNDI关系？</strong></p>
-<p>数据源是在JDBC 2.0中引入的一个概念。在JDBC 2.0扩展包中定义了javax.sql.DataSource接口来描述这个概念。如果用户希望建立一个数据库连接，通过查询在JNDI服务中的数据源，可以从数据源中获取相应的数据库连接。这样用户就只需要提供一个逻辑名称（Logic Name），而不是数据库登录的具体细节。即DataSource采用Java的JNDI技术，来获得DataSource对象的引用。当然各种web容器把DataSource作为一种可以配置的JNDI资源来处理如tomcat。生成DataSource对象的工厂为org.apache.commons.dbcp.BasicDataSourceFactory。</p>
-<p><strong>jdbc基础</strong></p>
-<p>java database connectivity standard 是一套规范的面向应用程序的接口，通过它可以访问各类关系数据库。各个数据库会实现该接口作为驱动如jtds.jar，当然可以自己写实现。</p>
-<p>jdbc是低级api，提供访问数据库的接口，是构建高级api的基础，利用纯java编写可以在任何操作系统任何java环境下工作。JDBC API 中定义了一些Java类分别用来表示与数据库的连接（connections）, SQL语句（SQL statements）, 结果集（result sets）以及其它的数据库对象, 使得Java程序能方便地与数据库交互并处理所得的结果。</p>
-<p>使用JDBC, 所有Java程序（包括Java applications , applets和servlet）都能通过SQL语句或存储在数据库中的过程（stored procedures）来存取数据库。要通过JDBC来存取某一特定的数据库，必须有相应的JDBC driver，它往往是由生产数据库的厂家提供，是连接JDBC API与具体数据库之间的桥梁。JDBC driver 是用于特定数据库的一套实施了JDBC接口的类集。</p>
-<p>简单的说，jdbc可以做三件事：与数据库建立连接，发送sql语句，处理结果。jdbc可以理解为odbc的纯java语言和面向对象的实现。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1864,12 +1878,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

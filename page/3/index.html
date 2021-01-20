@@ -150,6 +150,92 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/22/JDBC%E5%9F%BA%E7%A1%80/" class="post-title-link" itemprop="url">JDBC基础</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-22 09:51:17 / 修改时间：10:18:22" itemprop="dateCreated datePublished" datetime="2020-12-22T09:51:17+08:00">2020-12-22</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="jdbc"><a href="#jdbc" class="headerlink" title="jdbc"></a>jdbc</h1><h2 id="数据库与数据源"><a href="#数据库与数据源" class="headerlink" title="数据库与数据源"></a>数据库与数据源</h2><p><strong>什么是数据源？</strong></p>
+<p>数据源定义的是连接到实际数据库的一条路径而已，数据源中并无真正的数据，它仅仅记录的是你连接到哪个数据库，以及如何连接的，如odbc数据源。也就是说数据源仅仅是数据库的连接名称，一个数据库可以有多个数据源连接。</p>
+<p>在java语言中，DataSource对象就是一个代表数据源实体的对象。一个数据源就是一个用来存储数据的工具，它可以是复杂的大型企业级数据库，也可以是简单得只有行和列得文件。数据源可以位于在服务器端，也可以位于客户端。</p>
+<p><strong>什么是数据库连接池？</strong></p>
+<p>数据库连接是负责分配、管理和释放数据库连接。使用数据库连接池是因为数据库连接是一种关键的有限的昂贵得资源，这一点在多用户的网页应用程序中体现得尤为突出。如weblogic、tomcat、WebSphere容器都实现了数据库连接池，但是数据库连接池是可以独立出来自己编码实现的。</p>
+<p>数据库连接池在系统启动时初始化了一定量maxIdle=idlenum的数据库连接，即没有他的使用中的链接被释放的情况下，连接池中保存的最大空闲链接数。数据库连接请求如果没有超过idle的值则直接去连接池中获取；如果超过了maxIdle的值则新建一个数据库连接；但如果数据库连接池中的连接总数超过了maxActive=activenum则（如下处理）：</p>
+<ol>
+<li>直接抛出错误</li>
+<li>让想要借出连接的线程等待一段时间，如果等不到，再抛错</li>
+<li>每隔一段检查一次pool，直到有可用连接，否则一直等下去</li>
+<li>永远可以拿到（视情况需要maxActive不设置或0或负）</li>
+</ol>
+<p>但当没有可以使用的数据库链接的时候，连接池将要等待一个链接被返回的最长时间（毫秒）</p>
+<p>maxWait=waitnum，超过这个时间就要抛出异常。</p>
+<p><strong>什么是jndi?</strong></p>
+<p>jndi全称是<code>java naming and directory interface</code>。简单点就是你按命名规则给一个东西命名然后你就可以通过该名字在特定环境下直接查找到该东西了。</p>
+<p>JNDI是用于向java程序提供目录和命名功能的API。可以简单地把JNDI理解为一种将对象和名字绑定的技术，对象工厂负责生产出对象，这些对象都和唯一的名字绑定。外部程序可以通过名字来获取对某个对象的引用。在一个文件系统中，文件名被绑定给文件。在DNS中，一个ip地址绑定一个url。在目录服务中，一个对象名被绑定给一个对象实体。</p>
+<p>在Intranets(企业内部网)和Internates（互联网）中目录服务(Directory service)都非常重要，它规范了命名规则，让人们容易理解实体及之间的关系。JNDI是Java平台的一个标准扩展，提供了一组接口、类和关于命名空间的概念。JNDI目前所支持的技术包括LDAP、CORBA Common Object Service（COS）名字服务、RMI、NDS、DNS、Windows注册表等等。</p>
+<p>jndi被设计成独立于特定的目录服务，所以各种各样的目录都可以通过相同的方式进行访问。这样使用jndi的java程序员不仅可以获得统一规整的命名和目录，而且可以通过多层的命名方案无缝访问(seamless acess)目录对象。</p>
+<p><strong>数据源与数据库连接池关系？</strong></p>
+<p>我们通过第三方工具来使用数据源来实现对数据库数据操作。一个数据库连接池可以给它创建多个数据源，如一个人有别名；如果单纯使用jdbc连接数据库是web容器你要什么就去连什么。这样做没人看不耗内存，量大了你就死机。可以这样理解，数据源表示一个与数据库的连接（传统）或者表示很多与数据库的连接（使用数据库连接池）。数据源是用于访问连接池或多池的JNDI对象，多池的主要目的是提高可用性和在一组连接池间实现负载均衡。</p>
+<p><strong>数据源与JNDI关系？</strong></p>
+<p>数据源是在JDBC 2.0中引入的一个概念。在JDBC 2.0扩展包中定义了javax.sql.DataSource接口来描述这个概念。如果用户希望建立一个数据库连接，通过查询在JNDI服务中的数据源，可以从数据源中获取相应的数据库连接。这样用户就只需要提供一个逻辑名称（Logic Name），而不是数据库登录的具体细节。即DataSource采用Java的JNDI技术，来获得DataSource对象的引用。当然各种web容器把DataSource作为一种可以配置的JNDI资源来处理如tomcat。生成DataSource对象的工厂为org.apache.commons.dbcp.BasicDataSourceFactory。</p>
+<p><strong>jdbc基础</strong></p>
+<p>java database connectivity standard 是一套规范的面向应用程序的接口，通过它可以访问各类关系数据库。各个数据库会实现该接口作为驱动如jtds.jar，当然可以自己写实现。</p>
+<p>jdbc是低级api，提供访问数据库的接口，是构建高级api的基础，利用纯java编写可以在任何操作系统任何java环境下工作。JDBC API 中定义了一些Java类分别用来表示与数据库的连接（connections）, SQL语句（SQL statements）, 结果集（result sets）以及其它的数据库对象, 使得Java程序能方便地与数据库交互并处理所得的结果。</p>
+<p>使用JDBC, 所有Java程序（包括Java applications , applets和servlet）都能通过SQL语句或存储在数据库中的过程（stored procedures）来存取数据库。要通过JDBC来存取某一特定的数据库，必须有相应的JDBC driver，它往往是由生产数据库的厂家提供，是连接JDBC API与具体数据库之间的桥梁。JDBC driver 是用于特定数据库的一套实施了JDBC接口的类集。</p>
+<p>简单的说，jdbc可以做三件事：与数据库建立连接，发送sql语句，处理结果。jdbc可以理解为odbc的纯java语言和面向对象的实现。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/21/java%E5%B8%B8%E8%A7%81%E6%8E%92%E5%BA%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1699,102 +1785,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/10/%E7%BD%91%E7%BB%9C%E6%9D%82%E8%B0%88/" class="post-title-link" itemprop="url">网络杂谈</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-10 10:45:23" itemprop="dateCreated datePublished" datetime="2020-12-10T10:45:23+08:00">2020-12-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-23 18:50:39" itemprop="dateModified" datetime="2020-12-23T18:50:39+08:00">2020-12-23</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="VPN的原理"><a href="#VPN的原理" class="headerlink" title="VPN的原理"></a>VPN的原理</h2><p>VPN：英文全称是“Virtual Private Network”，就是虚拟专用网络。VPN通常拿来做两个事情，一个是可以让世界上任意2台机器进入一个虚拟的局域网中（当然这个局域网的数据通讯是加密的，很安全，用起来和一个家庭局域网没有区别），一个是可以用来翻墙。</p>
-<p>VPN比SS更加底层，它通过操作系统的接口直接虚拟出一张网卡，后续整个操作系统的网络通讯都将通过这张虚拟的网卡进行收发。这和任何一个代理的实现思路都差不多，应用层并不知道网卡是虚拟的，这样vpn虚拟网卡将以中间人的身份对数据进行加工，从而实现各种神奇的效果。具体来说，vpn是通过编写一套网卡驱动并注册到操作系统实现的虚拟网卡，这样数据只要经过网卡收发就可以进行拦截处理。</p>
-<p>一句话，vpn在IP层工作，而ss在TCP层工作。</p>
-<p><strong>翻墙用途</strong></p>
-<p><img src="http://yuerblog.cc/wp-content/uploads/2017/01/baiviet000181.png" alt="baiviet000181"></p>
-<p>需要在vps上部署vpn server，客户端所有数据将经过虚拟网卡的加密封装后都转发给vps上的vpn server，由它来转发给目标服务器，这和ss server原理类似，由vpn协议加密从而绕过GFW实现访问墙外网站，下面将以pptp vpn协议为例说明。</p>
-<p>例如要访问谷歌，那么客户端发出的数据包首先通过协议栈处理封装成IP包，其源地址是虚拟网卡的地址，例如：192.168.0.2，而目标地址是谷歌的IP。</p>
-<p>原始IP包交给虚拟网卡发送时，PPTP网卡驱动会按PPP协议对这个IP包整体加密封装作为新的payload，用一层新的IP头封装这个payload发送出去，这个新IP头的目标地址是vpn server，源地址是客户端的外网IP。</p>
-<p>vpn server的协议栈会剥离掉新IP头，将内部PPP协议的payload交给pptpd进程处理，pptpd进程会按PPP协议解包得到原始的IP包，我们知道这个IP包的源地址是192.168.0.2，目标地址google。因此pptpd进程需要做的是将这个ip包的源ip地址改为VPS的地址，然后将IP包发给谷歌，从而和谷歌进行数据交换。最终，pptpd理所应当将谷歌的应答IP包的目标IP地址换成192.168.0.2，然后经过PPP协议封装并添加新的IP头后发回给客户端既可。</p>
-<p><strong>局域网用途</strong></p>
-<p><img src="http://yuerblog.cc/wp-content/uploads/2017/01/Drawing3.gif" alt="drawing3"></p>
-<p>大家知道，玩CS的时候都是局域网搜索房间的，要求大家坐在一个网吧里连着一台交换机。如果大家各自坐在家里玩CS想联机，通常要登录一个对战平台，其实对战平台做的事情就是VPN，也就是虚拟一个局域网，大家感受起来就和坐在一起一样。</p>
-<p>虚拟网卡的驱动会尽力伪装成一个物理网卡的样子，我们知道DHCP协议是局域网动态分配客户端IP的协议，那么VPN的虚拟网卡其实也会和vpn server进行一些协商得到一个虚拟局域网的IP，比如192.168.0.2。得到虚拟IP后，后续数据将通过虚拟网卡发送至vpn server所在的IP，最终被pptpd进程处理。</p>
-<p>既然各个客户端的虚拟网卡都是和同一个pptpd进程交互，那么这个pptpd进程自然知道这个虚拟的局域网内有哪些局域网用户，因此当2个虚拟局域网用户192.168.0.2和192.168.0.3之间想互相通讯的时候，pptpd会完成数据的中转。不过要注意，虚拟局域网用户间的通讯是不需要像访问谷歌那样修改数据包的源IP地址的，这个很容易想明白。</p>
-<h2 id="curl-telnet-ping-nslookup指令区别"><a href="#curl-telnet-ping-nslookup指令区别" class="headerlink" title="curl,telnet,ping,nslookup指令区别"></a>curl,telnet,ping,nslookup指令区别</h2><p><strong>curl指令：</strong></p>
-<p>在Linux中curl是一个利用URL规则在命令行下工作的文件传输工具，可以说是一款很强大的http命令行工具。它支持文件的上传和下载。是综合传输工具，但按传统，习惯称url为下载工具。这个工具可以帮助我们在服务器上很好的模拟http的行为。</p>
-<p><code>curl url</code> 返回整个网页的内容</p>
-<p><code>curl -l url</code>返回这个网页的header</p>
-<p><code>curl -i url</code>返回网页header + 内容</p>
-<p><strong>telnet指令和ping指令</strong></p>
-<p><code>ping</code>用来检查网络是否通畅或者网络连接速度的命令，<code>telnet</code>是用来探测指定ip是否开放指定端口。</p>
-<p><code>ping</code>是Linux系统下的一个命令，ping也属于一个通信协议，是TCP/IP协议的一部分。利用”ping“命令可以检查网络是否连通，可以很好地帮助我们分析和判定网络故障。</p>
-<p>ping命令本身处于应用层，相当于一个应用程序，它直接使用网络层的ICMP协议。Ping，因特网包探索器，用于测试网络连接量的程序。它是用来检查网络是否通常或者网络连接速度的命令。作为一个生活在网络上的管理员或者黑客来说，ping命令是第一个必须掌握的DOS命令，它所利用的原理是这样的：利用网络上机器IP地址的唯一性，给目标IP地址发送一个ICMP数据包，再要求对方返回一个同样大小的ICMP数据包来确定两台网络机器是否连接相通，时延是多少。</p>
-<p>一般的ping指令为：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping www.baidu.com</span><br></pre></td></tr></table></figure>
-
-<p>ping指的是端对端连通，通常用来作为可用性的检查，但是某些病毒木马会强行大量远程执行ping命令抢占你的网络资源，导致系统变慢，网速变慢。严禁ping入侵作为大多数防火墙的一个基本功能提供给用户进行选择。通常的情况下你如果不用作服务器或者进行网络测试，可以放心的选中它，保护你的电脑。</p>
-<p><code>telnet</code>协议是TCP/IP协议族的其中之一，是Internet远程登录服务的标准协议和主要方式，常用于网页服务器的远端控制，可供使用者在本地主机执行远端主机上的工作。使用者首先在电脑执行telnet程序，连线至目的服务器，然后输入账号和密码以验证身份。使用者可以在本地主机输入命令，然后让已连接的远端主机执行，就像直接在对方的控制台上输入一样。传统telnet会话所传输的资料并未加密，帐号和密码等敏感资料容易会被窃听，因此很多服务器都会封锁telnet服务，改用更安全的ssh。</p>
-<p>一般的<code>telnet</code>指令为：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">telnet www.baidu.com 80</span><br></pre></td></tr></table></figure>
-
-<p>简单地说，ping命令是用来检测网络是否畅通的，而telnet命令则用来远程登录。但telnet不通并不一定代表网络不同。ping是基于ICMP协议的命令，就是你发出去一个数据包，对方收到后返给你一个！就好比声纳。这个协议是可以禁止的！禁止后，如果你ping对方，对方收到后就不回馈给你，这样你就显示无法ping通，但实际你们还是连着的！telnet是登录服务器的，服务没禁止就能登录。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1866,12 +1856,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">41</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
