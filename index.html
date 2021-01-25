@@ -295,10 +295,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-01-14 15:01:53 / 修改时间：16:22:15" itemprop="dateCreated datePublished" datetime="2021-01-14T15:01:53+08:00">2021-01-14</time>
+              <time title="创建时间：2021-01-14 15:01:53" itemprop="dateCreated datePublished" datetime="2021-01-14T15:01:53+08:00">2021-01-14</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-25 14:43:43" itemprop="dateModified" datetime="2021-01-25T14:43:43+08:00">2021-01-25</time>
+              </span>
 
           
 
@@ -435,6 +441,121 @@
 <li>HashTable继承自Dictionary类，而HashMap是java1.2引进的Map interface的一个实现。</li>
 <li>HashTable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap就必须为之提供外同步。</li>
 </ul>
+<p><strong>12 识别合法的构造方法</strong></p>
+<p>构造方法可以被重载，一个构造方法可以通过this关键字调用另一个构造方法，this语句必须位于构造方法的第一行；方法的重载：重载构成的条件：方法的名称相同，但参数类型或参数个数不同，才能构成方法的重载。</p>
+<p>当一个类中没有定义任何构造方法，java将自动提供一个缺省构造方法；</p>
+<p>子类通过super关键字调用父类的一个构造方法；</p>
+<p>当子类的某个构造方法没有通过super关键字调用父类的构造方法，通过这个构造方法创建子类对象时，会自动先调用父类的缺省构造方法。</p>
+<p>构造方法不能被static,final,synchronized,abstract,native修饰，但可以被public,private,protected修饰；</p>
+<p>构造方法不是类的成员方法；</p>
+<p>构造方法不能被继承</p>
+<p><strong>13、解决哈希冲突</strong></p>
+<p>ThreadLocalMap中使用开放地址法来处理散列冲突，而HashMap中使用的是分离链表法。之所以采用不同的方式主要是因为：在ThreadLoaclMap中的散列值分散的十分均匀，很少会出现冲突。并且ThreadLocalMap经常需要清楚无用的对象，使用传数组更加方便。</p>
+<p><strong>14、switch支持的类型</strong></p>
+<p>以java8为准，switch支持10种类型 基本类型：byte,char,short,int 对于包装类：Byte,Short,Character,Integer String Enum</p>
+<p>实际只支持int类型 java实际只用支持int类型的switch语句，那其他的类型是如何支持的 a、基本类型byte char short原因：这些基本数字类型可自动向上转为int，实际还是用的int。b、基本类型包装类Byte,Short，Character，Integer原因：java的自动拆箱机制可看这些对象自动转为基本类型 c、String类型原因：实际switch比较的string.hashCode值，它是一个int类型</p>
+<p><strong>15、JVM内存结构</strong></p>
+<p>程序计数器是一个以<strong>线程私有</strong>的一块较小的内存空间，用于记录所属线程所执行的字节码的行号指示器；字节码解释器工作时，通过改变程序计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳准、异常处理、线程恢复等基础功能都需要依赖程序计数器来完成。</p>
+<p><img src="https://uploadfiles.nowcoder.com/files/20190627/284864965_1561601257798_221440388796170.png" alt="img"></p>
+<p><strong>16、面向对象的五大基本原则</strong></p>
+<p>单一职责原则（SRP）：一个类，最好只做一件事，只有一个引起它的变化。单一职责原则可以看作是低耦合、高内聚在面向对象原则上的引申，将职责定义为引起变化的原因，以提高内聚性来减少引起变化的原因。</p>
+<p>开放封闭原则（OCP）：软件实体应该是可扩展的，而不可修改的。也就是，对外扩展开放，对修改封闭的。</p>
+<p>里氏替换原则（LSP）：子类必须能够替换其基类。这一思想体现为对继承机制的约束规范，只有子类能够替换基类时，才能保证系统在运行期内识别子类，这是保证继承复用的基础。</p>
+<p>依赖倒置原则（DIP）：依赖于抽象。具体而言就是高层模块不依赖于底层模块，二者都同依赖于抽象；抽象不依赖于具体，具体依赖于抽象。</p>
+<p>接口隔离原则（ISP）：使用多个小的转么的接口，而不要使用一个大的总接口</p>
+<p><strong>17、Collections</strong></p>
+<p><img src="http://uploadfiles.nowcoder.com/images/20160418/854180_1460986378682_4B1F66BFB4ADEB24A093A20778555B52" alt="img"></p>
+<hr>
+<p><strong>18、java内部类</strong></p>
+<ul>
+<li><p>为什么使用内部类</p>
+<ul>
+<li><p>使用内部类最吸引人的原因是：每个内部类都能独立地继承一个实现，所以无论外围类是否已经继承了某个实现，对于内部类都没有影响</p>
+<p>1.1 使用内部类最大的优点就在于能够非常好的解决多重继承的问题，使用内部类还能够为我们带来如下特性:</p>
+<ul>
+<li>内部类可以用多个实例，每个实例都有自己的状态信息，并且与其他外围对象的信息相互独。</li>
+<li>在单个外围类中，可以让多个内部类以不同的方式实现同一个接口，或者继承同一个类。</li>
+<li>创建内部类对象的时刻并不依赖于外围类对象的创建。</li>
+<li>内部类并没有令人迷惑的’”is-a”‘关系，他就是一个独立的实体。</li>
+<li>内部类提供了更好的封装，除了该外围类，其他类都不能访问。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>内部类分类：</p>
+<ul>
+<li><p>成员内部类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age =<span class="number">99</span>;</span><br><span class="line">    String name=<span class="string">&quot;CoCo&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">        String name=<span class="string">&quot;Jayden&quot;</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(Outer.<span class="keyword">this</span>.name);</span><br><span class="line">            System.out.println(name);</span><br><span class="line">            System.out.println(age);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Inner <span class="title">getInnerClass</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Inner();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Outer o = <span class="keyword">new</span> Outer();</span><br><span class="line">        Inner in=o.<span class="function">new <span class="title">Inner</span><span class="params">()</span></span>;</span><br><span class="line">        in.show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>1.Inner类定义在Outer类的内部，相当于Outer类的一个成员变量的位置，Inner类可以使用任意访问控制符，如public、protected、private等</p>
+<p>2、Inner类中定义的show()方法可以直接访问Outer类中的数据，而不受访问控制符的影响，如直接访问Outer类中的私有属性age</p>
+<p>3、定义了成员内部类，必须使用外部类对象来创建内部类对象，而不能直接去new一个内部类对象，</p>
+<p>即：内部类 对象名=外部类对象.new 内部类（）；</p>
+<p>4、编译上面的程序后，会发现产生了两个.class文件：Outer.class，Outer$Inner.class{}.</p>
+<p>5、成员内部类中不能存在任何static的变量和方法，可以定义常量：</p>
+<ul>
+<li>因为非静态内部类是要依赖于外部类的实例，而静态变量和方法是不依赖于对象的，仅与类相关。</li>
+<li>简而言之：在加载静态域时，根本没有外部类，所以在非静态内部类中不能定义静态域或方法，编译不通过；非静态内部类的作用域是实例级别</li>
+<li>常量是在编译器就确定的，放到所谓的常量池了。</li>
+</ul>
+<p>注意：外部类是不能直接使用内部类的成员和方法的，可先创建内部类的对象，然后通过内部类的对象来访问其成员变量和方法；如果外部类和内部类具有相同的成员变量或方法，内部类默认访问自己的成员变量或方法，如果要访问外部类的成员变量，可以使用this关键字，如Outer.this.name</p>
+</li>
+<li><p>静态内部类：是static修饰的内部类</p>
+<p>1、静态内部类不能直接访问外部类的非静态成员，但可以通过new 外部类().成员的方式访问</p>
+<p>2、如果外部类的静态成员与内部类的成员名称相同，可通过“类名.静态成员”访问外部类的静态成员；如果外部类的静态成员与内部类的成员名称不相同，则可通过“成员名”直接调用外部类的静态成员</p>
+<p>3、创建静态内部类的对象时，不需要外部类的对象，可以直接创建内部类 对象名 = new 内部类();</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age =<span class="number">99</span>;</span><br><span class="line">    <span class="keyword">static</span> String name=<span class="string">&quot;Coco&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">        String name=<span class="string">&quot;Jayden&quot;</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(Outer.name);</span><br><span class="line">            System.out.println(name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Inner i=<span class="keyword">new</span> Inner();</span><br><span class="line">        i.show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>方法内部类：其作用域仅限于方法内，方法外部无法访问该内部类</p>
+<p>1、局部内部类就像是方法里面的一个局部变量一样，是不能有public、protected、private以及static修饰符</p>
+<p>2、只能访问方法中定义的final类型的局部变量，因为：</p>
+<p>​    当方法被调用运行完毕之后，局部变量就已消亡了。但内部类对象可能还存在，直到没有被引用时才会消亡。此时就会出现一种情况，就是内部类要访问一个不存在的局部变量；使用final修饰符不仅会保持对象的引用不会改变，而且编译器还会持续维护这个对象在回调方法中的生命周期。局部内部类并不是直接调用方法传进来的参数，而是内部类将传进来的参数通过自己的构造器备份到了字节的内部，自己内部的方法调用的实际是自己的属性而不是外部类方法的参数；</p>
+</li>
+<li><p>匿名内部类：</p>
+<p>1、匿名内部类是直接使用new来生成一个对象的引用；</p>
+<p>2、对于匿名内部类的使用是存在一个缺陷的，就是它仅能被使用一次，创建匿名内部类时它会立即创建一个该类的实例，该类的定义会立即消失，所以匿名内部类是不能够被重复使用；</p>
+<p>3、使用匿名内部类时，我们必须是继承一个类或者实现一个接口，但是二者不可兼得，同时也只能继承一个类或者实现一个接口；</p>
+<p>4、匿名内部类中是不能定义构造函数的，匿名内部类中不能存在任何的静态成员变量和静态方法；</p>
+<p>5、匿名内部类中不能存在任何的静态成员变量和静态方法，匿名内部类不能是抽象的，它必须要实现继承的类或者实现的接口的所有抽象方法。</p>
+<p>6、匿名内部类初始化：使用构造代码块！利用构造代码块能够达到为匿名内部类创建一个构造器的效果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.niuke;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 匿名内部类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">s5</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> InnerClass <span class="title">getInnerClass</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> num,String str2)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> InnerClass() &#123;</span><br><span class="line">            <span class="keyword">int</span> number=num+<span class="number">3</span>;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> number;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        s5 out=<span class="keyword">new</span> s5();</span><br><span class="line">        InnerClass innerClass=out.getInnerClass(<span class="number">2</span>,<span class="string">&quot;shen&quot;</span>);</span><br><span class="line">        System.out.println(innerClass.getNumber());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">InnerClass</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">getNumber</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>19、java daemon线程</strong></p>
+<p>java的线程分为两类：用户线程和daemon线程。</p>
+<p>用户线程：用户线程可以简单的理解为用户定义的线程，当然包括majavain线程。</p>
+<p>daemon线程：daemon线程是为我们创建的用户线程提供服务的线程，比如说JVM的GC等等，这样的线程有一个非常明显的特征：当用户线程运行结束的时候，daemon线程将会自动退出。</p>
+<p>daemon线程的特点：</p>
+<p>1、守护线程创建的过程中需要先调用setDaemon方法进行设置，然后再启动线程。否则会报出IllegalThreadStateException异常。</p>
+<p>2、由于daemon线程的终止条件是当前是否存在用户线程，所以我们不能指派daemon线程来进进行一些业务操作，而只能服务用户线程。</p>
+<p>3、daemon线程创建的子线程仍然是daemon线程。</p>
+<p><strong>20、JVM参数配置</strong></p>
+<p>举例所示：-Xms1G -Xms2G -Xmn500M -XX:MaxPermSize=64M -XX:+UseConcMarkSweepGC -XX:SurvivorRatio=3,</p>
+<p>-Xms1G    设置java堆最小值为1G</p>
+<p>-Xmx2G    设置java堆最大值为2G</p>
+<p>-Xmn500M    设置新生代大小为500M（一个Eden区，两个Survivor区）</p>
+<p>-XX：MaxPermSize=64M    设置永久代大小为64M</p>
+<p>-XX：+UseConcMarkSweepGC    设置使用CMS收集器</p>
+<p>-XX：SurvivorRatio=3    设置Eden区与Survivor区大小的比例。</p>
+<p><strong>21、实现会话跟踪的机制</strong></p>
+<p>Cookies、URL重写，隐藏式表单域，Session机制。</p>
+<p>Cookies是使用最广泛的会话跟踪机制，Cookies是由服务器创建，并把Cookies信息保存在用户机器上的硬盘上，下次用户再次访问该站点服务器的时候，保存在用户机器上硬盘的Cookies信息就被送回给服务器。一般Cookies一般不多于4KB，且用户的敏感信息如信用卡账号密码不应该保存在Cookies中。</p>
+<p>URL重写:URL重写用于在每个URL结尾附加标识会话的数据，与标识符关联的服务器保存有关与会话的数据，如我们访问某个新闻的时候，在地址栏我们一般会看到这样的信息：<a target="_blank" rel="noopener" href="http://www.xxx.com/news?id=??%EF%BC%8C%E9%80%9A%E5%B8%B8%E7%9A%84%E8%AF%9Did%E5%90%8E%E9%9D%A2%E7%9A%84%E9%97%AE%E5%8F%B7%E8%A1%A8%E7%A4%BA%E8%AF%A5%E6%9D%A1%E6%96%B0%E9%97%BB%E5%9C%A8%E5%90%8E%E5%8F%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E6%96%B0%E9%97%BB%E8%A1%A8%E7%9A%84id%E3%80%82URL%E9%87%8D%E5%86%99%E8%83%BD%E5%A4%9F%E5%9C%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%81%9C%E7%94%A8cookies%E6%88%96%E8%80%85%E4%B8%8D%E6%94%AF%E6%8C%81cookies%E7%9A%84%E6%97%B6%E5%80%99%E4%BB%8D%E7%84%B6%E8%83%BD%E5%A4%9F%E5%8F%91%E6%8C%A5%E4%BD%9C%E7%94%A8%E3%80%82">http://www.XXX.com/news?id=??，通常的话id后面的问号表示该条新闻在后台数据库中的新闻表的id。URL重写能够在客户端停用cookies或者不支持cookies的时候仍然能够发挥作用。</a></p>
+<p>隐藏表单域：</p>
+<p>通常，在表单中我们使用隐藏表单域的时候会有这么一句代码：<input type="hidden" name="XXX" value="XXX"/>。通过给type属性赋值为hidden值来实现隐藏，这样用户在浏览的时候看不到这行代码的数据，但是当用户通过查看源代码还是可以看到的。</p>
+<p>Session机制</p>
+<p>这个机制要慎用，特别是对于访问量很大的站点，因为这种机制是把session信息保存在服务器端。如果访问量特别大的话，对于服务器的承受力的要求有多高是可想而知的。</p>
+<p><strong>22、J2EE常用名词解释</strong></p>
+<p>1、web容器：给处于其中的应用程序组件（JSP，Servlet）提供一个环境，使JSP，Servlet直接和容器中的环境变量接口交互，不必关注其他系统问题。主要有web服务器来实现。例如，tomcat,weblogic,websphere等。该容器提供的接口严格遵守J2EE规范中的web application标准。我们把遵守以上标准的web服务器就叫做J2EE中的WEB容器。</p>
+<p>2、Web container：实现J2EE体系结构中Web组件协议的容器。这个协议规定了一个Web组件运行时的环境，包括安全，一致性，生命周期管理，事务，配置和其他的服务。一个提供和JSP和J2EE平台APIs界面相同服务的容器。一个Web container由web服务器或者J2EE服务器提供。</p>
+<p>3、EJB容器：Enterprise java Bean容器。更具有行业领域特色，他提供给运行在其中的组件EJB各种管理功能。只要满足J2EE规范的EJB放入该容器，马上就会被容器进行高效率的管理。并且可以通过现成的接口来获得系统级别的服务。例如邮件服务、事务管理。一个实现了J2EE体系结构中EJB组件规范的容器。这个规范指定了一个Enterprise bean的运行时环境，包括安全、一致性、生命周期、事务、配置、和其他的服务。</p>
+<p>4、JNDI：（java Naming &amp; Directory interface）java命名目录服务。主要提供的功能是：提供一个目录系统，让其他各地的应用程序在其上面留下自己的索引，从而满足快速查找和定位分布式应用程序的功能。</p>
+<p>5、JMS（java Message Service）java消息服务。主要实现各个应用程序之间的通讯。包括点对点和广播。</p>
+<p>6、JTA（java Transaction API） java事务服务。提供各种分布式事务服务。应用程序只需调用其提供的接口即可。</p>
+<p>7、JAF：（java Action FrameWork）java安全认证框架。提供一些安全控制方面的框架。让开发者通过各种部署和自定义实现自己的个性安全控制策略。</p>
 
       
     </div>
