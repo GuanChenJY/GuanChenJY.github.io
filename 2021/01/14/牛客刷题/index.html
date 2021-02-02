@@ -31,8 +31,12 @@
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537178275_256EC3581646F19915DBB5C9F4D80330">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20190627/284864965_1561601257798_221440388796170.png">
 <meta property="og:image" content="http://uploadfiles.nowcoder.com/images/20160418/854180_1460986378682_4B1F66BFB4ADEB24A093A20778555B52">
+<meta property="og:image" content="http://uploadfiles.nowcoder.com/images/20151010/214250_1444467985224_6A144C1382BBEF1BE30E9B91BC2973C8">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20190701/300975041_1561974792932_428A93CE2102F1DFD863C72B9733057F">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20180827/9780880_1535335958506_5721C0ED3C89479FA5F09D1F8E722D00">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20170906/3766702_1504658512297_20160505173519730">
 <meta property="article:published_time" content="2021-01-14T07:01:53.000Z">
-<meta property="article:modified_time" content="2021-01-25T06:43:43.759Z">
+<meta property="article:modified_time" content="2021-01-31T11:49:20.640Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537222061_12B6233B6EA3C9956865918F5E9B7240">
@@ -190,7 +194,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-25 14:43:43" itemprop="dateModified" datetime="2021-01-25T14:43:43+08:00">2021-01-25</time>
+                <time title="修改时间：2021-01-31 19:49:20" itemprop="dateModified" datetime="2021-01-31T19:49:20+08:00">2021-01-31</time>
               </span>
 
           
@@ -443,6 +447,91 @@
 <p>5、JMS（java Message Service）java消息服务。主要实现各个应用程序之间的通讯。包括点对点和广播。</p>
 <p>6、JTA（java Transaction API） java事务服务。提供各种分布式事务服务。应用程序只需调用其提供的接口即可。</p>
 <p>7、JAF：（java Action FrameWork）java安全认证框架。提供一些安全控制方面的框架。让开发者通过各种部署和自定义实现自己的个性安全控制策略。</p>
+<p>8、RMI/IIOP：（Remote Method Invocation/internet对象请求中介协议）他们主要用于通过远程调用服务。例如，远程有一台计算机上运行一个程序，它提供股票分析服务，我们可以在本地计算机上实现对其直接调用。当然这是要通过一定的规范才能在异构的系统之间进行通信。RMI是JAVA特有的。</p>
+<p><strong>23、异常的种类</strong></p>
+<p><img src="http://uploadfiles.nowcoder.com/images/20151010/214250_1444467985224_6A144C1382BBEF1BE30E9B91BC2973C8" alt="img"></p>
+<p>1、粉红色的是受检查的异常（checked exceptions），其必须被try{}catch语句块所捕获，或者在方法签名里通过throws子句声明。受检查的异常必须在编译时被捕获处理，命名为Checked Exception是因为java编译器要进行检查，以确保这个规则得到遵守。</p>
+<p>2、绿色的异常是运行时异常（runtime exceptions），需要程序员自己分析代码决定是否捕获和处理，比如空指针，被0除…</p>
+<p>3、声明为Error的，属于严重错误，如系统崩溃、虚拟机错误、动态链接失败等，这些错误无法恢复或者不可能捕捉，将导致应用程序中断，Error不需要捕捉。</p>
+<p><strong>24、equals和==的比较</strong></p>
+<p>== 比较的是<strong>地址和值</strong>。</p>
+<p>equals比较的是值。</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20190701/300975041_1561974792932_428A93CE2102F1DFD863C72B9733057F" alt="img"></p>
+<p>s1==s2，比较的是地址和值，由上图得知两个引用指向的是同一个地址，<strong>所以返回true</strong></p>
+<p>s3==s4，比较的是两个new出来开辟的空间对象地址，所以值相同，但地址不同，<strong>返回false</strong></p>
+<p>s1.equals(s3)，比较的是内容，<strong>返回true</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s1=<span class="string">&quot;uml&quot;</span>;	</span><br><span class="line">String s2=<span class="string">&quot;uml&quot;</span>;</span><br><span class="line">String s3=<span class="keyword">new</span> String(<span class="string">&quot;uml&quot;</span>);</span><br><span class="line">String s4=<span class="keyword">new</span> String(<span class="string">&quot;uml&quot;</span>);</span><br><span class="line">System.out.println(s1==s2);	<span class="comment">//true</span></span><br><span class="line">System.out.println(s3==s4);	<span class="comment">//false</span></span><br><span class="line">System.out.println(s1.equals(s2));	<span class="comment">//true</span></span><br><span class="line">System.out.println(s3.equals(s4));	<span class="comment">//true</span></span><br><span class="line">System.out.println(s1.equals(s3));	<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>25、volatile</strong></p>
+<p>1、java的内存模型</p>
+<p>java内存模型规定了所有的变量都存储在主内存中，但是每个线程会有自己的工作内存，线程的工作内存保存了该线程中使用了的变量（从主内存中拷贝的），线程对变量的操作都必须在工作内存中进行，不同线程之间无法直接访问对方工作内存中的变量，线程间变量值从传递都要经过主内存完成</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20180827/9780880_1535335958506_5721C0ED3C89479FA5F09D1F8E722D00" alt="图片说明"></p>
+<p>2、什么是原子性</p>
+<p>一个操作是不可中断的，要么全部执行成功要么全部执行失败，比如银行转账</p>
+<p>3、什么是可见性</p>
+<p>当多个线程访问同一变量时，一个线程修改了这个变量的值，其他线程就能够立即看到修改的值</p>
+<p>4、什么是有序性</p>
+<p>程序执行的顺序按照代码的先后顺序执行</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a=<span class="number">0</span>;	<span class="comment">//1</span></span><br><span class="line"><span class="keyword">int</span> b=<span class="number">2</span>;	<span class="comment">//2</span></span><br></pre></td></tr></table></figure>
+
+<p>这两句代码1会比2先执行，但是JVM在真正执行时不一定是1在2之前，这里涉及一个概念叫做指令重排，处理器为了提高程序运行效率，可能会对输入代码进行优化，它不保证程序中各个语句的执行先后顺序同代码中的顺序一致，但是它会保证程序最终执行结果和代码顺序执行的结果是一致的。比如上面的代码语句1和语句2谁先执行对最终的程序结果并没有影响，那么就有可能在执行过程中，语句2先执行而语句1后执行。</p>
+<p>在指令重排时会考虑指令之间的数据依赖性，比如2依赖了1的数值，那么处理器会保证1在1之前执行。</p>
+<p>但是在多线程的情况下，指令重排就会有影响了。</p>
+<p>5、volatile到底做了什么</p>
+<ul>
+<li>禁止了指令重排</li>
+<li>保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量值，这个新值对其他线程是立即可见的。</li>
+<li>不保证原子性（线程不安全）</li>
+</ul>
+<p><strong>26、final finally finalize</strong></p>
+<p>1、final</p>
+<p>如果一个类被声明为final，意味着它不能再派生出新的子类，不能作为父类被继承。因此一个类不能既声明为abstract的，又被声明为final的。将变量或方法声明为final，可以保证它们在使用中不被改变。被声明为final的变量必须在new一个对象时初始化（即只能在声明变量或构造器或代码块内初始化），而在以后的引用中只能读取，不可修改。被声明为final的方法也同样只能使用，不能覆盖（重写）。</p>
+<p>2、finally</p>
+<p>在异常处理时提供finally块来执行清除操作，如果抛出一个异常，那么相匹配的catch子句就会执行，然后控制就会进入finally块。</p>
+<p>3、finalize</p>
+<p>方法名。java技术允许使用finalize()方法在垃圾收集器将对象从内存中清除出去之前做必要的清理工作。这个方法是由垃圾收集器在确定这个对象没有被引用时对这个对象调用的。它是在Object类中定义的，因此所有的类都继承了它。子类覆盖finalize()方法以整理系统资源或者执行其他清理工作。finalize()方法是在垃圾收集器删除对象之前对这个对象调用的。</p>
+<p><strong>27、内存泄漏</strong></p>
+<p>内存泄漏（Memory Leak）是指一个不再被使用的对象或者变量还在内存中占有存储空间。在C/C++语言中，内存泄漏出现在开发人员忘记释放已分配的内存就会造成内存泄漏。在java语言中引入垃圾回收机制，有GC负责进行回收不再使用的对象，释放内存。但是还是会存在内存泄漏的问题。</p>
+<p>内存泄漏主要有两种情况：1.在堆中申请的空间没有释放。2.对象已不再被使用，但是仍然在内存中保留着。GC机制的引入只能解决第一种情况，对于第2中情况无法保证不再使用的对象会被释放。Java语言中的内存泄漏主要指第2种情况。</p>
+<p>内存泄漏的原因：1. 静态集合类。如HashMap和Vector。这些容器是静态的，生命周期和程序的生命周期一致，那么在容器中对象的生命周期也和其一样，对象在程序结束之前将不能被释放，从而会造成内存泄漏。2.各种连接，如数据库连接，网络连接，IO连接，不再使用时如果连接不释放容易造成内存泄漏。3. 释放对象往往没有相应的删除，可能会导致内存泄漏。</p>
+<p>内存溢出（OOM）是指程序在申请内存时没有足够的内存供使用，进而导致程序崩溃这是结果描述。内存泄漏（Memory Leak）最终会导致内存溢出。</p>
+<p><strong>28、标识符</strong></p>
+<p>1、标识符由26个英文字符大小写（a<del>z,A</del>Z）、数字（0~9）、下划线(_)和美元符号($)组成；</p>
+<p>2、不能以数字开头，不能是关键字；</p>
+<p>3、严格区分大小写；</p>
+<p>4、标识符可以为任意长度；</p>
+<p><strong>29、接口和抽象类的区别</strong></p>
+<p>1、接口的方法默认为public abstract，接口中的变量默认为public static final，在java8之前所有的方法不能有实现抽象类中可以有非抽象方法；</p>
+<p>2、一个类可以实现多个接口，但只能继承一个抽象类</p>
+<p>3、一个类实现接口，要实现该接口的所有抽象方法。</p>
+<p>4、接口不能被实例化，但可以声明，但是必须引用一个实现该接口的对象。抽象类可以有构造方法，但是不能被直接通过new进行实例化。但可以通过子类继承，实例化子类的时候抽象类也会被实例化。这其实用到了多态，向上转型。父类引用指向子类对象。</p>
+<p>5、从设计层面来说，抽象类是对类的抽象，是一种模板设计，接口是行为的抽象，是一种行为的规范。</p>
+<p><strong>30、Integer对象的方法</strong></p>
+<p>Integer.parseInt(“”)是将字符串类型转换为int的基础数据类型</p>
+<p>Integer.valueOf(“”)是将字符串类型数据转换为Integer对象</p>
+<p>Integer.intValue()；是将Integer对象中的数据取出，返回一个基础数据类型int</p>
+<p><strong>31、Servlet的几个对象</strong></p>
+<p>ServletContext对象：servlet容器在启动时会加载web应用，并为每个web应用创建唯一的servlet context对象，可以把ServletContext看成是一个web应用的服务器端组件的共享内存，在ServletContext中可以存放共享数据。ServletContect对象是真正的一个全局对象，凡是web容器中的Servlet都可以访问。</p>
+<p>整个web应用只有唯一的一个ServletContext对象</p>
+<p>ServletConfig对象：用于封装servlet的配置信息。从一个servlet被实例化后，对任何客户端在任何时候访问有效，但仅对servlet自身有效，一个servlet的ServletConfig对象不能被另一个servlet访问。</p>
+<p><strong>32、IO流的分类</strong></p>
+<p>按照流的流向分，可以分为输入流和输出流：</p>
+<ul>
+<li>输入流：只能从中读取数据，而不能向其写入数据。</li>
+<li>输出流：只能向其写入数据，而不能向其读取数据。</li>
+</ul>
+<p>此处的输入，输出涉及一个方向的问题，数据从内存到硬盘，通常称为输出流—-也就是说，这里的输入，输出都是从程序运行所在的内存的角度来划分的。</p>
+<blockquote>
+<p>注：如果从硬盘的角度来考虑，上述应该是输入流才对；但划分输入/输出流时是从程序运行所在的内存角度来考虑的，因此上述为输出流而不是输入流。</p>
+</blockquote>
+<p><img src="https://uploadfiles.nowcoder.com/files/20170906/3766702_1504658512297_20160505173519730" alt="这是图片描述"></p>
+<p>对于如图15.2所示的数据流向，数据从服务器通过网络流向客户端，在这种情况下，server端的内存负责将数据输出到网络里，因此server端的程序使用输出流；client端的内存负责从网络中读取数据，因此client端的程序应该使用输入流。</p>
+<blockquote>
+<p>注：java的输入流主要是InputStream和Reader作为基类，而输出流则是主要由outputStream和Writer作为基类。它们都是一些抽象基类，无法直接创建实例。</p>
+</blockquote>
+<p><strong>节点流：</strong>FileInputStream、FileOutputStream、FileReader、FileWriter、StringReader、StringWriter、ByteArrayInputStream、ByteArrayOutputStream、CharArrayReader、PipedInputStream、PipedOutputStream、PipedReaderPipedWriter</p>
+<p><strong>处理流：</strong>BufferedInputStream、BufferedOutputStream、BufferedReader、BufferedWriter、InputStreamReader、OutputStreamReader、DataInputStream、DataOutputStream、PrintWriter</p>
+<p>节点流的前缀都是名词，如File、String、char等；处理流的前缀都是动词，如input、print、bufferd等等。</p>
 
     </div>
 
@@ -538,12 +627,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">48</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-count">18</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

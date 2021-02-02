@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="堆内存设置原理JVM堆内存分为2块：Permanent Space和Heap Space.  Permanent即持久代（Permanent Generation），主要存放的是java类定义信息，与垃圾收集器要收集的java对象关系不大。 Heap&#x3D;{Old + New &#x3D; {Eden, from, to}}，Old即老年代（Old Generation），New即年轻代（Young Gener">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java堆内存设置原理">
+<meta property="og:url" content="http://example.com/2021/01/26/java%E5%A0%86%E5%86%85%E5%AD%98%E8%AE%BE%E7%BD%AE%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="堆内存设置原理JVM堆内存分为2块：Permanent Space和Heap Space.  Permanent即持久代（Permanent Generation），主要存放的是java类定义信息，与垃圾收集器要收集的java对象关系不大。 Heap&#x3D;{Old + New &#x3D; {Eden, from, to}}，Old即老年代（Old Generation），New即年轻代（Young Gener">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-26T02:54:56.000Z">
+<meta property="article:modified_time" content="2021-01-26T06:39:36.561Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/01/26/java%E5%A0%86%E5%86%85%E5%AD%98%E8%AE%BE%E7%BD%AE%E5%8E%9F%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java堆内存设置原理 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/26/java%E5%A0%86%E5%86%85%E5%AD%98%E8%AE%BE%E7%BD%AE%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java堆内存设置原理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-26 10:54:56 / 修改时间：14:39:36" itemprop="dateCreated datePublished" datetime="2021-01-26T10:54:56+08:00">2021-01-26</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="堆内存设置"><a href="#堆内存设置" class="headerlink" title="堆内存设置"></a>堆内存设置</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>JVM堆内存分为2块：Permanent Space和Heap Space.</p>
+<ul>
+<li>Permanent即持久代（Permanent Generation），主要存放的是java类定义信息，与垃圾收集器要收集的java对象关系不大。</li>
+<li>Heap={Old + New = {Eden, from, to}}，Old即老年代（Old Generation），New即年轻代（Young Generation）。年老代和年轻代的划分对垃圾收集影响比较大。</li>
+</ul>
+<h2 id="年轻代"><a href="#年轻代" class="headerlink" title="年轻代"></a>年轻代</h2><p>所有新生成的对象首先都是放在年轻代。年轻代的目标就是尽可能快速的收集掉那些生命周期短的对象。年轻代一般分3个区，1个Eden区，2个Survivor区（from和to）。</p>
+<p>大部分对象在Eden区中生成。当Eden区满时，还存活的对象将被复制到到Survivor区（两个中的一个），当一个Survivor区满时，此区的存活对象将被复制到另外一个Survivor区，当另一个Survivor区也满了的时候，从前一个Survivor区复制过来的并且此时还存活的对象，将可能被复制到年老代。</p>
+<p>2个Survivor区是对称的，没有先后关系，所以同一个Survivor区中可能同时存在从Eden区复制过来的对象，和从另一个Survivor区复制过来的对象；而复制到年老区的只有一个从Survivor区过来的对象。<strong>而且，因为需要交换的原因，Survivor区至少有一个是空的。</strong>特殊的情况下，根据程序需要，Survivor区是可以配置为多个的，这样可以增加对象在年轻代中的存在时间，减少被放到年老代的可能。</p>
+<p>针对年轻代的垃圾回收即Young GC.</p>
+<h2 id="年老代"><a href="#年老代" class="headerlink" title="年老代"></a>年老代</h2><p>在年轻代中经历了N次（可配置）垃圾回收后仍然存活的对象，就会被复制到年老代中。因此，可以认为年老代中存放的都是一些生命周期较长的对象。</p>
+<p>针对年老代的垃圾回收即Full GC.</p>
+<h2 id="持久代"><a href="#持久代" class="headerlink" title="持久代"></a>持久代</h2><p>用于存放静态类型数据，如Java Class，Method等。持久代对垃圾回收没有显著影响。但是有些应用可能动态生成或调用一些Class，例如Hibernate CGLib等，在这种时候往往需要设置一个比较大的持久代空间来存放这些运行过程中动态增加的类型。</p>
+<p>所以，当一组对象生成时，<strong>内存申请过程</strong>如下：</p>
+<p>1、JVM会试图为相关java对象在年轻代的Eden区中初始化一块内存区域。</p>
+<p>2、当Eden区空间足够时，内存申请结束。否则执行下一步。</p>
+<p>3、JVM试图释放在Eden区中所有不活跃的对象（Young GC）。释放后若Eden空间仍然不足以放入新对象，JVM则试图将部分Eden区中活跃对象放入Survivor区。</p>
+<p>4、Survivor区被用来作为Eden区及年老代的中间交换区域。当年老代空间足够时，Survivor区中存活了一定次数的对象会被移到年老代。</p>
+<p>5、当年老代空间足够时，JVM会在年老代进行完全的垃圾回收（Full GC）.</p>
+<p>6、Full GC后，若Survivor区及年老代仍然无法存放从Eden区复制过来的对象，则会导致JVM无法在Eden区为新生成的对象申请内存，即出现”Out of Memory”.</p>
+<p><strong>OOM(“Out of Memory”)异常一般主要有如下2种原因：</strong></p>
+<p>1、年老代溢出，表现为：java.lang.OutOfMemoryError：javaheapspace。这是最常见的情况，产生的原因可能是：设置的内存参数Xmx过小或程序的内存泄漏及使用不当问题。例如循环上万次的字符串处理、创建上万次的字符串处理、创建上千万个对象、在一段代码内申请上百M甚至上G的内存。还有的时候虽然不会报内存溢出，却会使系统不间端的垃圾回收，也无法处理其他请求。这种情况下除了检查程序、打印堆内存等方法排查，还可以借助一些内存分析工具。</p>
+<p>2、持久代溢出，表现为：java.lang.OutOfMemoryError：PermGenspace.通常由于持久代设置过小，动态加载了大量java类而导致溢出，解决办法唯有将参数 -XX：MaxPermSize调大（一般256m能满足绝大多数应用程序需求）。将部分java类放到容器共享区（例如tomcat share lib）去加载的办法也是一个思路，但前提是容器里部署了多个应用，且这些应用有大量的共享类库。</p>
+<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><ul>
+<li>-Xmx3550m:设置JVM最大堆内存为3550M.</li>
+<li>-Xms3550m:设置JVM初始堆内存为3550M。此值可以设置与-Xmx相同，以避免每次垃圾回收完成后JVM重新分配内存。</li>
+<li>-Xss128k: 设置每个线程的栈大小。JDK5.0以后每个线程大小为1M，之前每个线程栈大小为256K.应当根据应用的线程所需内存大小进行调整。在相同物理内存下，减少这个值能生成更多的线程。但是操作系统对一个进程内的线程数还是有限制的，不能无限生成，经验值在3000~5000左右。需要注意的是：当这个值被设置的较大时将会在很大程度上降低系统的性能。</li>
+<li>-Xmn2g: 设置年轻代大小为2G。在整个堆内存大小确定的情况下，增大年轻代将会减小年老代，反之亦然。此值关系到JVM垃圾回收，对系统性能影响较大，官方推荐配置为每个堆大小的3/8.</li>
+<li>-XX：NewSize=1024m：设置年轻代初始值为1024M.</li>
+<li>-XX:MaxNewSize=1024m:设置年轻代最大值为1024M.</li>
+<li>-XX：PermSize=256m:设置持久代最大值为256M.</li>
+<li>-XX：MaxPermSize=256m:设置持久代最大值为256M。</li>
+<li>-XX：NewRatio=4:设置年轻代（包括1个Eden和2个Survivor）与年老代的比值。表示年轻代比年老代为1：4.</li>
+<li>-XX：SurvivorRatio=4：设置年轻代中Eden区与Survivor区的比值。表示2个Survivor区（JVM堆内存年轻代中默认有2个大小相等的Survivor区）与1个Eden区的比值为2：4，即1个Survivor区占整个年轻代大小的1/6.</li>
+<li>-XX:MaxTenuringThreshold=7 :表示一个对象如果在Survivor区移动了7次还没有被垃圾回收就进入年老代。如果设置为0的话，则年轻对象不经过Survivor区，直接进入年老代，对于需要大量常驻内存的应用，这样做可以提高效率。如果将此值设置为一个较大值，则年轻代对象会在Survivor区进行多次复制，这样可以增加对象在年老代存活时间，增加对象在年轻代被垃圾回收的概率，减少Full GC的频率，这样做可以在某种程度上提高服务稳定性。</li>
+</ul>
+<h2 id="垃圾回收器选择"><a href="#垃圾回收器选择" class="headerlink" title="垃圾回收器选择"></a>垃圾回收器选择</h2><p>JVM给出了3种选择：串行收集器、并行收集器、并发收集器。串行收集器只适用于小数据量的情况，所以生产环境的选择主要是并行收集器和并发收集器。</p>
+<p>默认情况下JDK5.0以前都是使用串行收集器，如果想使用其他收集器需要在启动时加入相应参数。JDK5.0以后，JVM会根据当前系统配置进行智能判断。</p>
+<h3 id="串行收集器"><a href="#串行收集器" class="headerlink" title="串行收集器"></a>串行收集器</h3><ul>
+<li>-XX+UseSerialGC:设置串行收集器</li>
+</ul>
+<h3 id="并行收集器（吞吐量优先）"><a href="#并行收集器（吞吐量优先）" class="headerlink" title="并行收集器（吞吐量优先）"></a>并行收集器（吞吐量优先）</h3><ul>
+<li>-XX+UseParallelGC:设置为并行收集器。此配置仅对年轻代有效。即年轻代使用并行收集，而年老代仍使用串行收集。</li>
+<li>-XX：ParallelGCThreads=20:配置并行收集器的线程数，即：同时有多少个线程一起进行垃圾回收。此值建议配置与CPU数据相等。</li>
+<li>-XX:+UseParallelOldGC:配置年老代垃圾收集方式为并行收集。JDK6.0开始支持对年老代并行收集。</li>
+<li>-XX：MaxGCPauseMillis=100:设置每次年轻代垃圾回收的最长时间。如果无法满足此时间，JVM会自动调整年轻代大小，以满足此时间。</li>
+<li>-XX+UseAdaptiveSizePolicy:设置此选型后，并行收集器会自动调整年轻代Eden区大小和Survivor区大小的比例，以达成目标系统规定的最低响应时间或者收集频率等指标。此参数建议在使用并行收集器时，一直</li>
+</ul>
+<h3 id="并发收集器（响应时间优先）"><a href="#并发收集器（响应时间优先）" class="headerlink" title="并发收集器（响应时间优先）"></a>并发收集器（响应时间优先）</h3><ul>
+<li>-XX:+UseConcMarkSweepGC：即CMS收集，设置年老代为并发收集。CMS收集是JDK1.4后期版本开始引入的新GC算法。它的主要适合场景是对响应时间的重要性需求大于对吞吐量的需求，能够承受垃圾回收线程和应用线程共享CPU资源，并且应用中存在比较多的长生命周期对象。CMS收集的目标是尽量减少应用的暂停时间，减少Full GC发生的几率，利用和应用程序线程并发的垃圾回收线程来标记清除年老代内存。</li>
+<li>-XX:+UseParNewGC：设置年轻代为并发收集。可与CMS收集同时使用。JDK5.0以上，JVM会根据系统配置自行设置，所以无需再设置此参数。</li>
+<li>-XX:CMSFullGCsBeforeCompaction=0：由于并发收集器不对内存空间进行压缩和整理，所以运行一段时间并行收集以后会产生内存碎片，内存使用效率降低。此参数设置运行0次Full GC后对内存空间进行压缩和整理，即每次Full GC后立刻开始压缩和整理内存。</li>
+<li>-XX:+UseCMSCompactAtFullCollection：打开内存空间的压缩和整理，在Full GC后执行。可能会影响性能，但可以消除内存碎片。</li>
+<li>-XX:+CMSIncrementalMode：设置为增量收集模式。一般适用于单CPU情况。</li>
+<li>-XX:CMSInitiatingOccupancyFraction=70：表示年老代内存空间使用到70%时就开始执行CMS收集，以确保年老代有足够的空间接纳来自年轻代的对象，避免Full GC的发生。</li>
+</ul>
+<h3 id="其他垃圾回收参数"><a href="#其他垃圾回收参数" class="headerlink" title="其他垃圾回收参数"></a>其他垃圾回收参数</h3><ul>
+<li>-XX:+ScavengeBeforeFullGC：年轻代GC优于Full GC执行。</li>
+<li>-XX:-DisableExplicitGC：不响应 System.gc() 代码。</li>
+<li>-XX:+UseThreadPriorities：启用本地线程优先级API。即使 <code>java.lang.Thread.setPriority() </code>生效，不启用则无效。</li>
+<li>-XX:SoftRefLRUPolicyMSPerMB=0：软引用对象在最后一次被访问后能存活0毫秒（JVM默认为1000毫秒）。</li>
+<li>-XX:TargetSurvivorRatio=90：允许90%的Survivor区被占用（JVM默认为50%）。提高对于</li>
+</ul>
+<h2 id="辅助信息参数设置"><a href="#辅助信息参数设置" class="headerlink" title="辅助信息参数设置"></a>辅助信息参数设置</h2><ul>
+<li>-XX:-CITime：打印消耗在JIT编译的时间。</li>
+<li>-XX:ErrorFile=./hs_err_pid.log：保存错误日志或数据到指定文件中。</li>
+<li><strong>-XX:HeapDumpPath=./java_pid.hprof：指定Dump堆内存时的路径。</strong></li>
+<li><strong>-XX:-HeapDumpOnOutOfMemoryError：当首次遭遇内存溢出时Dump出此时的堆内存。</strong></li>
+<li>-XX:OnError=”;”：出现致命ERROR后运行自定义命令。</li>
+<li>-XX:OnOutOfMemoryError=”;”：当首次遭遇内存溢出时执行自定义命令。</li>
+<li>-XX:-PrintClassHistogram：按下 Ctrl+Break 后打印堆内存中类实例的柱状信息，同JDK的 jmap -histo 命令。</li>
+<li>-XX:-PrintConcurrentLocks：按下 Ctrl+Break 后打印线程栈中并发锁的相关信息，同JDK的 jstack -l 命令。</li>
+<li>-XX:-PrintCompilation：当一个方法被编译时打印相关信息。</li>
+<li>-XX:-PrintGC：每次GC时打印相关信息。</li>
+<li>-XX:-PrintGCDetails：每次GC时打印详细信息。</li>
+<li>-XX:-PrintGCTimeStamps：打印每次GC的时间戳。</li>
+<li>-XX:-TraceClassLoading：跟踪类的加载信息。</li>
+<li>-XX:-TraceClassLoadingPreorder：跟踪被引用到的所有类的加载信息。</li>
+<li>-XX:-TraceClassResolution：跟踪常量池。</li>
+<li>-XX:-TraceClassUnloading：跟踪类的卸载信息。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/18/%E7%89%B9%E6%AE%8A%E6%A0%91/" rel="prev" title="特殊树">
+      <i class="fa fa-chevron-left"></i> 特殊树
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/27/%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE/" rel="next" title="路由协议">
+      路由协议 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A0%86%E5%86%85%E5%AD%98%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">堆内存设置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3"><span class="nav-number">1.2.</span> <span class="nav-text">年轻代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B4%E8%80%81%E4%BB%A3"><span class="nav-number">1.3.</span> <span class="nav-text">年老代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E4%BB%A3"><span class="nav-number">1.4.</span> <span class="nav-text">持久代</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.</span> <span class="nav-text">参数说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8%E9%80%89%E6%8B%A9"><span class="nav-number">1.6.</span> <span class="nav-text">垃圾回收器选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">1.6.1.</span> <span class="nav-text">串行收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%88%E5%90%9E%E5%90%90%E9%87%8F%E4%BC%98%E5%85%88%EF%BC%89"><span class="nav-number">1.6.2.</span> <span class="nav-text">并行收集器（吞吐量优先）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%94%B6%E9%9B%86%E5%99%A8%EF%BC%88%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%E4%BC%98%E5%85%88%EF%BC%89"><span class="nav-number">1.6.3.</span> <span class="nav-text">并发收集器（响应时间优先）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%8F%82%E6%95%B0"><span class="nav-number">1.6.4.</span> <span class="nav-text">其他垃圾回收参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%85%E5%8A%A9%E4%BF%A1%E6%81%AF%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.7.</span> <span class="nav-text">辅助信息参数设置</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

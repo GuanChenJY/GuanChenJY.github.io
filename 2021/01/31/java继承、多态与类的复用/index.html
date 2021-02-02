@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="摘要本文结合Java的类的复用对面向对象两大特征继承和多态进行了全面的介绍。首先，我们介绍了继承的实质和意义，并探讨了继承，组合和代理在类的复用方面的异同。紧接着，我们根据继承引入了多态，介绍了它的实现机制和具体应用。此外，为了更好地理解继承和多态，我们对final关键字进行了全面的介绍。在此基础上，我们介绍了Java中类的加载及初始化顺序。最后，我们对面向对象设计中三个十分重要的概念–重载、覆盖">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java继承、多态与类的复用">
+<meta property="og:url" content="http://example.com/2021/01/31/java%E7%BB%A7%E6%89%BF%E3%80%81%E5%A4%9A%E6%80%81%E4%B8%8E%E7%B1%BB%E7%9A%84%E5%A4%8D%E7%94%A8/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="摘要本文结合Java的类的复用对面向对象两大特征继承和多态进行了全面的介绍。首先，我们介绍了继承的实质和意义，并探讨了继承，组合和代理在类的复用方面的异同。紧接着，我们根据继承引入了多态，介绍了它的实现机制和具体应用。此外，为了更好地理解继承和多态，我们对final关键字进行了全面的介绍。在此基础上，我们介绍了Java中类的加载及初始化顺序。最后，我们对面向对象设计中三个十分重要的概念–重载、覆盖">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-31T11:53:17.000Z">
+<meta property="article:modified_time" content="2021-02-01T02:05:39.846Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="java相关">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/01/31/java%E7%BB%A7%E6%89%BF%E3%80%81%E5%A4%9A%E6%80%81%E4%B8%8E%E7%B1%BB%E7%9A%84%E5%A4%8D%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java继承、多态与类的复用 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/31/java%E7%BB%A7%E6%89%BF%E3%80%81%E5%A4%9A%E6%80%81%E4%B8%8E%E7%B1%BB%E7%9A%84%E5%A4%8D%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java继承、多态与类的复用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-31 19:53:17" itemprop="dateCreated datePublished" datetime="2021-01-31T19:53:17+08:00">2021-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-01 10:05:39" itemprop="dateModified" datetime="2021-02-01T10:05:39+08:00">2021-02-01</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>本文结合Java的类的复用对面向对象两大特征继承和多态进行了全面的介绍。首先，我们介绍了继承的实质和意义，并探讨了继承，组合和代理在类的复用方面的异同。紧接着，我们根据继承引入了多态，介绍了它的实现机制和具体应用。此外，为了更好地理解继承和多态，我们对final关键字进行了全面的介绍。在此基础上，我们介绍了Java中类的加载及初始化顺序。最后，我们对面向对象设计中三个十分重要的概念–重载、覆盖与隐藏进行了详细的说明。</p>
+<p><strong>要点：</strong></p>
+<ul>
+<li>继承</li>
+<li>组合、继承、代理</li>
+<li>多态</li>
+<li>final关键字</li>
+<li>类加载及初始化顺序</li>
+<li>重载、覆盖与隐藏</li>
+</ul>
+<h2 id="一、继承"><a href="#一、继承" class="headerlink" title="一、继承"></a>一、继承</h2><p>继承是所有OOP语言不可缺少的部分，在java中，使用extends关键字来表示继承关系。当创建一个类时，总是在继承，如果没有明确指出要继承的类，就总是隐式地从根类Object进行继承。如果两个类存在继承关系，则子类会自动继承父类的方法和变量，在子类中可以直接调用父类的方法和变量。需要指出的是，在java中，只允许单继承，也就是说，一个类最多只能显式地继承于一个父类。但是，一个类却可以被多个类继承，也就是说，一个类可以拥有多个子类。此外，<strong>我们需要特别注意以下几点：</strong></p>
+<p>1、成员变量的继承</p>
+<p>当子类继承了某个类之后，便可以使用父类中的成员变量，但是并不是完全继承父类的所有成员变量。具体的原则如下：</p>
+<ul>
+<li>子类能够继承父类的public和protected成员变量，不能够继承父类的private成员变量，但可以通过父类相应的getter/setter方法进行访问；</li>
+<li>对于父类的包访问权限成员变量，如果子类和父类在同一个包下，则子类能够继承，否则，子类不能够继承；</li>
+<li>对于子类可以继承的父类成员变量，如果在子类中出现了同名称的成员变量，则会发生隐藏现象，即子类的成员变量会屏蔽掉父类的同名成员变量。如果要在子类中访问父类中同名成员变量，需要使用super关键字来进行引用。</li>
+</ul>
+<p>2、成员方法的继承</p>
+<p>同样地，当子类继承了某个类之后，便可以使用父类中的成员方法，但是子类并不是完全继承父类的所有方法。具体的原则如下：</p>
+<ul>
+<li>子类能够继承父类的public和protected成员方法，不能够继承父类的private成员方法；</li>
+<li>对于父类的包访问权限成员方法，如果子类和父类在同一个包下，则子类能够继承，否则，子类不能够继承；</li>
+<li>对于子类可以继承的父类成员方法，如果在子类中出现了同名称的成员方法，则称为覆盖，即子类的成员方法会覆盖掉父类的同名成员方法。如果要在子类中访问父类中同名成员方法，需要使用super关键字来进行引用。</li>
+</ul>
+<p><strong>程序示例：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String gentle = <span class="string">&quot;Father&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">extends</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String gentle = <span class="string">&quot;Son&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.gentle;	<span class="comment">//在子类中访问父类中同名成员变</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException</span>&#123;</span><br><span class="line">        Student student= <span class="keyword">new</span> Student();</span><br><span class="line">        System.out.println(<span class="string">&quot;####&quot;</span> + student.gentle);</span><br><span class="line">        Person p = student;</span><br><span class="line">        System.out.println(<span class="string">&quot;*****&quot;</span> + p.gentle);	<span class="comment">//隐藏：编译时决定，不会发生多态</span></span><br><span class="line">        </span><br><span class="line">        Sytem.out.println(<span class="string">&quot;----&quot;</span> + student.print());</span><br><span class="line">        System.out.println(<span class="string">&quot;----&quot;</span> + p.print());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>隐藏和覆盖是不同的。隐藏是针对成员变量和静态方法的，而覆盖是针对普通方法的。</p>
+<p>3、基类的初始化与构造器</p>
+<p>导出类就像是一个与基类具有相同接口的新类，或许还会有一些额外的方法和域。但是，继承并不只是复制基类的接口。当创建一个导出类对象时，该对象会包含一个基类的子对象。这个子对象与我们用基类直接创建的对象是一样的。二者的区别在于，后者来自于外部，而基类的子对象被包装在导出类对象的内部。</p>
+<p>因此，对基类子对象的正确初始化是至关重要的，并且java也提供了相应的方法来保证这一点：导出类必须在构造器中调用基类构造器来执行初始化，而基类构造器具有执行基类初始化所需的所有知识和能力。当基类含有默认构造时，java会自动在导出类的构造器插入对该基类默认构造器的调用，因为编译器不必考虑要传递什么样的参数的问题。但是，若父类不含有默认构造器，或者导出类想调用一个带参数的父类构造器，那么在导出类的构造器中就必须使用super关键字显式的进行调用相应的基类的构造器，并且该调用语句必是导出类构造器的第一条语句。</p>
+<h2 id="二、组合，继承，代理"><a href="#二、组合，继承，代理" class="headerlink" title="二、组合，继承，代理"></a>二、组合，继承，代理</h2><p>组合、继承和代理三种技术都可以实现代码的复用。</p>
+<p><strong>（1）组合（has-a）</strong></p>
+<p><strong>通过在新的类中加入现有类的对象即可实现组合。</strong>即，新的类是由现有类的对象所组成。<strong>该技术通常用于想在新类中使用现有类的功能而非它的接口这种情形。</strong>也就是说，在新类中嵌入某个对象，让其实现所需要的功能，但新类的用户看到的只是为新类所定义的接口，而非所嵌入对象的接口。</p>
+<p><strong>（2）继承 （is-a）</strong></p>
+<p>继承可以使我们按照现有类的类型来创建新类。即，我们采用现有类的形式并在其中添加新代码。通常，这意味着我们在使用一个通用类，并为了某种特殊需要而将其特殊化。本质上，组合和继承都允许在新的类中放置子对象，组合是显式地这样做，而继承则是隐式地做。</p>
+<p><strong>（3）代理（继承与组合之前的一种中庸之道：像组合一样使用已有类的功能，同时像继承一样使用已有类的接口)</strong></p>
+<p>代理是继承与组合之前的一种中庸之道，java并没有提供对它的直接支持。在代理中，我们将一个成员对象置于所要构造的类中（就像组合），但与此同时我们在新类中暴漏了该成员对象的接口/方法。（就像继承）</p>
+<p><strong>程序示例：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 控制模块</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpaceShipControls</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">up</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">down</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">left</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">right</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">forward</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">back</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">turboBoost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>太空船需要一个控制模块，那么，构造太空船的一种方式是使用继承：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpaceShip</span> <span class="keyword">extends</span> <span class="title">SpaceShipControls</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SpaceShip</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        SpaceShip protector = <span class="keyword">new</span> SpaceShip(<span class="string">&quot;NSEA Protector&quot;</span>);</span><br><span class="line">        protector.forward(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然而，SpaceShip 并不是真正的 SpaceShipControls 类型，即便你可以“告诉” SpaceShip 向前运动（forward()）。<strong>更准确的说，SpaceShip 包含 SpaceShipControls ，与此同时， SpaceShipControls 的所有方法在 SpaceShip 中都暴露出来。</strong> <strong>代理（SpaceShip 的运动行为由 SpaceShipControls 代理完成）</strong> 正好可以解决这种问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SpaceShip 的行为由 SpaceShipControls 代理完成</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpaceShipDelegation</span> </span>&#123; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> SpaceShipControls controls = <span class="keyword">new</span> SpaceShipControls(); </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SpaceShipDelegation</span><span class="params">(String name)</span> </span>&#123; </span><br><span class="line">        <span class="keyword">this</span>.name = name; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 代理方法: </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">back</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.back(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">down</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.down(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forward</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.forward(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">left</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.left(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">right</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.right(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turboBoost</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        controls.turboBoost(); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">up</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.up(velocity); </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123; </span><br><span class="line">        SpaceShipDelegation protector = <span class="keyword">new</span> SpaceShipDelegation(<span class="string">&quot;NSEA Protector&quot;</span>); </span><br><span class="line">        protector.forward(<span class="number">100</span>); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上，使用代理时可以拥有更多的控制力，因为我们可以选择只提供在成员对象中方法的某个子集。</p>
+<h2 id="三、final关键字"><a href="#三、final关键字" class="headerlink" title="三、final关键字"></a>三、final关键字</h2><p>　许多编程语言都需要某种方法来向编译器告知一块数据是恒定不变的。有时，数据的恒定不变是很有用的，比如：</p>
+<ul>
+<li>一个永不改变的编译时常量；</li>
+<li>一个在运行时被初始化的值，而你不希望它被改变。</li>
+</ul>
+<p>对于编译期常量这种情况，编译器可以将该常量值带入任何可能用到它的计算式中，也即是说，可以在编译时执行计算式，这减轻了一些运行时负担。在java中，这类常量必须满足两个条件：</p>
+<ul>
+<li>是基本类型，并且用final修饰；</li>
+<li>在对这个常量进行定义的时候，必须对其进行赋值。</li>
+</ul>
+<p>此外，当用final修饰对象引用时，final使其引用恒定不变。一旦引用被初始化指向一个对象，就无法再把它指向另一个对象。然而，对象本身是可以被修改的，这同样使用于数组，因为它也是对象。</p>
+<p>特别需要注意的是，我们不能因为某数据是final的，就认为在编译时就可以知道它的值。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> i4=rand.nextInt(<span class="number">20</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>1、空白final</p>
+<p>　　Java允许生成 <strong>空白final</strong> , 即：<strong>声明final但又未给定初值的域。</strong>但无论什么情况，编译器都会确保空白final在使用前被初始化。但是，<strong>空白final在关键字final的使用上提供了更大的灵活性:</strong> <strong>一个类中的 final域 就可以做到根据对象而有所不同，却又保持其恒定不变的特性</strong></p>
+<p>必须在域的定义处或者每个构造器中使用表达式对final进行赋值，这正是final域在使用前总是被初始化的原因所在。</p>
+<p>2、final参数</p>
+<p>final参数主要应用于局部内部类和匿名内部类中。</p>
+<p>3、final方法</p>
+<p><strong>final关键字作用域方法时，用于锁定方法，以防任何继承类修改它的含义。**</strong>这是出于设计的考虑：想要确保在继承中使方法行为保持不变，并且不会被覆盖。**</p>
+<p>　　<strong>对于成员方法，只有在明确禁止覆盖时，才将方法设为final的。</strong></p>
+<p>4、final类</p>
+<p>当讲某个类定义为final时，就表明你不打算继承该类，而且也不允许别人这样做。换句话说，出于某种考虑，你对该类的设计永不需要做任何变动，或者出于安全考虑，你不希望它有子类。</p>
+<p>需要注意的是，final类的域可以根据实际情况选择是否为final的。不论是否被定义为final，相同的规则都适用于定义final的域。然而，由于final类禁止继承，所以final类中的所有方法都隐式指定为final的，因为无法覆盖它们。在final类中可以给方法添加final修饰，但这不会增添任何意义。</p>
+<p>5、final与private</p>
+<p><strong>类中所有的private方法都隐式地指定为final的。</strong>由于无法取用private方法，所以也就无法覆盖它。可以对private方法添加final修饰，但这并不会给该方法添加任何额外的意义。</p>
+<p>特别需要注意的是，覆盖只有在某方法是基类接口的一部分时才会出现。如果一个方法是private的，它就不是基类接口中的一部分，而仅仅是一些隐藏于类中的程序代码。但若在类中以相同的名称生成一个非private方法，此时我们并没有覆盖该方法，仅仅是生成了一个新的方法。由于private方法无法触及并且能有效隐藏，所以除了把它看成是由于它所归属的类的组织结构的原因而存在外，其他任何情况都不需要考虑它。</p>
+<p>6、final与static</p>
+<ul>
+<li>static修饰变量时，其具有默认值，且可改变，且其只能修饰成员变量和成员方法。</li>
+<li>一个static final域只占据一段不能改变的存储空间，且只能在声明时进行初始化。因为其是final的，因而没有默认值；且又是static的，因此在类没有实例化时，其已被赋值，所以只能在声明时初始化。</li>
+</ul>
+<h2 id="四、多态"><a href="#四、多态" class="headerlink" title="四、多态"></a>四、多态</h2><p>继承允许将对象视为它自己本身的类型或基类型加以处理，从而使同一份代码可以毫无差别地运行在这些不同的类型之上。其中，多态方法调用允许一种类型表现出其他相似类型之间的区别，只要这些类型由同一个基类所导出。所以，多态的作用主要体现在两个方面：</p>
+<ul>
+<li>多态通过分离做什么和怎么做，从另一个角度将接口和实现分离开来，从而实现将改变的事物与未变的事物分离开来；</li>
+<li>消除类型之间的耦合关系</li>
+</ul>
+<p>1、实现机制</p>
+<p>方法的覆盖很好的体现了多态，但是当使用一个基类引用去调用一个覆盖方法时，到底该调用哪个方法才正确呢？</p>
+<p>将一个方法调用同一个方法主体关联起来被称作绑定。若在程序执行前进行绑定，叫做前期绑定。但是，显然，这种机制并不能解决上面的问题，因为在编译时编译器并不知道上述基类引用到底指向哪个对象。解决的办法就是后期绑定（动态绑定/运行时绑定）：在运行时根据对象的具体类型进行绑定。</p>
+<p>事实上，在java中，除了static方法和final方法外，其他所有的方法都是后期绑定。这样，一个方法声明为final后，可以防止其他人覆盖该方法，但更重要的一点是：这样做可以有效地关闭动态绑定，或者说，告诉编译器不需要对其进行动态绑定，以便为final方法调用生成更有效的代码。</p>
+<p>基于动态绑定机制，我们就可以编写只与基类打交道的代码了，并且这些代码对所有的导出类都可以正确运行。或者说，发送消息给某个对象，让该对象去断定该做什么事情。</p>
+<p>2、向下转型与运行时类型识别</p>
+<p>由于向上转型会丢失具体的类型信息，所以我们可能会想，通过向下转型也应该能够获取类型信息。然而，向上转型是安全的，因为基类不会具有大于导出类的接口。因此，我们通过基类接口发送的消息都能被接受，但是对于向下转型，我们就无法保证了。</p>
+<p>要解决这个问题，必须有某种方法来确保向下转型的正确性，使我们不至于贸然转型到一种错误的类型，进而发出该对象无法接受的消息。在java中，运行时类型识别（RTTI）机制可以处理这个问题，它保证java中所有的转型都会得到检查。所以，即使我们只是进行一次普通的加括弧形式的类型转换，再进入运行期时仍会对其进行检查，以便保证它的确是我们希望的那种类型。如果不是，我们就会得到一个类型转换异常：ClassCastException。</p>
+<p>3、多态的应用举例</p>
+<ul>
+<li>策略模式</li>
+<li>适配器模式</li>
+</ul>
+<h2 id="五、类加载及初始化顺序"><a href="#五、类加载及初始化顺序" class="headerlink" title="五、类加载及初始化顺序"></a>五、类加载及初始化顺序</h2><p>类加载及初始化顺序：父类静态代码块-&gt;子类静态代码块-&gt;父类非静态代码块-&gt;父类构造函数-&gt;子类非静态代码块-&gt;子类构造函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String STR = <span class="string">&quot;Super Class Static Variable&quot;</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Super Class Static Block:&quot;</span> + STR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SuperClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Super Class Constructor Method&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Super Class Block&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectInit</span> <span class="keyword">extends</span> <span class="title">SuperClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String STR = <span class="string">&quot;Class Static Variable&quot;</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Class Static Block:&quot;</span> + STR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObjectInit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Constructor Method&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Class Block&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unused&quot;)</span></span><br><span class="line">        ObjectInit a = <span class="keyword">new</span> ObjectInit();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="comment">/* Output:</span></span><br><span class="line"><span class="comment">        Super Class Static Block:Super Class Static Variable</span></span><br><span class="line"><span class="comment">        Class Static Block:Class Static Variable</span></span><br><span class="line"><span class="comment">        Super Class Block</span></span><br><span class="line"><span class="comment">        Super Class Constructor Method</span></span><br><span class="line"><span class="comment">        Class Block</span></span><br><span class="line"><span class="comment">        Constructor Method</span></span><br><span class="line"><span class="comment"> */</span><span class="comment">//:~ </span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在运行该程序时，所发生的第一件事就是试图访问ObjectInit.main方法（一个static方法），于是加载器开始启动并加载ObjectInit类。在对其加载时，编译器注意到它有一个基类（由关键字extends得知），于是先进行加载其基类。如果该基类还有其自身的基类，那么先加载这个父基类，如此类推（本例中是先加载Object类，再加载SuperClass类，最后加载ObjectInit类）。接下来，根基类中的static域和static代码块会被执行，然后是下一个导出类，以此类推这种方式很重要，因为导出类的static初始化可能会依赖于基类成员能否正确初始化。到此为止，所有的类都已加载完毕，对象就可以创建了。首先，初始化根基类所有的普通成员变量和代码块，然后执行根基类构造器以便创建一个基对象，然后是下一个导出类，依次类推，知道初始化完成。</p>
+<h2 id="六、重载、覆盖与隐藏"><a href="#六、重载、覆盖与隐藏" class="headerlink" title="六、重载、覆盖与隐藏"></a>六、重载、覆盖与隐藏</h2><p>1、重载与覆盖</p>
+<p>重载：如果在一个类中定义了多个同名的方法，但它们有不同的参数（包含三方面：参数个数，参数类型和参数顺序），则称为方法的重载。其中，不能通过访问权限、返回类型和抛出异常进行重载。</p>
+<p>覆盖：子类中定义的某个方法与其父类中某个方法具有相同的方法签名（包含相同的名称和参数列表），则称为方法的覆盖。子类对象使用这个方法时，将调用该方法在子类中的定义，对它而言，父类中该方法的定义被屏蔽了。</p>
+<p>总的来说，重载和覆盖是java多态性的不同表现。前者是一个类中多态性的一种表现，后者是父类与子类之间多态性的一种表现。</p>
+<p>2、实现机制</p>
+<p>重载是一种参数多态机制，即通过方法参数的差异实现多态机制。并且，其属于一种静态绑定机制，在编译时已经知道具体执行哪个方法。</p>
+<p>覆盖是一种动态绑定的多态机制。即，在父类与子类中具有相同签名的方法具有不同的具体实现，至于最终执行哪个方法根据运行时的实际情况而定。</p>
+<p><strong>覆盖与隐藏</strong></p>
+<p>定义：</p>
+<p>覆盖：指运行时系统调用当前对象引用<strong>运行时类型</strong>中定义的方法，属于运行期绑定。</p>
+<p>隐藏：指运行时系统调用当前对象引用<strong>编译时类型</strong>中定义的方法，即被声明或者转换为什么类型就调用对应类型中的方法或变量，属于编译器绑定。</p>
+<p>范围：</p>
+<p>覆盖：只针对示例方法。</p>
+<p>隐藏：只针对静态方法和成员变量。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E7%9B%B8%E5%85%B3/" rel="tag"># java相关</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/27/%E8%B7%AF%E7%94%B1%E5%8D%8F%E8%AE%AE/" rel="prev" title="路由协议">
+      <i class="fa fa-chevron-left"></i> 路由协议
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/01/java%E4%B8%AD%E7%9A%84-equals%E4%B8%8EhashCode%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB/" rel="next" title="java中的==,equals与hashCode的区别与联系">
+      java中的==,equals与hashCode的区别与联系 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%91%98%E8%A6%81"><span class="nav-number">1.</span> <span class="nav-text">摘要</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%BB%A7%E6%89%BF"><span class="nav-number">1.1.</span> <span class="nav-text">一、继承</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E7%BB%84%E5%90%88%EF%BC%8C%E7%BB%A7%E6%89%BF%EF%BC%8C%E4%BB%A3%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">二、组合，继承，代理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81final%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-number">1.3.</span> <span class="nav-text">三、final关键字</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%A4%9A%E6%80%81"><span class="nav-number">1.4.</span> <span class="nav-text">四、多态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%8F%8A%E5%88%9D%E5%A7%8B%E5%8C%96%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.5.</span> <span class="nav-text">五、类加载及初始化顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E9%87%8D%E8%BD%BD%E3%80%81%E8%A6%86%E7%9B%96%E4%B8%8E%E9%9A%90%E8%97%8F"><span class="nav-number">1.6.</span> <span class="nav-text">六、重载、覆盖与隐藏</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

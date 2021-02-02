@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、java内存模型与常量池1、java内存模型  程序计数器 多线程时，当线程数超过CPU数量或CPU内核数量，线程之间就要根据时间片轮询抢夺CPU时间资源。因此，每个线程要有一个独立的程序计数器，记录下一条要运行的指令，其为线程私有的内存区域。如果执行的是JAVA方法，计数器记录正在执行的java字节码地址，如果执行的是native方法，则计数器为空。  虚拟机栈 线程私有的，与线程在同一时间">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java String综述1">
+<meta property="og:url" content="http://example.com/2021/02/01/java-String%E7%BB%BC%E8%BF%B01/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="一、java内存模型与常量池1、java内存模型  程序计数器 多线程时，当线程数超过CPU数量或CPU内核数量，线程之间就要根据时间片轮询抢夺CPU时间资源。因此，每个线程要有一个独立的程序计数器，记录下一条要运行的指令，其为线程私有的内存区域。如果执行的是JAVA方法，计数器记录正在执行的java字节码地址，如果执行的是native方法，则计数器为空。  虚拟机栈 线程私有的，与线程在同一时间">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-01T07:45:06.000Z">
+<meta property="article:modified_time" content="2021-02-01T12:37:34.764Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="java相关">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/02/01/java-String%E7%BB%BC%E8%BF%B01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java String综述1 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/01/java-String%E7%BB%BC%E8%BF%B01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java String综述1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-01 15:45:06 / 修改时间：20:37:34" itemprop="dateCreated datePublished" datetime="2021-02-01T15:45:06+08:00">2021-02-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="一、java内存模型与常量池"><a href="#一、java内存模型与常量池" class="headerlink" title="一、java内存模型与常量池"></a>一、java内存模型与常量池</h2><p>1、java内存模型</p>
+<ul>
+<li><p>程序计数器</p>
+<p>多线程时，当线程数超过CPU数量或CPU内核数量，线程之间就要根据时间片轮询抢夺CPU时间资源。因此，每个线程要有一个独立的程序计数器，记录下一条要运行的指令，其为线程私有的内存区域。如果执行的是JAVA方法，计数器记录正在执行的java字节码地址，如果执行的是native方法，则计数器为空。</p>
+</li>
+<li><p>虚拟机栈</p>
+<p>线程私有的，与线程在同一时间创建，是管理java方法执行的内存模型。栈中主要存放一些基本类型的变量数据（int,short,long,byte,float,double,boolean,char）和对象引用。每个方法执行时都会创建一个帧栈来存储方法的变量表、操作数栈、动态链接方法、返回值、返回地址等信息。栈的大小决定了方法调用的可达深度（递归多少层次，或嵌套调用多少层其他方法，-Xss参数可以设置虚拟机栈大小）。栈的大小可以是固定的，或者是动态扩展的。如果请求的栈深度大于最大可用深度，则抛出stackOverflowError；如果栈是可动态扩展的，但没有内存空间支持扩展，则抛出OutofMemoryError。使用jclasslib工具可以查看class类文件的结构。</p>
+</li>
+<li><p>本地方法区</p>
+<p>和虚拟机栈功能相似，但管理的不是java方法，是本地方法，本地方法是用C实现的。</p>
+</li>
+<li><p>java堆</p>
+<p>线程共享的，存放所有对象实例和数组，是垃圾回收的主要区域。堆是一个运行时数据区，类的对象从中分配空间，这些对象通过new、newarray，anewarray和multianewarray等指令建立，它们不需要程序代码来显式的释放。堆可以分为新生代和老年代（tenured）。新生代用于存放刚创建的对象以及年轻的对象，如果对象一直没有被回收，生存得足够长，老年对象就会被移入老年代。新生代又可进一步细分为eden、survivorSpace0、survivorSpace1(s1,tospace)。刚创建的对象都放入eden，s0和s1都至少经过一次GC并幸存。如果幸存对象经过一定实践仍存在，则进入老年代（tenured）。</p>
+</li>
+<li><p>方法区</p>
+<p>线程共享的，用于存放被虚拟机加载的类的元数据信息：如常量、静态变量、即时编译器编译后的代码，也成为永久代。如果hotspot虚拟机确定一个类的定义信息不会被使用，也会将其回收。回收的基本条件至少有：所有该类的实例被回收，而且装载该类的ClassLoader被回收。</p>
+</li>
+</ul>
+<p>2、常量池</p>
+<p>常量池属于类信息的一部分，而类信息反映到JVM内存模型中对应于方法区，也就是说，常量池位于方法区。常量池主要存放两大常量：字面量（Literal）和符号引用（Symbolic ）。其中，字面量主要包括字符串字面量，整型字面量和声明为final的常量值等；而符号引用则属于编译原理方面的概念，包括了下面三类常量：</p>
+<ul>
+<li>类和接口的全限定名</li>
+<li>字段的名称和描述符</li>
+<li>方法的名称和描述符</li>
+</ul>
+<h2 id="二、常量与变量"><a href="#二、常量与变量" class="headerlink" title="二、常量与变量"></a>二、常量与变量</h2><ul>
+<li><p>一般把内存地址不变，值可以改变的东西称为变量，换句话说，在内存地址不变的前提下内存的内容是可变的，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">String_2</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Human_1 h =<span class="keyword">new</span> Human_1(<span class="number">1</span>,<span class="number">30</span>);</span><br><span class="line">        Human_1 h2=h;</span><br><span class="line">        System.out.printf(<span class="string">&quot;h: %s\n&quot;</span>,h.toString());</span><br><span class="line">        Syytem.out.printf(<span class="string">&quot;h2: %s\n\n&quot;</span>,h.toString());</span><br><span class="line">        h.id=<span class="number">3</span>;</span><br><span class="line">        h.age=<span class="number">32</span>;</span><br><span class="line">        System.out.printf(<span class="string">&quot;h:%s\n&quot;</span>,h.toString());</span><br><span class="line">        System.out.printf(<span class="string">&quot;h2:%s\n\n&quot;</span>,h.toString());</span><br><span class="line">        </span><br><span class="line">        System.out.println(h==h2);	<span class="comment">//引用值不变，即对象内存底子不变，但内容改变</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们一般把若内存地址不变，则值也不可以改变的东西称为常量，典型的String就是不可变的，所以称之为常量（constant）。此外，我们可以通过final关键字来定义常量，但严格来说，只有基本类型被其修饰后才是常量（对基本类型来说是其值不可变，而对于对象变量来说其引用不可再变）。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> i=<span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="三、String定义与基础"><a href="#三、String定义与基础" class="headerlink" title="三、String定义与基础"></a>三、String定义与基础</h2><ol>
+<li><p>String的声明</p>
+<p>由JDK中关于String的声明可以知道：</p>
+<ol>
+<li>不同字符串可能共享同一个底层char数组，例如字符串String s=”abc”与s.substring(1)就共享同一个char数组：char[] c={‘a’,’b’,’c’}。其中，前者的offset和count的值分别为0和3，后者的offset和count的值分别为1和2.</li>
+<li>offset和count两个成员变量不是多余的，比如，在执行substring操作时。</li>
+</ol>
+</li>
+<li><p>JDK中关于String的描述</p>
+<p>The String class represents character Strings. All string literals(字符串字面值) in java programs, such as “abc”, are implemented as instances of this class. Strings are constant(常量); their values cannot be changed after they are created. String buffers[StringBuilder OR StringBuffer] support mutable strings. Because String objects are immutable, they can be shared(享元模式).</p>
+</li>
+<li><p>String类所内置的操作</p>
+<p>The class String includes methods for examining individual characters of the sequence, for examining individual characters of the sequence, for comparing strings, for searching strings, for extracting substrings and for creating a copy of a string with all characters translated to uppercase or to lowercase. Case mapping is based on the Unicode standard version specified by the java.lang.Character class.</p>
+</li>
+</ol>
+<p>4、字符串串联符号（”+”）以及将其他对象转换为字符串的特殊支持</p>
+<p>　　The Java language provides special support for the <strong>string concatenation operator (+)</strong>, and for conversion of other objects to strings. String concatenation is implemented through the <strong>StringBuilder(JDK1.5 以后) OR StringBuffer(JDK1.5 以前)</strong> class and <strong>its append method</strong>. String conversions(转化为字符串) are implemented through the method <strong>toString</strong>, defined by class Object and inherited by all classes in Java.</p>
+<p>注意：</p>
+<ul>
+<li><p>String不属于八种基本数据类型，String的实例是一个对象。因为对象的默认值是null，所以String的默认值也是null；但它又是一种特殊的对象，有其他对象没有的一些特性(String的不可变性导致其像八种基本类型一样，比如，作为方法参数时，像基本类型的传值效果一样)。例如，以下代码片段：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">changeStr</span><span class="params">(String str)</span></span>&#123;</span><br><span class="line">        String s=str;</span><br><span class="line">        str+=<span class="string">&quot;welcome&quot;</span>;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        String str=<span class="string">&quot;1234&quot;</span>;</span><br><span class="line">        changeStr(str);</span><br><span class="line">        System.out.println(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* Output: </span></span><br><span class="line"><span class="comment">        1234</span></span><br><span class="line"><span class="comment">        1234 </span></span><br><span class="line"><span class="comment">*/</span><span class="comment">//:~ </span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>new String()和new String(“”都是声明一个新的空字符串)，是空串不是null；</p>
+</li>
+</ul>
+<h2 id="四、String的不可变性"><a href="#四、String的不可变性" class="headerlink" title="四、String的不可变性"></a>四、String的不可变性</h2><p>1、什么是不可变对象？</p>
+<p>众所周知，在java中，String类是不可变类（基本类型的包装类都是不可改变的）的典型代表，也是Immutable设计模式的典型应用。String变量一旦初始化后就不能更改，禁止改变对象的状态，从而增加共享对象的坚固性、减少对象访问的错误，同时还避免了在多线程共享时进行同步的需要。什么是不可变的对象呢？可以这样认为：如果一个对象，在它创建完成之后，不能再改变它的状态，那么这个对象就是不可变的。不能改变状态指的是不能改变对象内的成员变量，包括：</p>
+<ul>
+<li>基本数据类型的值不能改变；</li>
+<li>引用类型的变量不能指向其他的对象；</li>
+<li>引用类型指向的对象的状态也不能改变；</li>
+</ul>
+<p>除此之外，还应具有以下特点：</p>
+<ul>
+<li>除了构造函数之外，不应该有其他任何函数（至少是任何public函数）修改任何成员变量；</li>
+<li>任何使成员变量获得新值的函数都应该将新的值保存在新的对象中，而保持原来的对象不被修改。</li>
+</ul>
+<p>2、区分引用和对象</p>
+<p>对于java初学者，对于String是不可变对象总是存有疑惑。看下面代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="string">&quot;ABCabc&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;s = &quot;</span> + s);    <span class="comment">// s = ABCabc</span></span><br><span class="line"></span><br><span class="line">s = <span class="string">&quot;123456&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;s = &quot;</span> + s);    <span class="comment">// s = 123456</span></span><br></pre></td></tr></table></figure>
+
+<p>首先创建了一个String对象s，然后让s的值为”ABCabc“，然后又让s的值为”1234560“。从打印结果可以看出，s的值确实改变了。那么怎么还说String对象是不可变的呢？其实这里存在一个误区：s只是一个String对象的引用，并不是对象本身。对象在内存中是一块内存区，成员变量越多，这块内存区占的空间越大。引用只是一个4字节的数据，里面存放了它所指向的对象的地址，通过这个地址可以访问对象。也就是说，s只是一个引用，它指向了一个具体的对象，当s=”123456”；这句代码执行过之后，又创建了一个新的对象”123456“，而引用s重新指向了这个心的对象，原来的对象”ABCabc”还在内存中存在，并没有改变。</p>
+<p>Java和C++的一个不同点是，<strong>在 Java 中，引用是访问、操纵对象的唯一方式： 我们不可能直接操作对象本身，所有的对象都由一个引用指向，必须通过这个引用才能访问对象本身</strong>，包括获取成员变量的值，改变对象的成员变量，调用对象的方法等。而在C++中存在引用，对象和指针三个东西，这三个东西都可以访问对象。其实，Java中的引用和C++中的指针在概念上是相似的，他们都是存放的对象在内存中的地址值，只是在Java中，引用丧失了部分灵活性，比如Java中的引用不能像C++中的指针那样进行加减运算。</p>
+<p>3、为什么String对象是不可变的？</p>
+<p>在JDK1.6中，String的成员变量有以下几个：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">string</span>&gt;, <span class="title">CharSequence</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The offset is the first index of the storage that is used. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> offset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The count is the number of characters in the String. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Cache the hash code for the string */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0&lt;/string&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在JDK1.7中，String类做了一些改动，主要是改变了substring方法执行时的行为，这和本文的主题不相关。JDK1.7中String类的主要成员变量就剩下了两个：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">string</span>&gt;, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Cache the hash code for the string */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0&lt;/string&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在java中，String类其实就是对字符数组的封装。JDK6中，value是String封装的数组，offset是String在这个value数组中的起始位置，count是String所占的字符的个数。在JDK7中，只有一个value变量，也就是value中的所有字符都是属于String这个对象的。这个改变不影响本文的讨论。除此之外还有一个hash成员变量，是该String对象的哈希值的缓存，这个成员的变量也和本文的讨论无关。在java中，数组也是对象。所以value也只是一个引用，它指向一个真正的数组对象。其实执行了String s =”ABCabc”；这句代码之后，真正的内存布局应该是这样的：</p>
+<p>value、offset和count这三个变量都是private的，并且没有提供setValue，setOffset和setCount等公共方法来修改这些值，所以在String类的外部无法修改String。也就是说一旦初始化就不能修改，并且在String类的外部不能访问这三个成员。此外，value，offset和count这三个变量都是final的，也就是说在String类内部，一旦这三个值初始化了，也不能被改变。所以，可以认为String对象是不可变的了。</p>
+<p>那么在String中，明明存在一些方法，调用他们可以得到改变后的值。这些方法包括substring， replace， replaceAll， toLowerCase等。例如如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="string">&quot;ABCabc&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;a = &quot;</span> + a);    <span class="comment">// a = ABCabc</span></span><br><span class="line"></span><br><span class="line">a = a.replace(<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">System.out.println(<span class="string">&quot;a = &quot;</span> + a);    <span class="comment">//a = aBCabc</span></span><br></pre></td></tr></table></figure>
+
+<p>那么a的值看似改变了，其实也是同样的误区。再次说明， a只是一个引用， 不是真正的字符串对象，在调用a.replace(‘A’, ‘a’)时， 方法内部创建了一个新的String对象，并把这个心的对象重新赋给了引用a。</p>
+<p>我们可以自己查看其他方法，都是在方法内部重新创建新的String对象，并且返回这个新的对象，原来的对象是不会被改变的。这也是为什么像replace， substring，toLowerCase等方法都存在返回值的原因。也是为什么像下面这样调用不会改变对象的值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String ss = <span class="string">&quot;123456&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;ss = &quot;</span> + ss);     <span class="comment">// ss = 123456</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ss.replace(<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">System.out.println(<span class="string">&quot;ss = &quot;</span> + ss);     <span class="comment">//ss = 123456</span></span><br></pre></td></tr></table></figure>
+
+<p>4、String对象真的不可变吗？</p>
+<p>String的成员变量是private final的，也就是初始化之后不可改变。那么在这几个成员中，value比较特殊，因为他是一个引用变量，而不是真正的对象。value是final修饰的，也就是说final不能再指向其他数组对象，那么我能改变value指向的数组吗？比如，将数组中的某个位置上的字符变为下划线”_”。至少在我们自己写的普通代码中不能够做到，因为我们根本不能够访问到这个value引用，更不能通过这个引用去修改数组，那么用什么方式可以访问私有成员呢？没错，用反射，可以反射出String对象中的value属性，进而改变通过获得的value引用改变数组的结构。下面是实例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testReflection</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建字符串&quot;Hello World&quot;， 并赋给引用s</span></span><br><span class="line">    String s = <span class="string">&quot;Hello World&quot;</span>; </span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;s = &quot;</span> + s); <span class="comment">//Hello World</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取String类中的value字段</span></span><br><span class="line">    Field valueFieldOfString = String.class.getDeclaredField(<span class="string">&quot;value&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//改变value属性的访问权限</span></span><br><span class="line">    valueFieldOfString.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取s对象上的value属性的值</span></span><br><span class="line">    <span class="keyword">char</span>[] value = (<span class="keyword">char</span>[]) valueFieldOfString.get(s);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//改变value所引用的数组中的第5个字符</span></span><br><span class="line">    value[<span class="number">5</span>] = <span class="string">&#x27;_&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;s = &quot;</span> + s);  <span class="comment">//Hello_World</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这个过程中，s始终引用的同一个String对象，但是再反射前后，这个String对象发生了变化，也就是说，通过反射是可以修改所谓的“不可变”对象的。但是一般不这么做。这个反射的实例还可以说明一个问题：如果一个对象，它组合的其他对象的状态是可以改变的，那么这个对象很可能不是不可变对象。例如一个Car对象，它组合了一个Wheel对象，虽然这个Wheel对象声明成了private final的，但是这个Wheel对象内部的状态可以改变，那么就不能很好的保证Car对象不可变。</p>
+<h2 id="五、String对象创建方式"><a href="#五、String对象创建方式" class="headerlink" title="五、String对象创建方式"></a>五、String对象创建方式</h2><p>1、字面值形式：JVM会自动根据字符串常量池中字符串的实际情况来决定是否创建新对象（要么不创建，要么创建一个对象，关键要看常量池中有没有）</p>
+<p>JDK中明确指出：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String s=<span class="string">&quot;abc&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>等价于：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> data[] =&#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>&#125;;</span><br><span class="line">String str = <span class="keyword">new</span> String(data);</span><br></pre></td></tr></table></figure>
+
+<p>这该种方式先在栈中创建一个对String类的对象引用变量s，然后去查找 “abc”是否被保存在字符串常量池中。<strong>若”abc”已经被保存在字符串常量池中，则在字符串常量池中找到值为”abc”的对象，然后将s 指向这个对象</strong>; 否则，<strong>在 \</strong>堆** 中创建char数组 data，然后在 *<em>堆*</em> 中创建一个String对象object，它由 data 数组支持，紧接着这个String对象 object 被存放进字符串常量池，最后将 s 指向这个对象。**</p>
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test01</span><span class="params">()</span></span>&#123;  </span><br><span class="line">    String s0 = <span class="string">&quot;kvill&quot;</span>;        <span class="comment">// 1</span></span><br><span class="line">    String s1 = <span class="string">&quot;kvill&quot;</span>;        <span class="comment">// 2</span></span><br><span class="line">    String s2 = <span class="string">&quot;kv&quot;</span> + <span class="string">&quot;ill&quot;</span>;     <span class="comment">// 3</span></span><br><span class="line">    System.out.println(s0 == s1);       <span class="comment">// true  </span></span><br><span class="line">    System.out.println(s0 == s2);       <span class="comment">// true  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行第 1 行代码时，“kvill” 入池并被 s0 指向；执行第 2 行代码时，s1 从常量池查询到” kvill” 对象并直接指向它；所以，s0 和 s1 指向同一对象。 由于 ”kv” 和 ”ill” 都是字符串字面值，所以 s2 在编译期由编译器直接解析为 “kvill”，所以 s2 也是常量池中”kvill”的一个引用。 所以，我们得出 s0==s1==s2;</p>
+<p>2.通过new创建字符串对象：一概在堆中创建新对象，无论字符串字面值是否相等（要么创建一个，要么创建两个对象，关键要看常量池中有没有）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;abc&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>等价于：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String original=<span class="string">&quot;abc&quot;</span>;</span><br><span class="line">String s=<span class="keyword">new</span> String(original);</span><br></pre></td></tr></table></figure>
+
+<p>所以，<strong>通过 new 操作产生一个字符串（“abc”）时，会先去常量池中查找是否有“abc”对象，如果没有，则创建一个此字符串对象并放入常量池中。然后，在堆中再创建“abc”对象，并返回该对象的地址。</strong>所以，<strong>对于 String str=new String(“abc”)**：</strong>如果常量池中原来没有”abc”，则会产生两个对象（一个在常量池中，一个在堆中）；否则，产生一个对象。**</p>
+<p>用new String()创建的字符串对象位于堆中，而不是常量池中，它们有自己独立的地址空间，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test02</span><span class="params">()</span></span>&#123;  </span><br><span class="line">    String s0 = <span class="string">&quot;kvill&quot;</span>;  </span><br><span class="line">    String s1 = <span class="keyword">new</span> String(<span class="string">&quot;kvill&quot;</span>);  </span><br><span class="line">    String s2 = <span class="string">&quot;kv&quot;</span> + <span class="keyword">new</span> String(<span class="string">&quot;ill&quot;</span>);  </span><br><span class="line">    String s = <span class="string">&quot;ill&quot;</span>;</span><br><span class="line">    String s3 = <span class="string">&quot;kv&quot;</span> + s;    </span><br><span class="line">    System.out.println(s0 == s1);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s0 == s2);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s1 == s2);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s0 == s3);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s1 == s3);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s2 == s3);       <span class="comment">// false  </span></span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>例子中，s0 还是常量池中”kvill”的引用，s1 指向运行时创建的新对象”kvill”，二者指向不同的对象。对于s2，因为后半部分是 new String(“ill”)，所以无法在编译期确定，在运行期会 new 一个 StringBuilder 对象， 并由 StringBuilder 的 append 方法连接并调用其 toString 方法返回一个新的 “kvill” 对象。此外，s3 的情形与 s2 一样，均含有编译期无法确定的元素。因此，以上四个 “kvill” 对象互不相同。StringBuilder 的 toString 为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(value,<span class="number">0</span>,count);	<span class="comment">//new的方式创建字符串</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>构造函数String(String original)的源码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据源字符串的底层数组长度与该字符串本身长度是否相等决定是否共用支撑数组</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">String</span><span class="params">(String original)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size = original.count;</span><br><span class="line">    <span class="keyword">char</span>[] originalValue = original.value;</span><br><span class="line">    <span class="keyword">char</span>[] v;</span><br><span class="line">    <span class="keyword">if</span> (originalValue.length &gt; size) &#123;</span><br><span class="line">        <span class="comment">// The array representing the String is bigger than the new</span></span><br><span class="line">        <span class="comment">// String itself. Perhaps this constructor is being called</span></span><br><span class="line">        <span class="comment">// in order to trim the baggage, so make a copy of the array.</span></span><br><span class="line">        <span class="keyword">int</span> off = original.offset;</span><br><span class="line">        v = Arrays.copyOfRange(originalValue, off, off + size);  <span class="comment">// 创建新数组并赋给 v</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// The array representing the String is the same</span></span><br><span class="line">        <span class="comment">// size as the String, so no point in making a copy.</span></span><br><span class="line">        v = originalValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.offset = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.count = size;</span><br><span class="line">    <span class="keyword">this</span>.value = v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由源码可以知道，<strong>所创建的对象在大多数情形下会与源字符串 original 共享 char数组 。</strong>但是，<strong>什么情况下不会共享呢？</strong><br>　　<br>　　Take a look at <strong>substring</strong> , and you’ll see how this can happen.</p>
+<p>　　Take for instance String s1 = “Abcd”; String s2 = s1.substring(3). Here s2.size() is 1, but s2.value.length is 4. <strong>This is because s1.value is the same as s2.value. This is done of performance reasons (substring is running in O(1), since it doesn’t need to copy the content of the original String).</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">&quot;Abcd&quot;</span>;       <span class="comment">// s1 的value为Abcd的数组，offset为 0，count为 4</span></span><br><span class="line">String s2 = a.substring(<span class="number">3</span>);      <span class="comment">// s2 的value也为Abcd的数组，offset为 3，count为 1</span></span><br><span class="line">String c = <span class="keyword">new</span> String(s2);      <span class="comment">// s2.value.length 为 4，而 original.count = size = 1, 即 s2.value.length &gt; size 成立</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Using substring can lead to a memory leak.</strong> Say you have a really long String, and you only want to keep a small part of it. If you just use substring, you will actually keep the original string content in memory. <strong>Doing</strong> <strong>String snippet = new String(reallyLongString.substring(x,y))</strong> , <strong>prevents you from wasting memory backing a large char array no longer needed.</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E7%9B%B8%E5%85%B3/" rel="tag"># java相关</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/01/java%E4%B8%AD%E7%9A%84-equals%E4%B8%8EhashCode%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB/" rel="prev" title="java中的==,equals与hashCode的区别与联系">
+      <i class="fa fa-chevron-left"></i> java中的==,equals与hashCode的区别与联系
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/02/java-String%E7%BB%BC%E8%BF%B02/" rel="next" title="java String综述2">
+      java String综述2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E4%B8%8E%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">1.</span> <span class="nav-text">一、java内存模型与常量池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E9%87%8F%E4%B8%8E%E5%8F%98%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">二、常量与变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81String%E5%AE%9A%E4%B9%89%E4%B8%8E%E5%9F%BA%E7%A1%80"><span class="nav-number">3.</span> <span class="nav-text">三、String定义与基础</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81String%E7%9A%84%E4%B8%8D%E5%8F%AF%E5%8F%98%E6%80%A7"><span class="nav-number">4.</span> <span class="nav-text">四、String的不可变性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81String%E5%AF%B9%E8%B1%A1%E5%88%9B%E5%BB%BA%E6%96%B9%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">五、String对象创建方式</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">48</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
