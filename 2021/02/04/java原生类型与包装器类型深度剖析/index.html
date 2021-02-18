@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="要点：  原生类型与包装器类型 字面值概念和种类 基本类型、自动转型与强制转型 自动装箱与拆箱机制（Autoboxing and Unboxing）  一、原生类型与包装器类型八种基本数据类型 注意：  未带有字符串标识的整数默认为int类型，未带有字符串后缀标识的浮点数默认为double类型； 只有byte，char，short，int四种基本类型纪其包装类可以用于switch语句（只有enum">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java原生类型与包装器类型深度剖析">
+<meta property="og:url" content="http://example.com/2021/02/04/java%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8%E7%B1%BB%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="要点：  原生类型与包装器类型 字面值概念和种类 基本类型、自动转型与强制转型 自动装箱与拆箱机制（Autoboxing and Unboxing）  一、原生类型与包装器类型八种基本数据类型 注意：  未带有字符串标识的整数默认为int类型，未带有字符串后缀标识的浮点数默认为double类型； 只有byte，char，short，int四种基本类型纪其包装类可以用于switch语句（只有enum">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-04T02:04:19.000Z">
+<meta property="article:modified_time" content="2021-02-04T07:46:20.901Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="java相关">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/02/04/java%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8%E7%B1%BB%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java原生类型与包装器类型深度剖析 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/04/java%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8%E7%B1%BB%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java原生类型与包装器类型深度剖析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 10:04:19 / 修改时间：15:46:20" itemprop="dateCreated datePublished" datetime="2021-02-04T10:04:19+08:00">2021-02-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>要点：</strong></p>
+<ul>
+<li>原生类型与包装器类型</li>
+<li>字面值概念和种类</li>
+<li>基本类型、自动转型与强制转型</li>
+<li>自动装箱与拆箱机制（Autoboxing and Unboxing）</li>
+</ul>
+<h2 id="一、原生类型与包装器类型"><a href="#一、原生类型与包装器类型" class="headerlink" title="一、原生类型与包装器类型"></a>一、原生类型与包装器类型</h2><p>八种基本数据类型</p>
+<p>注意：</p>
+<ul>
+<li>未带有字符串标识的整数默认为int类型，未带有字符串后缀标识的浮点数默认为double类型；</li>
+<li>只有byte，char，short，int四种基本类型纪其包装类可以用于switch语句（只有enum类型和int类型可以应用到switch），其他类型编译会报错；</li>
+<li>char(两个字节)可以用单引号标识单个字符（可以是汉字），如：‘良’，‘A’；</li>
+<li>整数可以由二进制（以0B/0b开头）、八进制（以0开头的整数）、十进制、十六进制表示；</li>
+</ul>
+<h2 id="二、字面值"><a href="#二、字面值" class="headerlink" title="二、字面值"></a>二、字面值</h2><p>字面值大体上可以分为整型字面值、浮点型字面值、字符串字面值、特殊字面值四种。</p>
+<p>1、整型字面值</p>
+<ul>
+<li>整型字面值可以使用十进制、十六进制、八进制和二进制来表示。当然，基数不能超出进制的范围。</li>
+<li>一般情况下，字面值创建的是int类型，但是int字面值可以赋值给byte、short、char、long和int。当然，前提是字面值在目标范围以内(java会自动完成转换)；如果试图将超出范围的字面值赋给某一类型，编译通不过，需要强制类型转换。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> b0 = <span class="number">128</span>;       <span class="comment">// Type mismatch: cannot convert from int to byte</span></span><br><span class="line"><span class="keyword">byte</span> b1 = <span class="number">12</span>;       <span class="comment">// OK</span></span><br><span class="line"><span class="keyword">byte</span> b2 = (<span class="keyword">byte</span>)<span class="number">300</span>；<span class="comment">// OK 需要强制转换，但表示的数字是截取后的数字（300二进制为100101100，截取后为00101100，即44）</span></span><br><span class="line"><span class="keyword">char</span> c0 = <span class="number">5</span>;       <span class="comment">// OK</span></span><br><span class="line"><span class="keyword">char</span> c1 = <span class="keyword">char</span>(-<span class="number">3</span>);       <span class="comment">// 编译通过,但打印值为 ？（char 为无符号的）</span></span><br><span class="line">System.out.println(c1);   <span class="comment">// ？</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建long类型，需要在字面值最后面加上L或者l。整型字面值包括int字面值和long字面值两种。</li>
+<li>java中，字符字面值用单引号括起来。</li>
+</ul>
+<p>2、浮点字面值</p>
+<p>浮点字面值简单的理解可以理解为小数，分为float字面值和double字面值。默认为double类型，如果在小数后面加上F或者f，则表示是个float字面值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">double</span> d1 = <span class="number">10</span>；     <span class="comment">// OK，自动类型转换</span></span><br><span class="line"><span class="keyword">double</span> d2 = <span class="number">11.4</span>;    <span class="comment">// OK</span></span><br><span class="line"><span class="keyword">double</span> d3 = <span class="number">1.23E3</span>;    <span class="comment">// OK  </span></span><br><span class="line"><span class="keyword">double</span> d4 = <span class="number">10D</span>;    <span class="comment">// OK  </span></span><br><span class="line"><span class="keyword">double</span> d5 = <span class="number">0.4D</span>;     <span class="comment">// OK </span></span><br><span class="line"><span class="keyword">float</span> f1 = <span class="number">10</span>;      <span class="comment">// OK，自动类型转换</span></span><br><span class="line"><span class="keyword">float</span> f2 = <span class="number">11.1F</span>;      <span class="comment">// OK</span></span><br><span class="line"><span class="keyword">float</span> f3 = <span class="number">11.1</span>;      <span class="comment">// Type mismatch: cannot convert from double to float</span></span><br></pre></td></tr></table></figure>
+
+<p>3、字符及字符串字面值</p>
+<p>java中字符字面值用单引号括起来，如‘@’，‘1’。字符串字面值使用双引号，字符串字面值中同样可以包含字符字面值中的转义字符序列。</p>
+<p>4、特殊字面值</p>
+<p>null是一种特殊的类型（type），可以将它赋给任何引用类型变量，表示这个变量不引用任何东西。如果一个引用类型变量为null，表示这个变量不可用。</p>
+<p>还有一种特殊的class literal，用type name加上.class表示，例如String.class。class literal用于表示类型本身。</p>
+<h2 id="三、自动转型与强制转型"><a href="#三、自动转型与强制转型" class="headerlink" title="三、自动转型与强制转型"></a>三、自动转型与强制转型</h2><p>1、自动转型</p>
+<p>自动转型总原则：byte,short，char（同级）-&gt;int-&gt;long-&gt;float-&gt;double（由低精度到高精度）</p>
+<ul>
+<li><p>从位数低的类型向位数高的类型转换</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> b = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">char</span> c = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">short</span> s = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>;</span><br><span class="line">c = b;  <span class="comment">// Error，同级</span></span><br><span class="line">c = s;  <span class="comment">// Error，同级</span></span><br><span class="line">s = c;  <span class="comment">// Error，同级</span></span><br><span class="line">i = c;  <span class="comment">// OK</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>从整型向浮点型的转换</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">long</span> t=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">float</span> f=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">double</span> d=<span class="number">1</span>;</span><br><span class="line">f=i;	<span class="comment">//OK</span></span><br><span class="line">f=t;	<span class="comment">//OK</span></span><br><span class="line">d=f;	<span class="comment">//OK</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>2、运算符对基本类型的影响</p>
+<p>1）当使用+,-,*,/,%,==,&gt;,&lt;等等运算符对基本类型进行运算时，遵循如下规则：</p>
+<p>​    两个操作数中，先考虑吧是否有一个是double类型的。如果有，另一个操作数和结果将会转换成double类型。再依次考虑float，long。除此之外，两个操作数都将会被转换成int类型。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> b1 = <span class="number">10</span> ;  <span class="comment">//OK，会检查发现10没有超过byte类型的最大值</span></span><br><span class="line"><span class="keyword">byte</span> b2 = <span class="number">12</span>;   <span class="comment">//OK，会检查发现12没有超过byte类型的最大值</span></span><br><span class="line"><span class="keyword">byte</span> b = b1 + b2; <span class="comment">//Error，byte类型在计算时会自动提升为int类型，此时就会报错，因为b1+b2实际上是int类型，但是左侧的变量为byte类型。</span></span><br><span class="line"><span class="keyword">short</span> s1=<span class="number">1</span>; <span class="comment">//OK，会检查发现1没有超过short类型的最大值</span></span><br><span class="line">s1=s1+<span class="number">1</span>;    <span class="comment">//Error，因为s1+1 结果int，但左侧变量为 short，报错</span></span><br><span class="line">s1++;      <span class="comment">//OK，不会报错，与s1=s1+1不同！！！，会检查发现2没有超过short类型的最大值</span></span><br><span class="line">s1=<span class="number">1</span>+<span class="number">1</span>;   <span class="comment">//OK，1+1 是个编译时可以确定的常量，&#x27;+&#x27;运算在编译时就被执行了，而不是在程序执行的时候，这个语句的效果等同于s1=2</span></span><br></pre></td></tr></table></figure>
+
+<p>2）当使用+=，-=,*=,/=,%=,i++,++i运算符对基本类型进行运算时，遵循如下规则：</p>
+<p><strong>运算符右边的数值将首先被强制转换成与运算符左边数值相同的类型，然后再执行运算，且运算结果与运算符左边数值类型相同。</strong>自增(减)运算也类似</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">short</span> s1=<span class="number">1</span>; <span class="comment">// OK，会检查发现1没有超过short类型的最大值</span></span><br><span class="line"><span class="keyword">short</span> s2;</span><br><span class="line"></span><br><span class="line">s1+=<span class="number">1</span>;    <span class="comment">// OK，正确，1首先被强制转换为short型，然后再参与运算，并且结果也是short类型</span></span><br><span class="line"></span><br><span class="line">s2 = ++s1;     <span class="comment">// OK，正确，s2的值为2</span></span><br></pre></td></tr></table></figure>
+
+<p>2、强制转型</p>
+<p>​    强制转型的格式是在需要转型的数据前加上“（）”，然后在括号内加入需要转化的数据类型。主要发生以下两种情形：</p>
+<ul>
+<li>由高精度向低精度转换</li>
+<li>一种类型到另一种类型转换，则必须使用强制类型转化（同级之间：byte，short,char）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span> b = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">int</span> i = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">long</span> t = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">float</span> f = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">char</span> c = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">short</span> s = <span class="number">3</span>;</span><br><span class="line">i = (<span class="keyword">int</span>) f;  <span class="comment">// OK，由高精度向低精度转换</span></span><br><span class="line">t = (<span class="keyword">long</span>) f;  <span class="comment">// OK，由高精度向低精度转换</span></span><br><span class="line">b = (<span class="keyword">byte</span>) i;  <span class="comment">// OK，由高精度向低精度转换</span></span><br><span class="line">i = b; <span class="comment">// OK，由低精度向高精度转换，自动转型</span></span><br><span class="line">System.out.println(c==s);  <span class="comment">// OK，true，c 和 s 自动转型为int,然后比较</span></span><br><span class="line">b = (<span class="keyword">byte</span>) s;  <span class="comment">// OK，一种类型到另一种类型转换</span></span><br><span class="line">c = (<span class="keyword">char</span>) b;  <span class="comment">// OK，一种类型到另一种类型转换</span></span><br><span class="line">c = (<span class="keyword">char</span>) s;   <span class="comment">// OK，一种类型到另一种类型转换</span></span><br></pre></td></tr></table></figure>
+
+<p>特别需要注意的是，强制转换常常会导致二进制位的截取，甚至会导致意想不到的结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">128</span>;</span><br><span class="line"><span class="keyword">byte</span> b = (<span class="keyword">byte</span>)i;</span><br><span class="line">System.out.println(b);           <span class="comment">// -128(即-0)</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、自动装箱与拆箱（Autoboxing-and-Unboxing）"><a href="#四、自动装箱与拆箱（Autoboxing-and-Unboxing）" class="headerlink" title="四、自动装箱与拆箱（Autoboxing and Unboxing）"></a>四、自动装箱与拆箱（Autoboxing and Unboxing）</h2><p>1、什么是装箱？什么是拆箱？</p>
+<p>java为每种基本数据类型都提供了对应的包装器类型。在java SE5之前，如果要创建一个数值为10的Integer对象，必须这样进行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Integer i = <span class="keyword">new</span> Integer(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+
+<p>而从java SE5之后就提供了自动装箱的特性，如果要创建一个数值为10的Integer对象，只需要这样就可以了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Integer i=<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>这个过程会自动根据数值创建对应的Integer对象，这就是装箱。</p>
+<p>那什么是拆箱呢？顾名思义，跟装箱对应，就是自动将包装器类型转换为基本数据类型：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Integer i=<span class="number">10</span>;	<span class="comment">//装箱</span></span><br><span class="line"><span class="keyword">int</span> n=i;	<span class="comment">//拆箱</span></span><br></pre></td></tr></table></figure>
+
+<p>简单一点说，装箱就是自动将基本数据类型转换为包装器类型；拆箱就是自动将包装器类型转换为基本数据类型。</p>
+<p>2、装箱和拆箱是如何实现的</p>
+<p>上一小节了解装箱的基本概念之后，这一小节来了解一下装箱和拆箱是如何实现的。我们就以Integer类为例，下面看一段代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Integer i = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">int</span> n = i;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从反编译得到的字节码内容可以看出，在装箱的时候自动调用的是Integer的valueOf(int)方法。而在拆箱的时候自动调用的是Integer的intValue方法。</p>
+<p>对于其他的包装器类，比如Double、Character，也同样适用。</p>
+<p>因此，可以用一句话总结装箱和拆箱的实现过程；</p>
+<p>装箱过程是通过调用包装器的valueOf方法实现的，而拆箱过程是通过调用包装器的xxxValue方法实现的（xxx代表对应的基本数据类型）。</p>
+<p>3、valueOf、xxxValue方法在JDK中的实现</p>
+<p>（1）在Byte、Charater、Short、Integer、Long中的实现（以Integer为例）</p>
+<ul>
+<li>public static Integer valueOf(int i): 类方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">valueOf</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(i &gt;= -<span class="number">128</span> &amp;&amp; i &lt;= IntegerCache.high)</span><br><span class="line">            <span class="keyword">return</span> IntegerCache.cache[i + <span class="number">128</span>];</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> Integer(i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCache</span> </span>&#123;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> high;</span><br><span class="line">        <span class="keyword">static</span> <span class="keyword">final</span> Integer cache[];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">static</span> &#123;                                         <span class="comment">// 静态代码块  </span></span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> low = -<span class="number">128</span>;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// high value may be configured by property</span></span><br><span class="line">            <span class="keyword">int</span> h = <span class="number">127</span>;</span><br><span class="line">            <span class="keyword">if</span> (integerCacheHighPropValue != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// Use Long.decode here to avoid invoking methods that</span></span><br><span class="line">                <span class="comment">// require Integer&#x27;s autoboxing cache to be initialized</span></span><br><span class="line">                <span class="keyword">int</span> i = Long.decode(integerCacheHighPropValue).intValue();</span><br><span class="line">                i = Math.max(i, <span class="number">127</span>);</span><br><span class="line">                <span class="comment">// Maximum array size is Integer.MAX_VALUE</span></span><br><span class="line">                h = Math.min(i, Integer.MAX_VALUE - -low);</span><br><span class="line">            &#125;</span><br><span class="line">            high = h;</span><br><span class="line"></span><br><span class="line">            cache = <span class="keyword">new</span> Integer[(high - low) + <span class="number">1</span>];</span><br><span class="line">            <span class="keyword">int</span> j = low;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> k = <span class="number">0</span>; k &lt; cache.length; k++)                      <span class="comment">// 初始化  </span></span><br><span class="line">                cache[k] = <span class="keyword">new</span> Integer(j++);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="title">IntegerCache</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在装箱时，valueOf方法会被自动调用：如果整型字面值在[-128,127]之间，便返回IntegerCache.cache中已经存在的对象的引用；否则，创建一个新的Integer对象并返回。</p>
+<ul>
+<li><p>public int intValue():实例方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">intValue</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从这段代码可以看出，在拆箱时，Integer对象会自动调用其intValue方法，返回该对象对应的int值。</p>
+</li>
+</ul>
+<p>下面代码可以很好说明这一点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Integer i1 = <span class="number">100</span>;</span><br><span class="line">        Integer i2 = <span class="number">100</span>;</span><br><span class="line">        Integer i3 = <span class="number">200</span>;</span><br><span class="line">        Integer i4 = <span class="number">200</span>;</span><br><span class="line">        System.out.println(i1==i2);          <span class="comment">// true</span></span><br><span class="line">        System.out.println(i3==i4);          <span class="comment">// false</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>（2）在Float、Double中的实现（以Double为例）</p>
+<ul>
+<li><p>public static Double valueOf(double d):  类方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Double <span class="title">valueOf</span><span class="params">(<span class="keyword">double</span> d)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Double(d);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在装箱时，valueOf方法会自动调用，从而创建相应的Double对象并返回。</p>
+</li>
+<li><p>public int intValue()：实例方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">doubleValue</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从这段代码可以看出，在拆箱时，Double对象会自动调用其doubleValue方法，返回该对象对应的double值。</p>
+</li>
+</ul>
+<p>下面代码可以很好说明这一点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Double i1=<span class="number">100.0</span>;</span><br><span class="line">        Double i2=<span class="number">100.0</span>;</span><br><span class="line">        Double i3=<span class="number">200.0</span>;</span><br><span class="line">        </span><br><span class="line">        System.out.println(i1==i2);</span><br><span class="line">        System.out.println(i3==i4);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为什么Double类的valueOf方法会采用与Integer类的valueOf方法不同的实现呢？原因很简单，在某个范围内的整型数值的个数是有限的，而浮点数却不是。</p>
+<p>（3）在Boolean中的实现</p>
+<ul>
+<li>public static Boolean valueOf(boolean b): 类方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Boolean TRUE = <span class="keyword">new</span> Boolean(<span class="keyword">true</span>);</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Boolean FALSE = <span class="keyword">new</span> Boolean(<span class="keyword">false</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Boolean <span class="title">valueOf</span><span class="params">(<span class="keyword">boolean</span> b)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (b ? TRUE : FALSE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在装箱时，valueOf方法会被自动调用，从而创建相应的Boolean对象并返回。</p>
+<ul>
+<li><p>public boolean booleanValue():实例方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">booleanValue</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从这段代码可以看出，在拆箱时，Boolean对象会自动调用其booleanValue方法，返回该对象对应的boolean值。</p>
+<p>下面代码可以很好说明这一点：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Boolean i1 = <span class="keyword">false</span>;</span><br><span class="line">        Boolean i2 = <span class="keyword">false</span>;</span><br><span class="line">        Boolean i3 = <span class="keyword">true</span>;</span><br><span class="line">        Boolean i4 = <span class="keyword">true</span>;</span><br><span class="line">        System.out.println(i1==i2);          <span class="comment">// true</span></span><br><span class="line">        System.out.println(i3==i4);          <span class="comment">// true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总之，</p>
+<ul>
+<li>Integer、Short、Byte、Character、Long这几个类的valueOf方法的实现是类似的，有限可列举，共享[-128,127];</li>
+<li>Double、Float的valueOf方法的实现是类似的，无限不可列举，不共享；</li>
+<li>Boolean的valueOf方法的实现不同于以上的整型和浮点型，只有两个值，有限可列举，共享；</li>
+</ul>
+</li>
+</ul>
+<p>4、Integer i = new Integer(xxx)和Integer i=xxx；的区别</p>
+<ul>
+<li>第一种方式不会触发自动装箱的过程，而第二种方式会触发；</li>
+<li>在执行效率和资源占用上的区别。第二种方式的执行效率和资源占用在一般性情况下（[-128,127]）要优于第一种情况（注意这并不是绝对的）。</li>
+</ul>
+<p>5、“==”运算符</p>
+<p>当使用“==”运算符在基本类型和其包装类型对象之间比较时，涉及到自动装箱、拆箱机制，遵循如下规则：</p>
+<p>1）、只要两个操作数中有一个是基本类型或表达式，就是比较它们的数值是否相等。</p>
+<p>2）、否则，就是判断这两个对象的内存地址是否相等，即是否是同一个对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码片段1</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Integer i01=<span class="number">59</span>;</span><br><span class="line">        <span class="keyword">int</span> i02=<span class="number">59</span>;</span><br><span class="line">        Integer i03=Integer.valueOf(<span class="number">59</span>);</span><br><span class="line">        Integer i04=<span class="keyword">new</span> Integer(<span class="number">59</span>);</span><br><span class="line">        System.out.println(i01==i02);  <span class="comment">// true，拆箱</span></span><br><span class="line">        System.out.println(i01==i03);  <span class="comment">// true，同一对象</span></span><br><span class="line">        System.out.println(i03==i04);  <span class="comment">// false，不同对象</span></span><br><span class="line">        System.out.println(i02==i04);  <span class="comment">// true，拆箱</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码片段2</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">        Integer a = <span class="number">1</span>;</span><br><span class="line">        Integer b = <span class="number">2</span>;</span><br><span class="line">        Integer c = <span class="number">3</span>;</span><br><span class="line">        Integer d = <span class="number">3</span>;</span><br><span class="line">        Integer e = <span class="number">321</span>;</span><br><span class="line">        Integer f = <span class="number">321</span>;</span><br><span class="line">        Long g = <span class="number">3L</span>;</span><br><span class="line">        Long h = <span class="number">2L</span>;</span><br><span class="line"></span><br><span class="line">        System.out.println(c==d);  <span class="comment">// true</span></span><br><span class="line">        System.out.println(e==f);  <span class="comment">// false</span></span><br><span class="line">        System.out.println(c==(a+b));  <span class="comment">// true</span></span><br><span class="line">        System.out.println(c.equals(a+b));  <span class="comment">// true</span></span><br><span class="line">        System.out.println(g==(a+b));  <span class="comment">// true</span></span><br><span class="line">        System.out.println(g.equals(a+b));  <span class="comment">// false</span></span><br><span class="line">        System.out.println(g.equals(a+h));  <span class="comment">// true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一个和第二个输出结果没有什么疑问；</li>
+<li>第三个打印语句由于 a+b 包含了算术运算，因此会触发自动拆箱过程（会调用intValue方法），因此它们比较的是数值是否相等；</li>
+<li>对于c.equals(a+b)会先触发自动拆箱过程，再触发自动装箱过程，也就是说a+b，会先各自调用intValue方法，得到了加法运算后的数值之后，便调用Integer.valueOf方法，再进行equals比较；</li>
+<li>对于g==(a+b)，会分别触发 Integer 和 Long 的自动拆箱过程，<strong>然后 int 自动转为 long</strong>，进行比较；</li>
+<li>对于g.equals(a+b)，最终会归结于 Long对象与Integer对象的比较，由于二者不为同一类型，直接返回 false ;</li>
+<li>对于g.equals(a+h)，最终会归结于 Long对象与Long对象的比较，由于 -128 &lt;= 3 &lt;= 127, 二者为同一对象，直接返回 true 。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E7%9B%B8%E5%85%B3/" rel="tag"># java相关</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/02/java-String%E7%BB%BC%E8%BF%B02/" rel="prev" title="java String综述2">
+      <i class="fa fa-chevron-left"></i> java String综述2
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/04/java%E7%9A%84%E6%8A%BD%E8%B1%A1%E7%89%B9%E6%80%A7%EF%BC%9A%E6%8A%BD%E8%B1%A1%E7%B1%BB%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" rel="next" title="java的抽象特性：抽象类与接口深度解析">
+      java的抽象特性：抽象类与接口深度解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">一、原生类型与包装器类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%AD%97%E9%9D%A2%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">二、字面值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%87%AA%E5%8A%A8%E8%BD%AC%E5%9E%8B%E4%B8%8E%E5%BC%BA%E5%88%B6%E8%BD%AC%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">三、自动转型与强制转型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1%EF%BC%88Autoboxing-and-Unboxing%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">四、自动装箱与拆箱（Autoboxing and Unboxing）</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

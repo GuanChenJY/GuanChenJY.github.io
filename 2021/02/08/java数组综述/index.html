@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、要点概览 数组与容器 数组的创建与初始化 数组与泛型 数组与可变参数列表 Arrays工具类的使用功能  二、数组与容器早期java数组的几个特点：  效率 数组是一种效率最高的存储和随机访问对象引用序列的方式。数组就是一个简单的线性序列，这使得元素访问非常快速。但是为这种速度所付出的代价是数组对象的大小被固定，并且在其生命周期中不可改变。由于ArrayList可以实现空间的自动分配且更为灵活">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java数组综述">
+<meta property="og:url" content="http://example.com/2021/02/08/java%E6%95%B0%E7%BB%84%E7%BB%BC%E8%BF%B0/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="一、要点概览 数组与容器 数组的创建与初始化 数组与泛型 数组与可变参数列表 Arrays工具类的使用功能  二、数组与容器早期java数组的几个特点：  效率 数组是一种效率最高的存储和随机访问对象引用序列的方式。数组就是一个简单的线性序列，这使得元素访问非常快速。但是为这种速度所付出的代价是数组对象的大小被固定，并且在其生命周期中不可改变。由于ArrayList可以实现空间的自动分配且更为灵活">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-02-08T03:45:40.000Z">
+<meta property="article:modified_time" content="2021-02-08T05:59:39.460Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="java相关">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2021/02/08/java%E6%95%B0%E7%BB%84%E7%BB%BC%E8%BF%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java数组综述 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/08/java%E6%95%B0%E7%BB%84%E7%BB%BC%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java数组综述
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-08 11:45:40 / 修改时间：13:59:39" itemprop="dateCreated datePublished" datetime="2021-02-08T11:45:40+08:00">2021-02-08</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="一、要点概览"><a href="#一、要点概览" class="headerlink" title="一、要点概览"></a>一、要点概览</h2><ul>
+<li>数组与容器</li>
+<li>数组的创建与初始化</li>
+<li>数组与泛型</li>
+<li>数组与可变参数列表</li>
+<li>Arrays工具类的使用功能</li>
+</ul>
+<h2 id="二、数组与容器"><a href="#二、数组与容器" class="headerlink" title="二、数组与容器"></a>二、数组与容器</h2><p>早期java数组的几个特点：</p>
+<ul>
+<li><p>效率</p>
+<p>数组是一种效率最高的存储和随机访问对象引用序列的方式。数组就是一个简单的线性序列，这使得元素访问非常快速。但是为这种速度所付出的代价是数组对象的大小被固定，并且在其生命周期中不可改变。由于ArrayList可以实现空间的自动分配且更为灵活，所以，通常应首选ArrayList而不是数组，但是ArrayList的效率比数组低的多。</p>
+</li>
+<li><p>类型</p>
+<p>在 JDK 1.5 之前，Java 并未引进泛型。所以，泛型之前的容器类在处理对象时，都将它们视作没有任何具体类型，即将这些对象都当作 Object 来处理。数组之所以优于泛型之前的容器，就是因为你可以创建一个数组去持有某种具体的类型。这意味着你可以通过编译期的类型检查来防止插入错误类型和抽取不当类型。当然，无论在编译时还是运行时，Java都会阻止你向对象发送不恰当的消息。所以，并不是说哪种方法更不安全，只是若编译时就能够指出错误，会显得更为优雅。</p>
+</li>
+<li><p>保存基本类型的能力</p>
+<p>数组可以持有基本类型，而泛型之前的容器则不能。JDK1.5之后，java引进了泛型和自动包装机制，这使得现在的容器除了性能之外的各个方面都使得数组相形见绌。</p>
+</li>
+</ul>
+<h2 id="三、数组的创建与初始化"><a href="#三、数组的创建与初始化" class="headerlink" title="三、数组的创建与初始化"></a>三、数组的创建与初始化</h2><p>1、数组基础</p>
+<ul>
+<li>数组标识符只是一个引用，指向在堆中创建的一个真实对象，这个对象用以保存指向其他对象的引用或基本类型的值；</li>
+<li>对象数组保存的是引用，基本类型数组直接保存基本类型的值；</li>
+<li>“[]”语法是访问数组对象的唯一方式；</li>
+</ul>
+<p>2、创建与初始化</p>
+<ul>
+<li><p>作为数组初始化的一部分隐式创建</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String[] strs=&#123;...&#125;;	<span class="comment">//花括号内对象的个数就是数组大小</span></span><br><span class="line">System.out.println(strs.length);	<span class="comment">//输出0</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用new表达式显式创建</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String[] strs=<span class="keyword">new</span> String[<span class="number">5</span>];	<span class="comment">//创建方式2</span></span><br><span class="line">String[] ss = <span class="keyword">new</span> String[]&#123;...&#125;;	<span class="comment">//创建方式3</span></span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>3、多维数组</p>
+<p>多维数组的本质：数组的元素仍是数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建方式 1</span></span><br><span class="line"><span class="keyword">int</span>[][] a = &#123; </span><br><span class="line">&#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, &#125;, </span><br><span class="line">&#123; <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, &#125;, </span><br><span class="line">&#125;; </span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建方式 2</span></span><br><span class="line"><span class="keyword">int</span>[][][] a = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][<span class="number">2</span>][<span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//粗糙数组：每个向量具有任意长度</span></span><br><span class="line">Random rand = <span class="keyword">new</span> Random(<span class="number">47</span>); </span><br><span class="line"></span><br><span class="line"><span class="comment">// 3-D array with varied-length vectors: </span></span><br><span class="line"><span class="keyword">int</span>[][][] a = <span class="keyword">new</span> <span class="keyword">int</span>[rand.nextInt(<span class="number">7</span>)][][]; </span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; a.length; i++) &#123; </span><br><span class="line">    a[i] = <span class="keyword">new</span> <span class="keyword">int</span>[rand.nextInt(<span class="number">5</span>)][]; </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; a[i].length; j++) </span><br><span class="line">        a[i][j] = <span class="keyword">new</span> <span class="keyword">int</span>[rand.nextInt(<span class="number">5</span>)]; </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="四、数组与泛型"><a href="#四、数组与泛型" class="headerlink" title="四、数组与泛型"></a>四、数组与泛型</h2><ul>
+<li><p>数组与泛型不能很好的结合，也就是说，不能实例化具有参数化类型的数组；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">T[] first = <span class="keyword">new</span> T[<span class="number">3</span>];    <span class="comment">// ERROR  </span></span><br><span class="line">A&lt;String&gt;[] arrays = <span class="keyword">new</span> A&lt;String&gt;[<span class="number">4</span>];    <span class="comment">// ERROR: Cannot create a generic array of A&lt;String&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以创建泛型数组引用</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">A&lt;String&gt;[] arrays;	<span class="comment">//OK</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数组是协变的</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Object[] objs=<span class="keyword">new</span> String[<span class="number">3</span>];	<span class="comment">//OK</span></span><br></pre></td></tr></table></figure>
+
+<p>总之，泛型容器总是比泛型数组更好的选择。</p>
+<h2 id="五、数组与可变参数类型"><a href="#五、数组与可变参数类型" class="headerlink" title="五、数组与可变参数类型"></a>五、数组与可变参数类型</h2><p>1、可变参数类型概念</p>
+<p>Java SE5 添加了可变参数类型 ( Variable Argument Type )，形式为 “Type… args”，<strong>只可用作方法的参数</strong>。<strong>可变参数列表适用于参数个数不确定但类型确定的情形 ( java 把可变参数当做数组处理 )。</strong>特别需要注意的是，<strong>可变参数列表必须位于最后一项 (即最多只支持一个可变参数)。</strong>当可变参数列表个数多余一个时，必将有一个不是最后一项，所以只支持一个可变参数。因为可变参数列表的参数个数不确定，所以当其后边还有相同类型参数时，Java 无法区分传入的参数属于前一个可变参数还是后边的参数，所以只能让可变参数位于最后一项。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码示例</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestVarArgus</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span>... intArray)</span></span>&#123;  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i : intArray)  </span><br><span class="line">            System.out.print(i +<span class="string">&quot; &quot;</span>);  </span><br><span class="line"></span><br><span class="line">        System.out.println();  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;  </span><br><span class="line">        dealArray();  </span><br><span class="line">        dealArray(<span class="number">1</span>);  </span><br><span class="line">        dealArray(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;<span class="comment">/* Output:</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">        1   </span></span><br><span class="line"><span class="comment">        1 2 3   </span></span><br><span class="line"><span class="comment"> */</span><span class="comment">//:~  </span></span><br></pre></td></tr></table></figure>
+
+<p>可变参数列表具有以下特点：</p>
+<ul>
+<li>只能出现在方法参数列表的最后；</li>
+<li>…位于变量类型和变量名之间，前后有无空格都可以；</li>
+<li>调用可变参数所在的方法时，编译器会为该可变参数隐式创建一个数组，从而我们可以在方法体中以数组的形式访问可变参数列表。</li>
+</ul>
+<p>2、可变参数类型与数组的兼容性</p>
+<ul>
+<li>编译器认为数组类型和可变参数类型是相同的，即二者不能重载；</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestVarArgus</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span>... intArray)</span></span>&#123;  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i : intArray)  </span><br><span class="line">            System.out.print(i +<span class="string">&quot; &quot;</span>);  </span><br><span class="line"></span><br><span class="line">        System.out.println();  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="comment">//ERROR : Duplicate method dealArray(int[]) in type TestVarArgus </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span>[] intArray)</span></span>&#123;    </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i : intArray)  </span><br><span class="line">            System.out.print(i +<span class="string">&quot; &quot;</span>);  </span><br><span class="line"></span><br><span class="line">        System.out.println();  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;  </span><br><span class="line">        dealArray();   </span><br><span class="line">        dealArray(<span class="number">1</span>);  </span><br><span class="line">        dealArray(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>可变参数是兼容数组类型参数的，但是数组类型参数却无法兼容可变参数；</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码示例 1 ： 给参数为可变参数类型的方法传递数组</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestVarArgus</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span>... intArray)</span></span>&#123;  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i : intArray)  </span><br><span class="line">            System.out.print(i +<span class="string">&quot; &quot;</span>);  </span><br><span class="line"></span><br><span class="line">        System.out.println();  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;  </span><br><span class="line">        <span class="keyword">int</span>[] intArray = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>&#125;;  </span><br><span class="line"></span><br><span class="line">        dealArray(intArray);  <span class="comment">// OK</span></span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 代码示例 2 ： 给参数为数组类型的方法传递可变参数</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestVarArgus</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span>[] intArray)</span></span>&#123;  </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i : intArray)  </span><br><span class="line">            System.out.print(i +<span class="string">&quot; &quot;</span>);  </span><br><span class="line"></span><br><span class="line">        System.out.println();  </span><br><span class="line">    &#125;  </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;  </span><br><span class="line">        dealArray(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>);     <span class="comment">// ERROR</span></span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>其实，对于示例代码 2 而言，只是需要一个定义为 dealArray(int, int, int）的方法或者一个定义为 dealArray(int… ）的方法。所以，自然就无法去匹配具有数组类型的参数 dealArray( int[] ) 方法了。</p>
+<ul>
+<li>参数匹配原则：能匹配定长的方法，那么优先匹配该方法；</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestVarArgus</span> </span>&#123; </span><br><span class="line"></span><br><span class="line"><span class="comment">//含有不定参数的那个重载方法是最后被选中的</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span>... intArray)</span></span>&#123;  </span><br><span class="line">    System.out.println(<span class="string">&quot;Bad&quot;</span>);  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">dealArray</span><span class="params">(<span class="keyword">int</span> count, <span class="keyword">int</span> count2)</span></span>&#123;  </span><br><span class="line">    System.out.println(<span class="string">&quot;Bingo&quot;</span>);  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span></span>&#123;  </span><br><span class="line">    dealArray(<span class="number">1</span>, <span class="number">2</span>);  </span><br><span class="line">&#125;  </span><br><span class="line">&#125; <span class="comment">/* Output:</span></span><br><span class="line"><span class="comment">        Bingo </span></span><br><span class="line"><span class="comment">*/</span><span class="comment">//:~</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="六、Arrays工具类的实用功能"><a href="#六、Arrays工具类的实用功能" class="headerlink" title="六、Arrays工具类的实用功能"></a>六、Arrays工具类的实用功能</h2><p>1、复制数组</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Introduction</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>System.arraycopy(<strong>Object src,</strong> int srcPos, <strong>Object dest,</strong> int destPos, int length)</td>
+<td>从指定源数组中复制一个数组，复制从指定的位置开始，到目标数组的指定位置结束</td>
+<td>若复制对象数组，那么只是复制了对象的引用，而不是对象本身的拷贝(浅复制)；<strong>该方法不会执行自动包装和自动拆包，所以两个数组必须具有相同的确切类型；**</strong>须明确自行新建立一个数组对象，作为副本**</td>
+</tr>
+<tr>
+<td>copyOf(T[] original, int newLength)</td>
+<td>复制指定的数组，<strong>截取或用 null 填充</strong></td>
+<td><strong>底层调用的还是 System.arraycopy；返回一个新的数组对象，若新数组的长度超过原数组的长度，则保留数组默认值</strong></td>
+</tr>
+</tbody></table>
+<p>注意</p>
+<p>对于以上两个方法：</p>
+<ul>
+<li>若赋值对象数组，那么只是复制了对象的引用，而不是对象本身的拷贝；</li>
+<li>这两个方法不会执行自动包装和自动拆包，所以两个数组必须具有相同的确认类型。</li>
+</ul>
+<p>2、数组的字符串方式表示</p>
+<p>方法：Arrays.toString(Object[] a)    //Arrays.deepToString(Object[] a)</p>
+<p>作用：返回指定数组内容字符串表示形式：前者适用于一维数组，或者适用于多维数组</p>
+<p>3、数组的比较</p>
+<p>方法：Arrays.equals(Object[] a, Object[] a2)    //deepEquals(Object[] a, Object[] a2)</p>
+<p>作用：比较两个数组：元素类型相同，元素个数相等，对应位置的元素相同；</p>
+<p>注意：</p>
+<ul>
+<li>通过对每个元素使用equals()作比较来判断；</li>
+<li>对于基本类型，使用的是基本类型的包装器类的equals()方法；</li>
+<li>使用equals()方法比较原则：是不是同一个对象，是不是同一个类型，是不是具有相同的内容。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] a1 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>]; </span><br><span class="line"><span class="keyword">int</span>[] a2 = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>]; </span><br><span class="line">Arrays.fill(a1, <span class="number">47</span>); </span><br><span class="line">Arrays.fill(a2, <span class="number">47</span>); </span><br><span class="line">print(Arrays.equals(a1, a2));    <span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+
+<p>4、数组的排序</p>
+<p>使用内置的排序方法，就可以对任意的基本类型数组排序；也可以对任意的对象数组进行排序，只要该对象实现了Comparable接口或具有相关联的Comparator。</p>
+<p><strong>方法：</strong> Arrays.sort(Object[] a) / Arrays.sort(Object[] a, int fromIndex, int toIndex)<br>　　　Arrays.sort(T[] a, Comparator&lt;? super T&gt; c) / Arrays.sort(T[] a, int fromIndex, int toIndex, Comparator&lt;? super T&gt; c)</p>
+<p><strong>作用：</strong> <strong>对数组内元素进行升序排序 (默认)</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">String[] sa = Generated.array(<span class="keyword">new</span> String[<span class="number">20</span>], <span class="keyword">new</span> RandomGenerator.String(<span class="number">5</span>)); </span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用 String 内置的比较器（已实现 Comparable 接口）：字典序（大写字母开头的词都放在前面输出，之后才是小写字母开头的词）</span></span><br><span class="line">Arrays.sort(sa);   <span class="comment">// ... ,WHkjU, YNzbr, bkIna, cQrGs, ...</span></span><br><span class="line">.</span><br><span class="line"><span class="comment">// 利用 Comparator 比较 ： Collections.reverseOrder() ： 现有顺序的逆序</span></span><br><span class="line">Arrays.sort(sa, Collections.reverseOrder()); </span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用 Comparator 比较 ： String.CASE_INSENSITIVE_ORDER : 忽略大小写将单词一起进行排序</span></span><br><span class="line">Arrays.sort(sa, String.CASE_INSENSITIVE_ORDER); </span><br></pre></td></tr></table></figure>
+
+<p>5、在已排序的数组中查找</p>
+<p><strong>若数组已经 \</strong>排好序*<em>，就可以使用该方法执行快速查找；*</em>若对未排序的数组使用该方法，将产生不可预料的结果。****</p>
+<p><strong>方法：</strong> binarySearch(Object[] a, Object key) / binarySearch(T[] a, T key, Comparator&lt;? super T&gt; c)</p>
+<p><strong>作用：</strong> 使用 <strong>二分搜索法</strong> 来搜索指定数组，以获得指定对象。在进行此调用之前，必须根据元素的自然顺序对数组进行<strong>升序排序（通过 sort(Object[]) 方法）</strong>; 使用二分搜索法来搜索指定数组，以获得指定对象。在进行此调用之前，必须根据指定的比较器（通过 sort(T[], Comparator) 方法）对数组进行<strong>多态**</strong>升序排序**。</p>
+<p>注意：</p>
+<ul>
+<li>对已经有序的数组进行查找；</li>
+<li>若找到了目标，方法返回的值不小于0；否则，它产生的负返回值表示在此排序下应插入的位置；</li>
+<li>“sort(Object[])” 与 “binarySearch(Object[] a, Object key)” 对应，“sort(T[], Comparator)” 与 binarySearch(T[] a, T key, Comparator&lt;? super T&gt; c) 对应。</li>
+</ul>
+<p><strong>若数组包含重复元素，则该方法无法保证找到的是哪一个元素；若需要对无重复元素的数组进行排序，可使用 TreeSet(保持排序顺序) 或 LinkedHashSet(保持插入顺序)进行排序。除非它们成为程序的瓶颈，否则不需要自己维护数组。</strong></p>
+<p>6、填充数组</p>
+<p><strong>方法：</strong> fill(Object[] a, Object val)<br><strong>作用：</strong> <strong>只能使用同一个值填充各个位置，而针对对象而言，就是复制同一个对象的引用进行填充</strong></p>
+<p>7、数组与容器的转化</p>
+<p><strong>方法：</strong> asList(T… a)<br><strong>作用：</strong> 返回一个 <strong>受指定数组支持的固定大小的列表</strong><br><strong>注意：</strong></p>
+<ul>
+<li>所得到的 List 是固定大小的，因为<strong>其底层表示即为该数组，因此不能调整大小。</strong>因此，调用 add/remove 方法会抛出 java.lang.UnsupportedOperationException (可选操作)。</li>
+<li>因此，<strong>Arrays.asList() 的真正意义在于：将其结果作为构造器参数传递给任何 Collection （或者使用 addAll 方法、Collections.addAll 静态方法），这样可以生成一个动态的容器。</strong></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E7%9B%B8%E5%85%B3/" rel="tag"># java相关</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/04/java%E5%BC%82%E5%B8%B8%E6%A8%A1%E5%9E%8B%E7%BB%BC%E8%BF%B0/" rel="prev" title="java异常模型综述">
+      <i class="fa fa-chevron-left"></i> java异常模型综述
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/08/java%E5%B9%B6%E5%8F%91volatile%E5%85%B3%E9%94%AE%E5%AD%97/" rel="next" title="java并发volatile关键字">
+      java并发volatile关键字 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E8%A6%81%E7%82%B9%E6%A6%82%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">一、要点概览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E7%BB%84%E4%B8%8E%E5%AE%B9%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">二、数组与容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%95%B0%E7%BB%84%E7%9A%84%E5%88%9B%E5%BB%BA%E4%B8%8E%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">三、数组的创建与初始化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%95%B0%E7%BB%84%E4%B8%8E%E6%B3%9B%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">四、数组与泛型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%95%B0%E7%BB%84%E4%B8%8E%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B"><span class="nav-number">5.</span> <span class="nav-text">五、数组与可变参数类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81Arrays%E5%B7%A5%E5%85%B7%E7%B1%BB%E7%9A%84%E5%AE%9E%E7%94%A8%E5%8A%9F%E8%83%BD"><span class="nav-number">6.</span> <span class="nav-text">六、Arrays工具类的实用功能</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
