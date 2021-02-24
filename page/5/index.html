@@ -150,6 +150,199 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/20/%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/20/%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB/" class="post-title-link" itemprop="url">静态内部类</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-20 13:59:55 / 修改时间：16:15:05" itemprop="dateCreated datePublished" datetime="2020-12-20T13:59:55+08:00">2020-12-20</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h1><p>一个类中创建另一个类，叫做成员内部类。这个成员内部类可以是静态的（利用static关键字修饰），也可以是非静态的。</p>
+<h2 id="静态内部类的使用目的"><a href="#静态内部类的使用目的" class="headerlink" title="静态内部类的使用目的"></a>静态内部类的使用目的</h2><p>在定义内部类的时候，在其前面加上一个权限修饰符static。这个内部类就变为了静态内部类。如在进行代码程序测试的时候，如果每一个java源文件中都设置一个主方法（主方法是某个应用程序的入口，必须具有），那么会出现很多额外的代码。而且这段主程序的代码对于java文件来说，只是一个形式，其本身并不需要这种主方法。但是少了这个主方法又是万万不行的。在这种情况下，就可以将主方法写入到静态内部类中，从而不用为每个java源文件都设置一个类似的主方法。这对于代码测试是非常有用的。在一些中大型的应用程序开发中，则是一个常用的技术手段。</p>
+<h2 id="静态内部类的使用限制"><a href="#静态内部类的使用限制" class="headerlink" title="静态内部类的使用限制"></a>静态内部类的使用限制</h2><p>将某个内部类定义为静态类，跟将其他类定义为静态类的方法基本相同，引用规则也基本一致。不过其细节方面仍然有很大的不同。具体来说，主要有如下几个地方需要注意：</p>
+<p><strong>一是静态成员（包括静态变量与静态成员）的定义。</strong></p>
+<p>在非静态内部类中不可以声明静态成员。如现在在一个student类中定义了一个内部类Age，如果没有将这个类利用static关键字修饰，即没有定义为静态类，那么在这个内部类中如果要利用static关键字来修饰某个成员方法或者成员变量是不允许的。在编译的时候就通不过。故程序开发人员需要注意，只有静态内部类才能够定义静态的成员变量与成员方法</p>
+<p><strong>二是在成员的引用上，有比较大的限制。</strong></p>
+<p>一般的非静态内部类，可以随意的访问外部类中的成员变量与成员方法。即使这些成员方法被修饰为private（私有的成员变量或者方法）。因为在其他类中是无法访问被定义为私有的成员变量或方法。但是如果一个内部类被定义为静态的，那么在引用外部类的成员方法或者成员变量的时候，就会有诸多的限制。如不能够从静态内部类的对象中访问外部类的非静态成员(包括成员变量与成员方法)。这是什么意思呢?如果在外部类中定义了两个变量，一个是非静态的变量，一个是静态的变量。静态内部类只能引用外部类中的静态的成员（变量或方法），而不能够访问非静态的变量。对于那些非静态的成员变量与成员方法，在静态内部类中是无法访问的。这就是静态内部类的最大使用限制。在普通的非静态内部类中是没有这个限制的。也正是这个原因，决定了静态内部类只应用在一些特定的场合。其应用范围远远没有像非静态的内部类那样广泛。</p>
+<p><strong>三是在创建静态内部类时不需要将静态内部类的实例绑定在外部类的实例上。</strong></p>
+<p>通常情况下，在一个类中创建成员内部类的时候，有一个强制性的规定，即内部类的实例一定要绑定在外部类的实例中。也就是说，在创建内部类之前要先在外部类中要利用new关键字来创建这个内部类的对象。如此的话如果从外部类中初始化一个内部类对象，那么内部类对象就会绑定在外部类对象上。也就是说，普通非静态内部类的对象是依附在外部类对象之中的。通常情况下，程序员在定义静态内部类的时候，是不需要定义绑定在外部类的实例上的。也就是说，要在一个外部类中定义一个静态的内部类，不需要利用关键字new来创建内部类的实例。</p>
+<p>从以上的分析中可以看出，静态内部类与非静态的内部类还是有很大的不同的。<strong>一般程序开发人员可以这么理解，非静态的内部类对象隐式地在外部类中保存了一个引用，指向创建它的外部类对象</strong>。</p>
+<p><strong>牢记两个差别：</strong></p>
+<p>一、如是否可以创建静态的成员方法与成员变量（静态内部类可以创建静态的成员，而非静态的内部类不可以）</p>
+<p>二、对于访问外部类的成员的限制（静态内部类只可以访问外部类中的静态成员变量与成员方法，而非静态的内部类即可以访问所有的外部类成员方法与成员变量）。</p>
+<p>这两个差异是静态内部类与非静态外部类最大的差异，也是静态内部类之所以存在的原因。了解了这个差异之后，程序开发人员还需要知道，在什么情况下该使用静态内部类。如在程序测试的时候，为了避免在各个Java源文件中书写主方法的代码，可以将主方法写入到静态内部类中，以减少代码的书写量，让代码更加的简洁。</p>
+<p>非静态内部类实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> common.lang;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String name1;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> age1;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getName1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> name1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName1</span><span class="params">(String name1)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name1 = name1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(age);</span><br><span class="line">            <span class="keyword">return</span> age1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge1</span><span class="params">(<span class="keyword">int</span> age1)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age1 = age1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Student s = <span class="keyword">new</span> Student();</span><br><span class="line">        s.setAge(<span class="number">12</span>);</span><br><span class="line">        s.setName(<span class="string">&quot;yao&quot;</span>);</span><br><span class="line">        Child c = s.<span class="function">new <span class="title">Child</span><span class="params">()</span></span>;</span><br><span class="line">        System.out.println(c.getAge1());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>静态内部类实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> common.lang;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        Student.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String name1;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> age1;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">getName1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> name1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName1</span><span class="params">(String name1)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.name1 = name1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            System.out.println(age);</span><br><span class="line">            <span class="keyword">return</span> age1;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge1</span><span class="params">(<span class="keyword">int</span> age1)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age1 = age1;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Student s = <span class="keyword">new</span> Student();</span><br><span class="line">        Child c = <span class="keyword">new</span> Child();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/15/BFS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/12/15/BFS/" class="post-title-link" itemprop="url">BFS</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-15 15:02:09" itemprop="dateCreated datePublished" datetime="2020-12-15T15:02:09+08:00">2020-12-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-13 15:42:32" itemprop="dateModified" datetime="2021-01-13T15:42:32+08:00">2021-01-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="BFS"><a href="#BFS" class="headerlink" title="BFS"></a>BFS</h1><p>BFS核心思想就是把一些问题抽象成图，从一个点开始，向四周扩散。一般来说，写BFS算法都是用队列这种数据结构，每次将一个节点周围的所有节点加入队列。</p>
+<p>BFS相对DFS的最主要的区别是：<strong>BFS找到的路径一定是最短的，但代价就是空间复杂度比DFS大很多。</strong></p>
+<h2 id="算法框架"><a href="#算法框架" class="headerlink" title="算法框架"></a>算法框架</h2><p>BFS的常见场景就是在一副“图”中找到从起点start到终点target的最近距离，这个栗子听起来很枯燥，但是BFS算法问题都是在干这个事儿。</p>
+<p><strong>框架</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计算从起点start到终点target的最近距离</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">BFS</span><span class="params">(Node start,Node target)</span></span>&#123;</span><br><span class="line">    Queue&lt;Node&gt; q; <span class="comment">//核心数据结构</span></span><br><span class="line">    Set&lt;Node&gt; visited; <span class="comment">//避免走回头路</span></span><br><span class="line">    </span><br><span class="line">    q.offer(start); <span class="comment">//将起点加入队列</span></span><br><span class="line">    visited.add(start);</span><br><span class="line">    <span class="keyword">int</span> step=<span class="number">0</span>; <span class="comment">//记录扩散的步数</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(q not empty)&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向四周扩散*/</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            Node cur=q.poll();</span><br><span class="line">            <span class="comment">/*划重点：这里判断是否到达终点*/</span></span><br><span class="line">            <span class="keyword">if</span> (cur is target)&#123;</span><br><span class="line">                <span class="keyword">return</span> step;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*将cur的相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">for</span> (Node x: cur.adj())&#123;</span><br><span class="line">                <span class="keyword">if</span> (x not in visited)&#123;</span><br><span class="line">                    q.offer(x);</span><br><span class="line">                    visited.add(x);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*划重点：更新步数在这里*/</span></span><br><span class="line">        step++;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>队列q是BFS的核心数据结构；<code>cur.adj()</code>泛指<code>cur</code>相邻的节点，比如说二维数组中，cur上下左右四面的位置就是相邻节点；<code>visited</code>的主要作用是防止走回头路，大部分时候都是必须的，但是像一般的二叉树结构，没有子节点到父节点的指针，不会走回头路就不需要<code>visited</code>。</p>
+<p><strong>python实现：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">graph=&#123;</span><br><span class="line">    <span class="string">&quot;A&quot;</span>:[<span class="string">&quot;B&quot;</span>,<span class="string">&quot;C&quot;</span>],</span><br><span class="line">    <span class="string">&quot;B&quot;</span>:[<span class="string">&quot;A&quot;</span>,<span class="string">&quot;C&quot;</span>,<span class="string">&quot;D&quot;</span>],</span><br><span class="line">    <span class="string">&quot;C&quot;</span>:[<span class="string">&quot;A&quot;</span>,<span class="string">&quot;B&quot;</span>,<span class="string">&quot;D&quot;</span>,<span class="string">&quot;E&quot;</span>],</span><br><span class="line">    <span class="string">&quot;D&quot;</span>:[<span class="string">&quot;B&quot;</span>,<span class="string">&quot;C&quot;</span>,<span class="string">&quot;E&quot;</span>,<span class="string">&quot;F&quot;</span>],</span><br><span class="line">    <span class="string">&quot;E&quot;</span>:[<span class="string">&quot;C&quot;</span>,<span class="string">&quot;D&quot;</span>],</span><br><span class="line">    <span class="string">&quot;F&quot;</span>:[<span class="string">&quot;D&quot;</span>]</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">BFS</span>(<span class="params">graph,s</span>):</span></span><br><span class="line">    queue=[]</span><br><span class="line">    queue.append(s)</span><br><span class="line">    seen = <span class="built_in">set</span>()</span><br><span class="line">    seen.add(s)</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">len</span>(queue)&gt;<span class="number">0</span>):</span><br><span class="line">        vertex=queue.pop(<span class="number">0</span>)</span><br><span class="line">        nodes = graph[vertex]</span><br><span class="line">        <span class="keyword">for</span> w <span class="keyword">in</span> nodes:</span><br><span class="line">            <span class="keyword">if</span> w <span class="keyword">not</span> <span class="keyword">in</span> seen:</span><br><span class="line">                queue.append(w)</span><br><span class="line">                seen.add(w)</span><br><span class="line">        print(vertex)</span><br><span class="line">BFS(graph,<span class="string">&quot;E&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="二叉树的最小高度"><a href="#二叉树的最小高度" class="headerlink" title="二叉树的最小高度"></a>二叉树的最小高度</h3><p>力扣111题：</p>
+<p><strong>起点是root根节点，终点就是最靠近根节点的那个叶子节点嘛，叶子节点就是两个子节点都是null的节点</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (cur.left == <span class="keyword">null</span> &amp;&amp; cur.right == <span class="keyword">null</span>)</span><br><span class="line">    <span class="comment">//到达叶子节点</span></span><br></pre></td></tr></table></figure>
+
+<p>因此程序可写为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">minDepth</span><span class="params">(TreeNode root)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (root == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    Queue&lt;TreeNode&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    q.offer(root);</span><br><span class="line">    <span class="comment">//root本身就是一层，depth初始化为1</span></span><br><span class="line">    <span class="keyword">int</span> depth=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (!q.isEmpty)&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向四周扩散*/</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            TreeNode cur=q.poll();</span><br><span class="line">            <span class="comment">/*判断是否到达终点*/</span></span><br><span class="line">            <span class="keyword">if</span> (cur.left == <span class="keyword">null</span> &amp;&amp; cur.right == <span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">return</span> depth;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*将cur的相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">if</span> (cur.left != <span class="keyword">null</span>)&#123;</span><br><span class="line">                q.offer(cur.left);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (cur.right != <span class="keyword">null</span>)&#123;</span><br><span class="line">                q.offer(cur.right);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*这里增加步数*/</span></span><br><span class="line">        depth++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> depth;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="解开密码锁的最少次数"><a href="#解开密码锁的最少次数" class="headerlink" title="解开密码锁的最少次数"></a>解开密码锁的最少次数</h3><p>力扣752题</p>
+<p>题目描述的就是生活中常见的那种密码锁，如果没有任何约束，最少的拨动次数很好算，就像我们平时开密码锁那样直奔密码拨就行了。</p>
+<p>但现在不能出现<code>deadends</code>(题目中给的死亡序列)，应该如何计算出最少的转动次数呢？</p>
+<p><strong>step 1: 不管所有的限制条件，不管<code>deadends</code>和<code>target</code>的限制，就思考一个问题：设计一个算法，穷举所有可能的密码组合</strong></p>
+<p>穷举，总共有4个位置，每个位置可以向上转，也可以乡下转，就是有8种可能。</p>
+<p>比如说从<code>&quot;0000&quot;</code>开始，转一次，可以穷举出<code>&quot;1000&quot;</code>,<code>&quot;9000&quot;</code>,<code>&quot;0100&quot;</code>,<code>&quot;0900&quot;...</code>共8种密码。然后再以这8种密码作为基础，对每个密码再转一下，穷举出所有可能…</p>
+<p><strong>仔细想想，就可以抽象成一幅图，每个节点有8个相邻的节点</strong>，又让求最短距离，就是典型的BFS。框架如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将S[j]向上拨动一次</span></span><br><span class="line"><span class="function">String <span class="title">plusOne</span><span class="params">(String s, <span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] ch=s.toCharArray();</span><br><span class="line">    <span class="keyword">if</span> (ch[j]==<span class="string">&#x27;9&#x27;</span>)&#123;</span><br><span class="line">        ch[j]=<span class="string">&#x27;0&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        ch[j]+=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(ch);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//将S[i]向下拨动一次</span></span><br><span class="line"><span class="function">String <span class="title">minusOne</span><span class="params">(String s,<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] ch=s.toCharArray();</span><br><span class="line">    <span class="keyword">if</span> (ch[j]==<span class="string">&#x27;0&#x27;</span>)&#123;</span><br><span class="line">        ch[j]=<span class="string">&#x27;9&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        ch[j]-=<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(ch);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//BFS框架，打印出所有可能的密码</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">BFS</span><span class="params">(String target)</span></span>&#123;</span><br><span class="line">    Queue&lt;String&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    q.offer(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    <span class="keyword">while</span> (!q.isEmpty())&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向周围扩散*/</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            String cur=q.poll();</span><br><span class="line">            <span class="comment">/*判断是否到达终点*/</span></span><br><span class="line">            System.out.println(cur);</span><br><span class="line">            <span class="comment">/*将一个节点的相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">4</span>;j++)&#123;</span><br><span class="line">                String up=plusOne(cur,j);</span><br><span class="line">                String down=minusOne(cur,j);</span><br><span class="line">                q.offer(up);</span><br><span class="line">                q.offer(down);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*在这里增加步数*/</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>这段代码可以穷举所有可能的密码组合了，但是显然不能完成题目，有如下问题需要解决：</strong></p>
+<p>1、会走回头路。比如说我们从<code>&quot;0000&quot;</code> 拨到<code>&quot;1000&quot;</code>，但是等从队列拿出<code>&quot;1000&quot;</code>时，还会拨出一个<code>&quot;0000&quot;</code>，这样会产生死循环。</p>
+<p>2、没有终止条件，找到<code>target</code>就应该结束并返回拨动的次数。</p>
+<p>3、没有对<code>deadends</code>的处理，按道理这些死亡密码是不能出现的，也就是说遇到这些密码的时候需要跳过。</p>
+<p>按照BFS框架在对应的位置稍作修改即可修复以上问题：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">openLock</span><span class="params">(String[] deadends,String target)</span></span>&#123;</span><br><span class="line">    <span class="comment">//记录需要跳过的死亡密码</span></span><br><span class="line">    Set&lt;String&gt; deads=<span class="keyword">new</span> HashSets&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (String s:deadends) deads.add(s);</span><br><span class="line">    <span class="comment">//记录已经穷举过的密码，防止走回头路</span></span><br><span class="line">    Set&lt;String&gt; visited=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    Queue&lt;String&gt; q=<span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    <span class="comment">//从起点开始启动广度优先搜索</span></span><br><span class="line">    <span class="keyword">int</span> step=<span class="number">0</span>;</span><br><span class="line">    q.offer(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    visited.add(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span>(!q.isEmpty())&#123;</span><br><span class="line">        <span class="keyword">int</span> sz=q.size();</span><br><span class="line">        <span class="comment">/*将当前队列中的所有节点向周围扩散*/</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sz;i++)&#123;</span><br><span class="line">            String cur=q.poll();</span><br><span class="line">            <span class="comment">/*判断是否到达终点*/</span></span><br><span class="line">            <span class="keyword">if</span> (deads.contains(cur))&#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (cur.equals(target))&#123;</span><br><span class="line">                <span class="keyword">return</span> step;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">/*将一个节点的未遍历相邻节点加入队列*/</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;<span class="number">4</span>;j++)&#123;</span><br><span class="line">                String up=plusOne(cur,j);</span><br><span class="line">                <span class="keyword">if</span> (!visited.contains(up))&#123;</span><br><span class="line">                    q.offer(up);</span><br><span class="line">                    visited.add(up);</span><br><span class="line">                &#125;</span><br><span class="line">                String down=minusOne(cur,j);</span><br><span class="line">                <span class="keyword">if</span> (!visited.contains(down))&#123;</span><br><span class="line">                    q.offer(down);</span><br><span class="line">                    visited.add(down);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;            </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/*增加步数*/</span></span><br><span class="line">        step++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//如果穷举完都没找到目标密码，那就是找不到了</span></span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="双向BFS优化"><a href="#双向BFS优化" class="headerlink" title="双向BFS优化"></a>双向BFS优化</h3><p><strong>传统的BFS框架就是从起点开始向四周扩散，遇到终点时停止；而双向BFS则是从起点和终点同时开始扩散，当两边有交集的时候停止。</strong></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201216154118822.png" alt="image-20201216154118822"></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201216154128828.png" alt="image-20201216154128828"></p>
+<p>图形中的树形结构，如果终点在最底部，按照传统BFS算法的策略，会把整棵树的节点都搜索一遍，最后找到<code>target</code>；而双向BFS其实只遍历了半棵树就出现了交集，也就是找到了最短距离。</p>
+<p><strong>不过，双向BFS也有局限，因为你必须知道终点在哪里。</strong>比如二叉树的最小高度问题，一开始并不知道终点，也就无法使用BFS；但是密码锁的问题，可以使用双向BFS算法来提高效率，代码稍加修改为下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">openLock</span><span class="params">(String[] deadends String target)</span></span>&#123;</span><br><span class="line">    Set&lt;String&gt; deads=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (String s: deadends) deads.add(s);</span><br><span class="line">    <span class="comment">//用集合不用队列，可以快速判断元素是否存在</span></span><br><span class="line">    Set&lt;String&gt; q1=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    Set&lt;String&gt; q2=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    Set&lt;String&gt; visited=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    <span class="keyword">int</span> step = <span class="number">0</span>;</span><br><span class="line">    q1.add(<span class="string">&quot;0000&quot;</span>);</span><br><span class="line">    q2.add(target);</span><br><span class="line">    <span class="keyword">while</span> (!q1.isEmpty() &amp;&amp; !q2.isEmpty())&#123;</span><br><span class="line">        <span class="comment">//哈希集合在遍历的过程中不能修改，用temp存储扩散结果</span></span><br><span class="line">        Set&lt;String&gt; temp=<span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">        <span class="comment">/* 将 q1 中的所有节点向周围扩散 */</span></span><br><span class="line">        <span class="keyword">for</span> (String cur : q1) &#123;</span><br><span class="line">            <span class="comment">/* 判断是否到达终点 */</span></span><br><span class="line">            <span class="keyword">if</span> (deads.contains(cur))</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">if</span> (q2.contains(cur))</span><br><span class="line">            <span class="keyword">return</span> step;</span><br><span class="line">            visited.add(cur);</span><br><span class="line">            <span class="comment">/* 将⼀个节点的未遍历相邻节点加⼊集合 */</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">4</span>; j++) &#123;</span><br><span class="line">            String up = plusOne(cur, j);</span><br><span class="line">            <span class="keyword">if</span> (!visited.contains(up))</span><br><span class="line">            temp.add(up);</span><br><span class="line">            String down = minusOne(cur, j);</span><br><span class="line">            <span class="keyword">if</span> (!visited.contains(down))</span><br><span class="line">            temp.add(down);</span><br><span class="line">            &#125;</span><br><span class="line">		&#125;   </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/* 在这⾥增加步数 */</span></span><br><span class="line">    step++;</span><br><span class="line">    <span class="comment">// temp 相当于 q1</span></span><br><span class="line">    <span class="comment">// 这⾥交换 q1 q2，下⼀轮 while 就是扩散 q2</span></span><br><span class="line">    q1 = q2;</span><br><span class="line">    q2 = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>双向BFS还是遵循BFS算法框架的，只是<strong>不再使用队列，而是使用HashSet方便快速判断两个集合是否有交集。</strong></p>
+<p>另外的一个技巧点就是<strong>while循环的最后交换q1和q2的内容</strong>，所以只要默认扩散<code>q1</code>就相当于轮流扩散<code>q1</code>和<code>q2</code>。</p>
+<p>双向BFS还有一个优化，就是在while循环开始时做一个判断：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line"><span class="keyword">while</span>(!q1.isEmpty() &amp;&amp; !q2.isEmpty())&#123;</span><br><span class="line">    <span class="keyword">if</span> (q1.size()&gt;q2.size())&#123;</span><br><span class="line">        <span class="comment">//交换q1和q2</span></span><br><span class="line">        temp=q1;</span><br><span class="line">        q1=q2;</span><br><span class="line">        q2=temp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为什么是一个优化呢？</p>
+<p>因为按照BFS的逻辑，队列中的元素越多，扩散之后新的队列（集合）中的元素就越多；在双向BFS算法中，如果每次都选择一个较小的集合进行扩散，那么占用的空间增长速度就会慢一些，效率就会高一些。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/14/%E6%A0%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1480,336 +1673,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/kubernetes%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/07/kubernetes%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">kubernetes命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-07 19:27:41" itemprop="dateCreated datePublished" datetime="2020-12-07T19:27:41+08:00">2020-12-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-15 09:17:42" itemprop="dateModified" datetime="2020-12-15T09:17:42+08:00">2020-12-15</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Kubernetes"><a href="#Kubernetes" class="headerlink" title="Kubernetes"></a>Kubernetes</h1><h2 id="1、跑一个简单应用"><a href="#1、跑一个简单应用" class="headerlink" title="1、跑一个简单应用"></a>1、跑一个简单应用</h2><p>1）、部署一个应用</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run cnntest --image=docker.io/gcc1122/cnn_test:v1 --port=5008</span><br></pre></td></tr></table></figure>
-
-<p>2)、访问应用</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl expose deployment/cnntest --type=&quot;NodePort&quot; --port=5008</span><br><span class="line">kubectl get services</span><br></pre></td></tr></table></figure>
-
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201123094408309.png" alt="image-20201123094408309"></p>
-<p>3)、测试访问</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 127.0.0.1:30423</span><br></pre></td></tr></table></figure>
-
-<p>4)、scale 应用</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get deployments</span><br><span class="line">kubectl scale deployments/cnntest1 --replicas=3 #将副本数增加到3个</span><br><span class="line">kubectl get pods #pods被扩展到三个，访问时负载均衡策略为随机策略</span><br></pre></td></tr></table></figure>
-
-<p><strong>过程分析：</strong></p>
-<p>1、kubectl 发送部署请求到API Server</p>
-<p>2、API Server通知Controller Manager创建一个deployment资源</p>
-<p>3、Scheduler执行调度任务，将两个副本pod分发到k8s-node1和k8s-node2上。</p>
-<p>4、k8s-node1和k8s-node2上的kubectl在各自的节点上创建并运行pod。</p>
-<h2 id="2、重要概念"><a href="#2、重要概念" class="headerlink" title="2、重要概念"></a>2、重要概念</h2><h3 id="cluster"><a href="#cluster" class="headerlink" title="cluster"></a>cluster</h3><p>cluster是计算、存储和网络资源的集合，K8s利用这些资源运行各种基于容器的应用。</p>
-<h3 id="Master"><a href="#Master" class="headerlink" title="Master"></a>Master</h3><p>Master是Cluster的大脑，主要职责是调度，即决定将应用放在哪里运行。Master运行Linux操作系统，可以是物理机或者虚拟机。</p>
-<h3 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h3><p>Node负责监控并汇报容器的状态，同时根据Matser的要求管理容器的生命周期。</p>
-<h3 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a>Pod</h3><p>pod是k8s的最小工作单元，每个pod包含一个或多个容器，pod中的容器会作为一个整体被Master调度到一个Node上运行。</p>
-<h3 id="Controller"><a href="#Controller" class="headerlink" title="Controller"></a>Controller</h3><p>K8s通常不会直接创建pod，而是通过Controller来管理pod的。Controller中定义了pod的部署特性，比如有几个副本、在什么样的Node上运行。为了满足不同的业务场景，k8s提供了多种Controller，包括Deployment、ReplicaSet、DaemonSet、Stateful、Job等。</p>
-<p>**Deployment:**最常用的Controller,Deployment可以管理pod的多个副本，并确保pod按照期望的状态运行。</p>
-<p>**ReplicaSet:**实现了pod的多副本管理。使用Deployment时会自动创建ReplicaSet，也就是说Deployment是通过ReplicaSet来管理pod的多个副本的，我们通常不需要直接使用ReplicaSet。</p>
-<p>**DaemonSet:**用于每个Node最多只运行一个pod副本的场景。</p>
-<p>**StatefulSet:**能够保证pod的每个副本在整个生命周期中名称是不变的，而其他Controller不提供这个功能。当某个pod发生故障需要删除并重新启动时，pod的名称会发生变化，同时statefulset会保证副本按照固定的顺序启动、更新或者删除。</p>
-<p>**job:**用于运行结束就删除的应用，而其他controller中的pod通常是长期持续运行。</p>
-<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h3><p>Deployment可以部署多个副本，每个pod都有自己的ip，访问这些副本不能通过pod的ip，而是service。K8s service定义了外界访问一组特定的pod的方式。service有自己的ip和端口，servce为pod提供了复杂均衡。</p>
-<p>k8s运行容器与访问容器这两项任务分别由controller和service执行</p>
-<h3 id="Namespace"><a href="#Namespace" class="headerlink" title="Namespace"></a>Namespace</h3><p>多个用户或项目组使用同一个kubernetes Cluster，如何将controller、pod等资源分开呢？</p>
-<p>namespace可以将一个物理的Cluster逻辑上划分成多个虚拟cluster，每个cluster就是一个Namespace。不同Namespace里的资源是完全隔离的。</p>
-<p><strong>Deployment配置文件简介</strong></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lbphtest-deployment</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">lbphtest</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">lbphtest</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lbphtest1</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.io/gcc1122/lbph_test:v1</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
-
-<p>删除deployment</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete deployment nginx 或 kubectl delete -f nging.yml</span><br></pre></td></tr></table></figure>
-
-<p>如果希望将k8s-master也当作Node使用，可以执行如下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint node k8s-matser node-role.kubernetes.io/matser-</span><br></pre></td></tr></table></figure>
-
-<p>恢复Matser Only状态，执行如下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint node k8s-master node-role.kubernetes.io/master=&quot;&quot;.NoSchedule</span><br></pre></td></tr></table></figure>
-
-<p><strong>Service配置文件</strong></p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lbphtest-service</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">lbphtest</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">9000</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">30000</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">lbphtest</span></span><br></pre></td></tr></table></figure>
-
-<p>​    nodePort是节点上监听的端口</p>
-<p>​    port是Cluster上监听的端口</p>
-<p>​    targetPort是Pod监听的端口</p>
-<p>最终，Node和ClusterIP在各自端口上接收到的请求都会通过iptables转发到pod的targetPort。</p>
-<p>测试是否成功：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get services</span><br></pre></td></tr></table></figure>
-
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201123110859570.png" alt="image-20201123110859570"></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl 10.108.152.174:88 #测试是否可连接pod</span><br></pre></td></tr></table></figure>
-
-<p>查看service信息：</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">kubectl</span> <span class="string">describe</span> <span class="string">service</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">Name:</span>              <span class="string">nginx-service</span></span><br><span class="line"><span class="attr">Namespace:</span>         <span class="string">default</span></span><br><span class="line"><span class="attr">Labels:</span>            <span class="string">app=nginx</span></span><br><span class="line"><span class="attr">Annotations:       kubectl.kubernetes.io/last-applied-configuration:</span></span><br><span class="line">                     &#123;<span class="string">&quot;apiVersion&quot;</span><span class="string">:&quot;v1&quot;</span>,<span class="string">&quot;kind&quot;</span><span class="string">:&quot;Service&quot;</span>,<span class="string">&quot;metadata&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;annotations&quot;</span><span class="string">:</span>&#123;&#125;,<span class="string">&quot;labels&quot;</span><span class="string">:</span>&#123;<span class="string">&quot;app&quot;</span><span class="string">:&quot;nginx&quot;</span>&#125;,<span class="string">&quot;name&quot;</span><span class="string">:&quot;nginx-service&quot;</span>,<span class="string">&quot;namespace&quot;</span><span class="string">:&quot;default&quot;</span>&#125;,<span class="string">&quot;s...</span></span><br><span class="line"><span class="string">Selector:          app=nginx</span></span><br><span class="line"><span class="string">Type:              ClusterIP</span></span><br><span class="line"><span class="string">IP:                10.108.152.174</span></span><br><span class="line"><span class="string">Port:              &lt;unset&gt;  88/TCP</span></span><br><span class="line"><span class="string">TargetPort:        80/TCP</span></span><br><span class="line"><span class="string">Endpoints:         10.244.51.20:80</span></span><br><span class="line"><span class="string">Session Affinity:  None</span></span><br><span class="line"><span class="string">Events:            &lt;none&gt;</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
-
-<p>EndPoint罗列了一个Pod的IP和端口。</p>
-<h4 id="Cluster-IP底层实现原理"><a href="#Cluster-IP底层实现原理" class="headerlink" title="Cluster IP底层实现原理"></a>Cluster IP底层实现原理</h4><p>虚拟ip，是由k8s节点上的iptables规则管理的。iptables将Service的流量转发到后端pod，而且使用类似轮询的负载均衡策略。</p>
-<h2 id="3、数据管理"><a href="#3、数据管理" class="headerlink" title="3、数据管理"></a>3、数据管理</h2><p>容器和pod是短暂的，其含义是它们的生命周期可能很短，会被频繁地销毁和创建。容器销毁时，保存在容器内部文件系统中的数据都会被清楚。</p>
-<p>为了持久化保存容器的数据，可以使用Kubernetes Volume。</p>
-<h2 id="4、Istio"><a href="#4、Istio" class="headerlink" title="4、Istio"></a>4、Istio</h2><p>创建service 和不同版本的deployment。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lbphapp</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">lbphapp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">9010</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">lbphapp</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lbphapp-v1</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchlabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">lbphapp</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">lbphapp</span></span><br><span class="line">        <span class="attr">version:</span> <span class="string">v1</span></span><br><span class="line">  <span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lbphapp</span></span><br><span class="line">      <span class="attr">image:</span> <span class="string">docker.io/gcc1122/lbph_test:v1</span></span><br><span class="line">      <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">      <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">version</span></span><br><span class="line">        <span class="attr">value:</span> <span class="string">v1</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">lbphapp-v2</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchlabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">lbphapp</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">lbphapp</span></span><br><span class="line">        <span class="attr">version:</span> <span class="string">v2</span></span><br><span class="line">  <span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">lbphapp</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">docker.io/gcc1122/lbph_test:v1</span></span><br><span class="line">        <span class="attr">imagePullPolicy:</span> <span class="string">IfNotPresent</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line">        <span class="attr">env:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">version</span></span><br><span class="line">            <span class="attr">value:</span> <span class="string">v2</span></span><br></pre></td></tr></table></figure>
-
-<p>执行以下命令：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">istioctl kube-inject -f lbphapp.istio.yml | kubectl apply -f - #部署service和deployment并注入</span><br><span class="line">kubectl get service #检查service创建成功</span><br><span class="line">kubectl get deployment #检查deployment</span><br><span class="line">kubectl get pod -o wide #检查pod</span><br><span class="line">kubectl describe po pod_name #查看pod详细信息 </span><br></pre></td></tr></table></figure>
-
-<h2 id="List-watch机制和Informer模块"><a href="#List-watch机制和Informer模块" class="headerlink" title="List-watch机制和Informer模块"></a>List-watch机制和Informer模块</h2><p>List-watch是<code>k8s</code>统一的异步消息处理机制，保证了消息的实时性、可靠性、顺序性、性能等等，为声明式风格的<code>API</code>奠定了良好的基础，是优雅的通信方式，是<code>k8s</code>架构的精髓。</p>
-<h3 id="List-watch机制具体是什么样的"><a href="#List-watch机制具体是什么样的" class="headerlink" title="List-watch机制具体是什么样的"></a>List-watch机制具体是什么样的</h3><p><code>etcd</code>存储集群的数据信息，apiserver作为统一入口，任何对数据的操作都必须经过<code>apiserver</code>。客户端（<code>kubelet</code>/<code>scheduler</code>/<code>controller-manager</code>）通过<code>list-watch</code>监听apiserver中资源的create、update和delete事件，并针对事件类型调用相应的事件处理函数。</p>
-<p>list-watch由两部分组成，分别是list和watch。list非常好理解，就是调用资源的list API罗列资源，基于HTTP短链接实现；watch则是调用资源的watch API监听资源变更事件，基于HTTP长链接事件。</p>
-<p><code>以</code>pod 资源<code>为例，它的</code>list<code>和</code>watch API<code>分别为： [List API](https://v1-10.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#list-all-namespaces-63)，返回值为 [PodList](https://v1-10.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#podlist-v1-core)，即一组</code>pod`。</p>
-<blockquote>
-<p>GET /api/v1/pods</p>
-</blockquote>
-<p>Watch API，往往带上<code>watch=true</code>，表示采用<code>HTTP 长连接</code>持续监听<code>pod 相关事件</code>，每当有事件来临，返回一个WatchEvent。</p>
-<p>GET /api/v1/watch/pods</p>
-<p>k8s的informer模块封装list-watch API，用户只需要指定资源，编写事件处理函数，AddFunc，UpdateFunc和DeleteFunc等。如下图所示，informer首先通过list API罗列资源，然后调用watch API监听资源的变更事件，并将结果放入到一个FIFO队列，队列的另一头有协程，从中取出事件，并调用对应的注册函数处理事件。informer还维护了一个只读的<code>Map Store</code>缓存，主要为了提升查询的效率，降低<code>apiserver</code>的负载。</p>
-<p><img src="https://pic4.zhimg.com/v2-5263be53b45fdbea59e9812d9df627b7_b.jpg" alt="img"></p>
-<h3 id="Watch是如何实现的"><a href="#Watch是如何实现的" class="headerlink" title="Watch是如何实现的"></a>Watch是如何实现的</h3><p>Watch是通过HTTP长链接接收apiserver发来的资源变更事件。秘诀就是通过Chunked transfer encoding（分块传输编码），它首次出现在HTTP/1.1。</p>
-<p>HTTP 分块传输编码允许服务器为动态生成的内容维持 HTTP 持久链接。通常，持久链接需要服务器在开始发送消息体前发送Content-Length消息头字段，但是对于动态生成的内容来说，在内容创建完之前是不可知的。使用分块传输编码，数据分解成一系列数据块，并以一个或多个块发送，这样服务器可以发送数据而不需要预先知道发送内容的总大小。</p>
-<p>当客户端调用<code>watch API</code>时，apiserver在response的HTTP Header中设置transfer Encoding的值为chunked，表示采用分块传输编码，客户端收到该信息后，便和服务端链接，并等待下一个数据块，即资源的时间信息。</p>
-<p>例如：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> curl -i http://&#123;kube-api-server-ip&#125;:8080/api/v1/watch/pods?watch=yes</span></span><br><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Content-Type: application/json</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Date: Thu, 02 Jan 2019 20:22:59 GMT</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">&#123;&quot;type&quot;:&quot;ADDED&quot;, &quot;object&quot;:&#123;&quot;kind&quot;:&quot;Pod&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,...&#125;&#125;</span><br><span class="line">&#123;&quot;type&quot;:&quot;ADDED&quot;, &quot;object&quot;:&#123;&quot;kind&quot;:&quot;Pod&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,...&#125;&#125;</span><br><span class="line">&#123;&quot;type&quot;:&quot;MODIFIED&quot;, &quot;object&quot;:&#123;&quot;kind&quot;:&quot;Pod&quot;,&quot;apiVersion&quot;:&quot;v1&quot;,...&#125;&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="List-Watch的设计理念"><a href="#List-Watch的设计理念" class="headerlink" title="List-Watch的设计理念"></a>List-Watch的设计理念</h3><p>当设计一个优秀的异步消息的系统时，对<code>消息机制</code>有至少四点要求：</p>
-<ul>
-<li>消息可靠性</li>
-<li>消息实时性</li>
-<li>消息顺序性</li>
-<li>高性能</li>
-</ul>
-<p>首先<code>消息</code>必须是<code>可靠</code>的，<code>list</code>和<code>watch</code>一起保证了消息的可靠性，避免因消息丢失而造成状态不一致场景。具体而言，<code>list API</code>可以查询当前的资源及其对应的状态(即期望的状态)，客户端通过拿<code>期望的状态</code>和<code>实际的状态</code>进行对比，纠正状态不一致的资源。<code>Watch API</code>和<code>apiserver</code>保持一个<code>长链接</code>，接收资源的<code>状态变更事件</code>并做相应处理。如果仅调用<code>watch API</code>，若某个时间点连接中断，就有可能导致消息丢失，所以需要通过<code>list API</code>解决<code>消息丢失</code>的问题。从另一个角度出发，我们可以认为<code>list API</code>获取全量数据，<code>watch API</code>获取增量数据。虽然仅仅通过轮询<code>list API</code>，也能达到同步资源状态的效果，但是存在开销大，实时性不足的问题。</p>
-<p>消息必须是实时的，list-watch机制下，每当apiserver的资源产生状态变更事件，都会将事件及时的推送给客户端，从而保证了消息的实时性。</p>
-<p>消息的顺序性也是非常重要的，在并发的场景下，客户端在短时间内可能会收到同一个资源的多个事件，对于<code>关注最终一致性</code>的<code>K8S</code>来说，它需要知道哪个是最近发生的事件，并保证资源的最终状态如同最近事件所表述的状态一样。<code>K8S</code>在每个资源的事件中都带一个<code>resourceVersion</code>的标签，这个标签是递增的数字，所以当客户端并发处理同一个资源的事件时，它就可以对比<code>resourceVersion</code>来保证最终的状态和最新的事件所期望的状态保持一致。</p>
-<p><code>List-watch</code>还具有高性能的特点，虽然仅通过周期性调用<code>list API</code>也能达到资源最终一致性的效果，但是周期性频繁的轮询大大的增大了开销，增加<code>apiserver</code>的压力。而<code>watch</code>作为异步消息通知机制，复用一条长链接，保证实时性的同时也保证了性能。</p>
-<h3 id="Informer介绍"><a href="#Informer介绍" class="headerlink" title="Informer介绍"></a>Informer介绍</h3><p><code>Informer</code>是<code>Client-go</code>中的一个核心工具包。在<code>kubernetes</code>源码中，如果<code>kubernetes</code>的某个组件，需要<code>List/Get Kubernetes</code>中的<code>Object</code>，在绝大多 数情况下，会直接使用<code>Informer</code>实例中的<code>Lister()</code>方法（该方法包含 了 Get 和 List 方法），而很少直接请求<code>Kubernetes API</code>。<code>Informer</code>最基本 的功能就是<code>List/Get Kubernetes</code>中的<code>Object</code>。</p>
-<p><img src="https://pic3.zhimg.com/v2-7dd870bf025344f466e54f2be8e59d2e_b.jpg" alt="img"></p>
-<h3 id="Informer设计思路"><a href="#Informer设计思路" class="headerlink" title="Informer设计思路"></a>Informer设计思路</h3><h4 id="Informer设计中的关键点"><a href="#Informer设计中的关键点" class="headerlink" title="Informer设计中的关键点"></a>Informer设计中的关键点</h4><p>为了让<code>Client-go</code>更快地返回<code>List/Get</code>请求的结果、减少对<code>Kubenetes API</code>的直接调用，<code>Informer</code>被设计实现为一个依赖<code>Kubernetes List/Watch API</code>、<code>可监听事件并触发回调函数</code>的<code>二级缓存</code>工具包。</p>
-<h4 id="更快地返回List-Get请求，减少对Kubernetes-API的直接调用"><a href="#更快地返回List-Get请求，减少对Kubernetes-API的直接调用" class="headerlink" title="更快地返回List/Get请求，减少对Kubernetes API的直接调用"></a>更快地返回List/Get请求，减少对Kubernetes API的直接调用</h4><p>使用<code>Informer</code>实例的<code>Lister()</code>方法，<code>List/Get Kubernetes</code>中的<code>Object</code>时，<code>Informer</code>不会去请求<code>Kubernetes API</code>，而是直接查找<code>缓存</code>在本地内存中的数据(这份数据由<code>Informer</code>自己维护)。通过这种方式，<code>Informer</code>既可以更快地返回结果，又能减少对<code>Kubernetes API</code>的直接调用。</p>
-<h4 id="依赖Kubernetes-List-Watch-API"><a href="#依赖Kubernetes-List-Watch-API" class="headerlink" title="依赖Kubernetes List/Watch API"></a>依赖Kubernetes List/Watch API</h4><p><code>Informer</code>只会调用<code>Kubernetes List</code>和<code>Watch</code>两种类型的<code>API</code>。<code>Informer</code>在初始化的时，先调用<code>Kubernetes List API</code>获得某种<code>resource</code>的全部<code>Object</code>，缓存在<code>内存</code>中; 然后，调用<code>Watch API</code>去<code>watch</code>这种<code>resource</code>，去维护这份缓存; 最后，<code>Informer</code>就不再调用<code>Kubernetes</code>的任何 API。</p>
-<p>用<code>List/Watch</code>去维护缓存、保持一致性是非常典型的做法，但令人费解的是，<code>Informer</code>只在初始化时调用一次<code>List API</code>，之后完全依赖<code>Watch API</code>去维护缓存，没有任何<code>resync</code>机制。</p>
-<h4 id="可监听事件并触发回调函数"><a href="#可监听事件并触发回调函数" class="headerlink" title="可监听事件并触发回调函数"></a>可监听事件并触发回调函数</h4><p><code>Informer</code>通过<code>Kubernetes Watch API</code>监听某种<code>resource</code>下的所有事件。而且，<code>Informer</code>可以添加自定义的回调函数，这个回调函数实例(即<code>ResourceEventHandler</code>实例)只需实现<code>OnAdd</code>(obj interface{})<code>OnUpdate</code>(oldObj, newObj interface{}) 和<code>OnDelete</code>(obj interface{}) 三个方法，这三个方法分别对应<code>informer</code>监听到<code>创建</code>、<code>更新</code>和<code>删除</code>这三种事件类型。</p>
-<p>在<code>Controller</code>的设计实现中，会经常用到<code>informer</code>的这个功能。</p>
-<h4 id="二级缓存"><a href="#二级缓存" class="headerlink" title="二级缓存"></a>二级缓存</h4><p>二级缓存属于<code>Informer</code>的底层缓存机制，这两级缓存分别是<code>DeltaFIFO</code>和<code>LocalStore</code>。</p>
-<p>这两级缓存的用途各不相同。<code>DeltaFIFO</code>用来存储<code>Watch API</code>返回的各种事件 ，<code>LocalStore</code>只会被<code>Lister</code>的<code>List/Get</code>方法访问 。</p>
-<p>虽然<code>Informer</code>和<code>Kubernetes</code>之间没有<code>resync</code>机制，但<code>Informer</code>内部的这两级缓存之间存在<code>resync</code>机制。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/07/docker%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/07/docker%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">docker命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-07 19:11:29" itemprop="dateCreated datePublished" datetime="2020-12-07T19:11:29+08:00">2020-12-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-12 11:13:51" itemprop="dateModified" datetime="2021-01-12T11:13:51+08:00">2021-01-12</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="docker命令"><a href="#docker命令" class="headerlink" title="docker命令"></a>docker命令</h1><h2 id="docker状态命令"><a href="#docker状态命令" class="headerlink" title="docker状态命令"></a>docker状态命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">systemctl start docker</span><br><span class="line">systemctl status docker #查看状态</span><br><span class="line">systemctl stop docker</span><br><span class="line">systemctl restart docker #重启</span><br><span class="line">systemctl enable docker #开机自启动</span><br></pre></td></tr></table></figure>
-
-<h2 id="镜像相关命令"><a href="#镜像相关命令" class="headerlink" title="镜像相关命令"></a>镜像相关命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">docker images #查看本地镜像</span><br><span class="line">docker images -q #查看所用镜像的id</span><br><span class="line">docker search redis #搜索镜像</span><br><span class="line">docker pull redis #下载镜像</span><br><span class="line">docker rmi redis:latest #删除镜像</span><br><span class="line">docker build -t cnn_test .</span><br><span class="line">images:显示镜像列表。</span><br><span class="line">history：显示镜像构建历史。</span><br><span class="line">commit:从容器创建新镜像</span><br><span class="line">tag:给镜像打tag</span><br><span class="line">pull:从registry下载镜像</span><br><span class="line">push：将镜像上传到registry</span><br><span class="line">docker build -t vgg_test . #构建镜像</span><br></pre></td></tr></table></figure>
-
-<h2 id="容器相关命令"><a href="#容器相关命令" class="headerlink" title="容器相关命令"></a>容器相关命令</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run -it --name c1 centos:7 /bin/bash</span><br><span class="line">（-i 保持容器运行，通常与-t同时使用，加入it这两个参数后，容器创建后会自动进入容器中，退出容器后，容器自动关闭。</span><br><span class="line">-t :为容器重新分配一个伪输入终端，通常与-i同时使用</span><br><span class="line">-d：以守护（后台）模式运行容器，创建一个容器在后台运行，需要使用docker exec进入容器，退出后，容器不会关闭。</span><br><span class="line">-it:创建的容器一般为交互式容器，-id创建的容器一般称为守护式容器</span><br><span class="line">--name:为创建的容器命名。）</span><br><span class="line">docker ps #查看正在运行的容器</span><br><span class="line">docker ps -a #查看历史的运行的容器</span><br><span class="line">docker rm CONTAINER_NAME #删除容器，删除容器时要确保容器不在运行 docker stop container_name</span><br><span class="line">docker inspect CONTAINER_NAME #查看容器的信息</span><br><span class="line">docker run -itd -p 9000:80 image_name #端口映射</span><br></pre></td></tr></table></figure>
-
-<p><strong>进入容器的方法</strong></p>
-<p>我们经常需要进到容器里去做一些工作，比如查看日志、调试、启动其他进程等。有两种方法进入容器：attach和exec。两者主要区别如下：</p>
-<p>1、attach直接进入容器启动命令的终端，不会启动新的进程</p>
-<p>2、exec则是在容器中打开新的终端，并且可以启动新的进程。</p>
-<p>3、如果想直接在终端中查看启动命令的输出，用attach；其他情况使用exec.</p>
-<h2 id="docker查看日志记录"><a href="#docker查看日志记录" class="headerlink" title="docker查看日志记录"></a>docker查看日志记录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker logs [OPTIONS] CONTAINER</span><br><span class="line">Options:</span><br><span class="line">      --details        显示更多的信息</span><br><span class="line">  -f, --follow         跟踪实时日志</span><br><span class="line">      --since string   显示自某个timestamp之后的日志，或相对时间，如42m（即42分钟）</span><br><span class="line">      --tail string    从日志末尾显示多少行日志， 默认是all</span><br><span class="line">  -t, --timestamps     显示时间戳</span><br><span class="line">      --until string   显示自某个timestamp之前的日志，或相对时间，如42m（即42分钟）</span><br></pre></td></tr></table></figure>
-
-<p><strong>例子</strong></p>
-<p>查看最近30分钟的日志：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs --since 30m CONTAINER_ID</span><br></pre></td></tr></table></figure>
-
-<p>查看指定时间后的日志，只显示最后100行：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -f -t --since=&quot;2018-02-08&quot; --tail=100 CONTAINER_ID</span><br></pre></td></tr></table></figure>
-
-<p>查看某时间之后的日志：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -t --since=&quot;2018-02-08T13:23:37&quot; CONTAINER_ID</span><br></pre></td></tr></table></figure>
-
-<p>查看某时间段日志：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker logs -t --since=&quot;2018-02-08T13:23:37&quot; --until &quot;2018-02-09T12:23:37&quot; CONTAINER_ID</span><br></pre></td></tr></table></figure>
-
-<h2 id="dockerfile"><a href="#dockerfile" class="headerlink" title="dockerfile"></a>dockerfile</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FROM python:3.6 #指定base镜像</span><br><span class="line">MAINTAINER：&#x27;gcc&#x27; 303163861@qq.com #指定镜像作者</span><br><span class="line">WORKDIR /usr/src/app #设置工作目录</span><br><span class="line">COPY requirements.txt ./ #将文件从build content复制到镜像</span><br><span class="line">RUN apt-get update #运行命令以安装环境</span><br><span class="line">RUN apt install -y libgl1-mesa-glx</span><br><span class="line">RUN pip install -i https://mirrors.aliyun.com/pypi/simple/ --no-cache-dir -r requirements.txt</span><br><span class="line">COPY py/ /usr/src/app/</span><br><span class="line">VOLUME /usr/src/app #将文件或目录申明为volume</span><br><span class="line">ENTRYPOINT [&quot;python&quot;] #设置容器启动时运行的命令</span><br></pre></td></tr></table></figure>
-
-<h2 id="docker-volume"><a href="#docker-volume" class="headerlink" title="docker volume"></a>docker volume</h2><p>docker镜像是以layer概念存在的，一层一层的叠加，最终成为我们需要的镜像。但该镜像的每一层都是ReadOnly的。只有我们运行容器的时候才会创建读写层。文件系统的隔离使得：</p>
-<p>​    容器不再运行时，数据将不会持续存在，数据很难从容器中取出。</p>
-<p>​    无法在不同主机之间很好的进行数据迁移</p>
-<p>​    数据写入容器的读写层需要内核提供联合文件系统，这会额外的降低性能。</p>
-<p>docker提供了三种不同的方式将数据挂载到容器中：volume、bind mount、tmpfs.</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201123132602878.png" alt="image-20201123132602878"></p>
-<p><strong>volume方式：</strong></p>
-<ul>
-<li>docker默认在主机上会有一个特定的区域（/var/lib/docker/volumes/linux），该区域用来存放volume。</li>
-<li>非docker进程不应该去修改该区域。</li>
-<li>volume可以通过docker volume进行管理，如创建、删除等操作。</li>
-<li>volume在生成的时候如果不指定名称，便会随机生成。</li>
-</ul>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201123133043043.png" alt="image-20201123133043043"></p>
-<ul>
-<li>volume在容器停止或删除的时候会继续存在，如需删除需要显示声明。</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker rm -v container_id</span><br><span class="line">docker volume rm volume_name</span><br></pre></td></tr></table></figure>
-
-<p>volume 在 docker 中被推荐为首选方式，它与 bind mount 相比，有以下优点：</p>
-<ul>
-<li>与 bind mount 相比，volume 更容易备份或迁移。</li>
-<li>可以使用 Docker CLI 命令或 Docker API 来管理。</li>
-<li>volume 在 Linux 和 Windows 容器上都能工作。</li>
-<li>volume 可以在多个容器之间更安全的共享。</li>
-<li>volume 驱动程序允许你在远程主机或云上提供存储、加密或其他功能。</li>
-<li>新 volume 的内容可以由容器预填充。</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker volume ls #卷列表</span><br><span class="line">docker volume inspect volume_name #查看卷信息</span><br><span class="line">docker volume rm volume_name #删除卷</span><br></pre></td></tr></table></figure>
-
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201123133713960.png" alt="image-20201123133713960"></p>
-<h2 id="bind-mount方式"><a href="#bind-mount方式" class="headerlink" title="bind mount方式"></a>bind mount方式</h2><p>通过bind mount方式，可以将主机上的任何文件或目录（绝对路径）挂载到容器中。</p>
-<ul>
-<li>挂载的文件或目录可以被任何进程修改，因此有时候容器中修改了该文件或目录将会影响其他进程。</li>
-<li>如果挂载主机的文件或目录不存在将会自动创建。</li>
-<li>使用该方式不能通过docker volume管理，推荐使用volume方式。</li>
-</ul>
-<p>bind mount，一般在以下情况下使用：</p>
-<ul>
-<li>从主机共享配置文件到容器。默认情况，docker会绑定类似/etc/resolv.conf的文件用于DNS的解析。</li>
-<li>主机与容器共享源代码或构建工具。如，可以将Maven target/ 挂载到容器中，并且每次主机上构建Maven项目时，容器都可以访问重建的构件。</li>
-<li>主机的文件或目录结构与容器所需的一致时。</li>
-</ul>
-<p>如果将空文件或目录挂载到容器，容器中的该目录又有文件，那么，这些文件将会被复制到主机上的目录中。如果将非空的文件或目录挂载到容器，容器中的该目录也有文件，那么，容器中的文件将会被隐藏。</p>
-<p><strong>-v/-mount标志</strong></p>
-<h3 id="创建一个数据卷"><a href="#创建一个数据卷" class="headerlink" title="创建一个数据卷"></a>创建一个数据卷</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">docker volume create my-vol</span><br><span class="line">docker volume ls #查看所有数据卷</span><br><span class="line">docker volume inspect my-vol #查看数据卷的信息</span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;CreatedAt&quot;: &quot;2020-11-23T18:45:44+08:00&quot;,</span><br><span class="line">        &quot;Driver&quot;: &quot;local&quot;,</span><br><span class="line">        &quot;Labels&quot;: &#123;&#125;,</span><br><span class="line">        &quot;Mountpoint&quot;: &quot;/var/lib/docker/volumes/my-vol/_data&quot;,</span><br><span class="line">        &quot;Name&quot;: &quot;my-vol&quot;,</span><br><span class="line">        &quot;Options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;Scope&quot;: &quot;local&quot;</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<h3 id="启动一个挂载数据卷的容器"><a href="#启动一个挂载数据卷的容器" class="headerlink" title="启动一个挂载数据卷的容器"></a>启动一个挂载数据卷的容器</h3><p>在用docker run命令的时候，使用–mount标记来将数据卷挂载到容器里。在一次docker run中可以挂载多个数据卷。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> docker run -d -P \</span></span><br><span class="line"><span class="bash">    --name web \</span></span><br><span class="line"><span class="bash">    <span class="comment"># -v my-vol:/usr/share/nginx/html \</span></span></span><br><span class="line"><span class="bash">    --mount <span class="built_in">source</span>=my-vol,target=/usr/share/nginx/html \</span></span><br><span class="line"><span class="bash">    nginx:alpine</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="查看数据卷的具体信息"><a href="#查看数据卷的具体信息" class="headerlink" title="查看数据卷的具体信息"></a>查看数据卷的具体信息</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">docker inspect web</span><br><span class="line">&quot;Mounts&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;Type&quot;: &quot;volume&quot;,</span><br><span class="line">        &quot;Name&quot;: &quot;my-vol&quot;,</span><br><span class="line">        &quot;Source&quot;: &quot;/var/lib/docker/volumes/my-vol/_data&quot;,</span><br><span class="line">        &quot;Destination&quot;: &quot;/usr/share/nginx/html&quot;,</span><br><span class="line">        &quot;Driver&quot;: &quot;local&quot;,</span><br><span class="line">        &quot;Mode&quot;: &quot;&quot;,</span><br><span class="line">        &quot;RW&quot;: true,</span><br><span class="line">        &quot;Propagation&quot;: &quot;&quot;</span><br><span class="line">    &#125;</span><br><span class="line">],</span><br></pre></td></tr></table></figure>
-
-<h3 id="删除数据卷"><a href="#删除数据卷" class="headerlink" title="删除数据卷"></a>删除数据卷</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker volume rm my-vol</span><br><span class="line">docker volume prune #清理数据卷</span><br></pre></td></tr></table></figure>
-
-<h2 id="上传至dockerhub"><a href="#上传至dockerhub" class="headerlink" title="上传至dockerhub"></a>上传至dockerhub</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker login</span><br><span class="line">docker tag cnn_reco gcc1122/cnn_reco</span><br><span class="line">docker push gcc1122/cnn_reco</span><br></pre></td></tr></table></figure>
-
-<h2 id="案例流程"><a href="#案例流程" class="headerlink" title="案例流程"></a>案例流程</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mkdir cnn_reco</span><br><span class="line">cp -rf cnn_test/* /home/cnn_reco</span><br><span class="line">cd /home/cnn_reco</span><br><span class="line">docker build -t cnn_reco .</span><br><span class="line">docker login</span><br><span class="line">docker tag cnn_reco gcc1122/cnn_reco</span><br><span class="line">docker push gcc1122/cnn_reco</span><br></pre></td></tr></table></figure>
-
-<p><strong>注意事项：</strong></p>
-<ul>
-<li><p>镜像源最好选择阿里的镜像源，清华的镜像源会卡导致失败。</p>
-</li>
-<li><p>编译依赖应提前下载好</p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1881,12 +1744,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">57</span>
+          <span class="site-state-item-count">59</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-count">21</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
