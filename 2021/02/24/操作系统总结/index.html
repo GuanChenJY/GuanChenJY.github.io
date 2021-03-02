@@ -29,8 +29,12 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200218111032.png">
 <meta property="og:image" content="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200218102010.png">
+<meta property="og:image" content="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200217135006.png">
+<meta property="og:image" content="https://uploadfiles.nowcoder.com/images/20190723/220525776_1563877459292_F5CB0AD2C92C30DF24FC9C18034B313D">
+<meta property="og:image" content="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200218105728.png">
+<meta property="og:image" content="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200218110201.png">
 <meta property="article:published_time" content="2021-02-24T08:00:26.000Z">
-<meta property="article:modified_time" content="2021-02-24T12:19:53.416Z">
+<meta property="article:modified_time" content="2021-02-25T04:52:10.490Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary">
@@ -181,10 +185,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-02-24 16:00:26 / 修改时间：20:19:53" itemprop="dateCreated datePublished" datetime="2021-02-24T16:00:26+08:00">2021-02-24</time>
+              <time title="创建时间：2021-02-24 16:00:26" itemprop="dateCreated datePublished" datetime="2021-02-24T16:00:26+08:00">2021-02-24</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-25 12:52:10" itemprop="dateModified" datetime="2021-02-25T12:52:10+08:00">2021-02-25</time>
+              </span>
 
           
 
@@ -228,6 +238,10 @@
 <li>进程是操作系统分配资源的单位，而<strong>线程是进程的一个实体</strong>，是CPU调度和分派的基本单位。</li>
 <li>线程没有独立的内存单元，不能够独立执行，必须依存在应用程序中。</li>
 </ul>
+<p><strong>孤儿进程、僵尸进程、守护进程：</strong></p>
+<p><strong>孤儿进程</strong>：如果<strong>父进程先退出,子进程还没退出</strong>那么子进程将被托孤给init进程,这是子进程的父进程就是init进程(1号进程).其实还是很好理解的</p>
+<p> <strong>僵尸进程</strong>：如果我们了解过linux进程状态及转换关系,我们应该知道进程这么多状态中有一种状态是僵死状态,就是进程终止后进入僵死状态(zombie),等待告知父进程自己终止,后才能完全消失.但是如果<strong>一个进程已经终止了,但是其父进程还没有获取其状态,那么这个进程就称之为僵尸进程</strong>.僵尸进程还会消耗一定的系统资源,并且还保留一些概要信息供父进程查询子进程的状态可以提供父进程想要的信息.一旦父进程得到想要的信息,僵尸进程就会结束.</p>
+<p>  <strong>守护进程</strong>：同样我们需要了解一下什么是守护进程,<strong>守护进程就是在后台运行,不与任何终端关联的进程</strong>,通常情况下守护进程在系统启动时就在运行,它们以root用户或者其他特殊用户(apache和postfix)运行,并能处理一些系统级的任务.习惯上守护进程的名字通常以d结尾(sshd),但这些不是必须的.</p>
 <p><strong>引入线程的好处：</strong>线程快！创建、终止、切换都很快！</p>
 <p><strong>总结：</strong></p>
 <ol>
@@ -330,7 +344,83 @@
 <li>安全状态：能找到一个分配资源的序列能让所有进程都顺利完成。</li>
 <li>银行家算法：采用预分配策略检查分配完成时系统是否处于完全状态。</li>
 </ul>
-<h1 id="3、内存"><a href="#3、内存" class="headerlink" title="3、内存"></a>3、内存</h1>
+<h1 id="3、内存"><a href="#3、内存" class="headerlink" title="3、内存"></a>3、内存</h1><h2 id="3-1-逻辑地址、线性地址和物理地址的区别"><a href="#3-1-逻辑地址、线性地址和物理地址的区别" class="headerlink" title="3.1 逻辑地址、线性地址和物理地址的区别"></a>3.1 逻辑地址、线性地址和物理地址的区别</h2><p><strong>逻辑地址（Logic Address）</strong>是指<strong>由程序产生的与段相关的偏移地址部分</strong>，因此一个逻辑地址<strong>由段标识符和段内偏移量</strong>组成，有时也称<strong>虚拟地址</strong>。比如，在C程序中，<strong>可以使用&amp;操作读取指针变量本身的值，实际上这个值就是逻辑地址</strong>。逻辑地址和绝对的物理地址不相干。</p>
+<p><strong>线性地址（Linear Address）</strong>是逻辑地址到物理地址变换之间的中间层。程序代码会产生逻辑地址，或说是段中的偏移地址，<strong>加上相应段的基地址就生成了一个线性地址。</strong></p>
+<p><strong>物理地址（Physical Address）</strong>是CPU外部地址总线上的地址，也是地址变换的最终地址。</p>
+<h2 id="3-2-寻址方式有哪些"><a href="#3-2-寻址方式有哪些" class="headerlink" title="3.2 寻址方式有哪些"></a>3.2 寻址方式有哪些</h2><p>寻址寻的都是物理地址。分三组：立即寻址+寄存寻址；直接间接寻址；相对寻址+2个基变址寻址。</p>
+<ul>
+<li><p>立即寻址：操作数在指令中给出，作为指令的一部分。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AL,5</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>寄存器寻址</strong>：操作数在CPU内部的寄存器中，指令指定寄存器。<strong>不需要访问存储器</strong>，所以速度快。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,BX</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>直接寻址</strong>：<strong>操作数在寄存器中</strong>，指令直接包含有操作数的有效地址。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,[8054]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>间接寻址</strong>：存储操作数的寄存器的地址另一个在寄存器中</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,[SI]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>相对寻址</strong>：操作数在存储器中，形式为<strong>基地址+偏移地址</strong>。假设数据段DS地址为5000，DI为3678，最终地址为5000+3678+1223。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,[DI+1223H]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>基变址绝对寻址</strong>：操作数在寄存器中，形式为<strong>基地址寄存器+变址寄存器</strong>。BX基地址+DI变址得到操作数存放的地址。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,[BX][DI]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>基变址相对寻址</strong>：操作数在存储器中，形式为：<strong>基地址寄存器+变址寄存器+偏移地址</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MOV AX,[BX+DI-2]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="3-3-什么是虚拟内存？"><a href="#3-3-什么是虚拟内存？" class="headerlink" title="3.3 什么是虚拟内存？"></a>3.3 什么是虚拟内存？</h2><p>多任务会带来进程对内存的操作冲突，需要虚拟内存来解决。假设现在有一块物理内存，<strong>操作系统让两个进程共用这一块内存</strong>，彼此并不打扰。</p>
+<p><img src="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200217135006.png" alt="img"></p>
+<p><strong>虚拟内存的应用与优点</strong></p>
+<p>虚拟内存允许执行进程不必完全在内存中。虚拟内存的基本思想是：每个进程拥有独立的地址空间，这个空间被分为大小相等的多个块，称为页（Page），每个页都是一段连续的地址。这些页<strong>被映射到物理内存</strong>，但并不是所有的页都必须在内存中才能运行程序。当程序引用到一部分在物理内存中的地址空间时，由硬件立刻进行必要的映射；当程序引用到一部分不在物理内存中的地址空间时，由操作系统负责将缺失的部分装入物理内存并重新执行失败的命令。这样，对于进程而言，逻辑上似乎有很大的内存空间，实际上其中一部分对应物理内存上的一块(称为帧，通常页和帧大小相等)，还有一些没加载在内存中的对应在硬盘上，如图所示。 注意，请求分页系统、请求分段系统和请求段页式系统都是针对虚拟内存的，通过请求实现内存与外存的信息置换。</p>
+<p>由图可以看出，虚拟内存实际上可以比物理内存大。当访问虚拟内存时，会访问MMU（内存管理单元）去匹配对应的物理地址（比如图5的0，1，2）。如果虚拟内存的页并不存在于物理内存中（如图5的3,4），会产生缺页中断，从磁盘中取得缺的页放入内存，如果内存已满，还会根据某种算法将磁盘中的页换出。　　</p>
+<p><img src="https://uploadfiles.nowcoder.com/images/20190723/220525776_1563877459292_F5CB0AD2C92C30DF24FC9C18034B313D" alt="img">　　　　　　</p>
+<p>虚拟内存很适合在多道程序设计系统中使用，许多程序的片段同时保存在内存中。当一个程序等待它的一部分读入内存时，可以把CPU交给另一个进程使用。虚拟内存的使用可以带来以下好处：</p>
+<ul>
+<li><strong>在内存中可以保留多个进程，系统并发度提高</strong></li>
+<li><strong>解除了用户与内存之间的紧密约束，进程可以比内存的全部空间还大</strong></li>
+</ul>
+<h2 id="3-4-什么是交换空间"><a href="#3-4-什么是交换空间" class="headerlink" title="3.4 什么是交换空间"></a>3.4 什么是交换空间</h2><p>操作系统把物理内存(physical RAM)分成一块一块的小内存，每一块内存被称为<strong>页(page)**。当内存资源不足时，</strong>Linux把某些页的内容转移至硬盘上的一块空间上，以释放内存空间<strong>。硬盘上的那块空间叫做</strong>交换空间**(swap space),而这一过程被称为交换(swapping)。<strong>物理内存和交换空间的总容量就是虚拟内存的可用容量。</strong></p>
+<p>用途：</p>
+<ul>
+<li>物理内存不足时一些不常用的页可以被交换出去，腾给系统。</li>
+<li>程序启动时很多内存页被用来初始化，之后便不再需要，可以交换出去。</li>
+</ul>
+<h2 id="3-5-什么是分页？"><a href="#3-5-什么是分页？" class="headerlink" title="3.5 什么是分页？"></a>3.5 什么是分页？</h2><p>把内存空间划分为<strong>大小相等且固定的块</strong>，作为主存的基本单位。因为程序数据存储在不同的页面中，而页面又离散的分布在内存中，<strong>因此需要一个页表来记录映射关系，以实现从页号到物理块号的映射。</strong></p>
+<p>访问分页系统中内存数据需要<strong>两次的内存访问</strong> (一次是从内存中访问页表，从中找到指定的物理块号，加上页内偏移得到实际物理地址；第二次就是根据第一次得到的物理地址访问内存取出数据)</p>
+<p><img src="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200218105728.png" alt="img"></p>
+<h2 id="3-6-什么是分段？"><a href="#3-6-什么是分段？" class="headerlink" title="3.6 什么是分段？"></a>3.6 什么是分段？</h2><p><strong>分页是为了提高内存利用率，而分段是为了满足程序员在编写代码的时候的一些逻辑需求(比如数据共享，数据保护，动态链接等)。</strong></p>
+<p>分段内存管理当中，<strong>地址是二维的，一维是段号，二维是段内地址；其中每个段的长度是不一样的，而且每个段内部都是从0开始编址的</strong>。由于分段管理中，每个段内部是连续内存分配，但是段和段之间是离散分配的，因此也存在一个逻辑地址到物理地址的映射关系，相应的就是段表机制。</p>
+<p><img src="https://uk-1259555870.cos.eu-frankfurt.myqcloud.com/20200218110201.png" alt="img"></p>
+<h2 id="3-7-分页分段的区别是什么？"><a href="#3-7-分页分段的区别是什么？" class="headerlink" title="3.7 分页分段的区别是什么？"></a>3.7 分页分段的区别是什么？</h2><ul>
+<li>属性：页是信息的物理单位，对用户不可见，段是逻辑单位，用户可见。</li>
+<li>大小：分页固定，分段不固定</li>
+<li>决定权：分页在于系统，分段在于用户</li>
+<li>目的：分页有利于资源的利用，分段方便用户管理内存。</li>
+</ul>
+<h2 id="3-8-有哪些页面置换算法"><a href="#3-8-有哪些页面置换算法" class="headerlink" title="3.8 有哪些页面置换算法"></a>3.8 有哪些页面置换算法</h2><p><strong>缺页中断</strong>：在请求分页系统中，可以通过查询页表中的状态位来确定所要访问的页面是否存在于内存中。每当所要访问的页面不在内存是，会产生一次缺页中断，此时操作系统会根据页表中的外存地址在外存中找到所缺的一页，将其调入内存。</p>
+<p>有时候操作系统必须在内存选择一个页面将其移出内存，以便为即将调入的页面让出空间。而用来选择淘汰哪一页的规则叫做页面置换算法。</p>
+<ul>
+<li>先进先出FIFO：总是选择在主存中停留时间最长（即最老）的一页置换</li>
+<li>LRU：选择在最近一段时间里<strong>最久没有使用</strong>过的页面予以置换</li>
+<li>LFU(least frequent)：统计页的使用频率，选择在<strong>最近时期使用最少的页面</strong>作为淘汰页</li>
+</ul>
+<h1 id="系统中断"><a href="#系统中断" class="headerlink" title="系统中断"></a>系统中断</h1><h2 id="4-1-中断的处理过程"><a href="#4-1-中断的处理过程" class="headerlink" title="4.1 中断的处理过程"></a>4.1 中断的处理过程</h2><ol>
+<li>保护现场：将当前执行程序的相关数据保存在寄存器中，然后入栈</li>
+<li>开中断：以便执行中断时能响应较高级别的中断请求。</li>
+<li>中断处理</li>
+<li>关中断：保证恢复现场时不被新中断打扰</li>
+<li>恢复现场：从堆栈中按序取出程序数据，恢复中断前的执行状态。</li>
+</ol>
+<h2 id="4-2-中断和轮询有什么区别？"><a href="#4-2-中断和轮询有什么区别？" class="headerlink" title="4.2 中断和轮询有什么区别？"></a>4.2 中断和轮询有什么区别？</h2>
     </div>
 
     
@@ -351,7 +441,10 @@
     <a href="/2021/02/23/springboot%E6%8B%A6%E6%88%AA%E5%99%A8%E7%90%86%E8%A7%A3/" rel="prev" title="springboot拦截器理解">
       <i class="fa fa-chevron-left"></i> springboot拦截器理解
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/25/java%E5%A4%9A%E7%BA%BF%E7%A8%8B/" rel="next" title="java多线程">
+      java多线程 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -410,7 +503,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%80%BB%E4%BD%93%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">1、总体概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">1.1 操作系统的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="nav-number">3.</span> <span class="nav-text">1.2 操作系统的主要功能有哪些</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%A8%E6%88%B7%E6%80%81%E5%92%8C%E5%92%8C%E5%BF%83%E6%80%81"><span class="nav-number">4.</span> <span class="nav-text">1.3 什么是用户态和和心态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="nav-number"></span> <span class="nav-text">2、进程与线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">2.1 进程线程协程区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E8%BF%9B%E7%A8%8B%E6%9C%89%E5%93%AA%E4%BA%9B%E7%8A%B6%E6%80%81%EF%BC%8C%E8%BD%AC%E6%8D%A2%E6%9D%A1%E4%BB%B6%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">2.2 进程有哪些状态，转换条件是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">3.</span> <span class="nav-text">2.3 进程间通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E8%BF%9B%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">4.</span> <span class="nav-text">2.4 进程间同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E7%BA%BF%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">5.</span> <span class="nav-text">2.5 线程间同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%B4%E7%95%8C%E5%8C%BA%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81"><span class="nav-number">6.</span> <span class="nav-text">2.6 什么是临界区，如何解决冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">7.</span> <span class="nav-text">2.7 线程的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">8.</span> <span class="nav-text">2.8 线程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-%E6%AD%BB%E9%94%81"><span class="nav-number">9.</span> <span class="nav-text">2.9 死锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E5%86%85%E5%AD%98"><span class="nav-number"></span> <span class="nav-text">3、内存</span></a></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%80%BB%E4%BD%93%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">1、总体概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">1.1 操作系统的特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9A%84%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="nav-number">3.</span> <span class="nav-text">1.2 操作系统的主要功能有哪些</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E4%BB%80%E4%B9%88%E6%98%AF%E7%94%A8%E6%88%B7%E6%80%81%E5%92%8C%E5%92%8C%E5%BF%83%E6%80%81"><span class="nav-number">4.</span> <span class="nav-text">1.3 什么是用户态和和心态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="nav-number"></span> <span class="nav-text">2、进程与线程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E5%8D%8F%E7%A8%8B%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">2.1 进程线程协程区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E8%BF%9B%E7%A8%8B%E6%9C%89%E5%93%AA%E4%BA%9B%E7%8A%B6%E6%80%81%EF%BC%8C%E8%BD%AC%E6%8D%A2%E6%9D%A1%E4%BB%B6%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">2.2 进程有哪些状态，转换条件是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">3.</span> <span class="nav-text">2.3 进程间通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E8%BF%9B%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">4.</span> <span class="nav-text">2.4 进程间同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-%E7%BA%BF%E7%A8%8B%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">5.</span> <span class="nav-text">2.5 线程间同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%B4%E7%95%8C%E5%8C%BA%EF%BC%8C%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E5%86%B2%E7%AA%81"><span class="nav-number">6.</span> <span class="nav-text">2.6 什么是临界区，如何解决冲突</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">7.</span> <span class="nav-text">2.7 线程的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">8.</span> <span class="nav-text">2.8 线程池</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-9-%E6%AD%BB%E9%94%81"><span class="nav-number">9.</span> <span class="nav-text">2.9 死锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E5%86%85%E5%AD%98"><span class="nav-number"></span> <span class="nav-text">3、内存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E9%80%BB%E8%BE%91%E5%9C%B0%E5%9D%80%E3%80%81%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80%E5%92%8C%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">3.1 逻辑地址、线性地址和物理地址的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E5%AF%BB%E5%9D%80%E6%96%B9%E5%BC%8F%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="nav-number">2.</span> <span class="nav-text">3.2 寻址方式有哪些</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E4%BB%80%E4%B9%88%E6%98%AF%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">3.3 什么是虚拟内存？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BA%A4%E6%8D%A2%E7%A9%BA%E9%97%B4"><span class="nav-number">4.</span> <span class="nav-text">3.4 什么是交换空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E9%A1%B5%EF%BC%9F"><span class="nav-number">5.</span> <span class="nav-text">3.5 什么是分页？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-%E4%BB%80%E4%B9%88%E6%98%AF%E5%88%86%E6%AE%B5%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">3.6 什么是分段？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-7-%E5%88%86%E9%A1%B5%E5%88%86%E6%AE%B5%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">7.</span> <span class="nav-text">3.7 分页分段的区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-8-%E6%9C%89%E5%93%AA%E4%BA%9B%E9%A1%B5%E9%9D%A2%E7%BD%AE%E6%8D%A2%E7%AE%97%E6%B3%95"><span class="nav-number">8.</span> <span class="nav-text">3.8 有哪些页面置换算法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E4%B8%AD%E6%96%AD"><span class="nav-number"></span> <span class="nav-text">系统中断</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E4%B8%AD%E6%96%AD%E7%9A%84%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">4.1 中断的处理过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E4%B8%AD%E6%96%AD%E5%92%8C%E8%BD%AE%E8%AF%A2%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">4.2 中断和轮询有什么区别？</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -426,12 +519,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">59</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">23</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

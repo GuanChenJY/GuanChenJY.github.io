@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="No1、Http和Https基本概念HTTP：是互联网上应用最为广泛的一种网络协议，是一个客户端和服务器端请求和应答的标准（TCP），用于从WWW服务器传输超文本到本地浏览器的传输协议，它可以使浏览器更加高效，使网络传输减少。 HTTPS：是以安全为目标的HTTP通道，简单讲是HTTP的安全版，即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。HTTPS协议的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="操作系统面经">
+<meta property="og:url" content="http://example.com/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E7%BB%8F/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="No1、Http和Https基本概念HTTP：是互联网上应用最为广泛的一种网络协议，是一个客户端和服务器端请求和应答的标准（TCP），用于从WWW服务器传输超文本到本地浏览器的传输协议，它可以使浏览器更加高效，使网络传输减少。 HTTPS：是以安全为目标的HTTP通道，简单讲是HTTP的安全版，即HTTP下加入SSL层，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。HTTPS协议的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200519215003101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200519214642408.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200524213553435.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200524214010568.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200524214351244.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200525105747699.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200525112538829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200525113010270.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200527142647950.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200527111202224.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200527111826612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2021-03-01T09:08:57.000Z">
+<meta property="article:modified_time" content="2021-03-01T13:18:40.866Z">
+<meta property="article:author" content="GCC">
+<meta property="article:tag" content="面经">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200519215003101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70">
+
+<link rel="canonical" href="http://example.com/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E7%BB%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>操作系统面经 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E9%9D%A2%E7%BB%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          操作系统面经
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-01 17:08:57 / 修改时间：21:18:40" itemprop="dateCreated datePublished" datetime="2021-03-01T17:08:57+08:00">2021-03-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="No1、Http和Https"><a href="#No1、Http和Https" class="headerlink" title="No1、Http和Https"></a>No1、Http和Https</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>HTTP：是互联网上应用最为广泛的一种网络协议，是一个客户端和服务器端请求和应答的标准（TCP），用于从WWW服务器传输超文本到本地浏览器的传输协议，它可以使浏览器更加高效，使网络传输减少。</p>
+<p>HTTPS：是以安全为目标的HTTP通道，<strong>简单讲是HTTP的安全版，即HTTP下加入SSL层</strong>，HTTPS的安全基础是SSL，因此加密的详细内容就需要SSL。HTTPS协议的主要作用可以分为两种：一种是建立一个信息安全通道，来保证数据传输的安全；另一种就是确认网站的真实性。</p>
+<h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><p>Http协议运行在TCP之上，即明文传输，客户端和服务器端都无法验证对方的身份；<br>Https是身披SSL（Secure Socket Layer）外壳的Http，运行于SSL上，SSL运行于TCP之上，<strong>是添加了加密和认证机制的HTTP。</strong><br>二者存在的不同主要有以下几点：</p>
+<p>（1） 端口不同<br>Http和Https使用的是不同的连接方式，用到的端口也不一样，Http是80，Https是443<br>（2）资源消耗<br>Http是超文本传输协议，信息是明文传输，Https则是具有安全性的ssl加密传输协议。和Http通信相比，Https通信会由于加减密处理消耗更多的CPU和内存资源。<br>（3）成本开销<br>Https协议需要用到CA申请证书，一般免费的较少，因此需要一定的费用向认证机构购买<br>（4）安全性能<br>Http的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比http协议安全。<br>Https 的加密机制是一种共享密钥加密和公开密钥加密并用的混合加密机制。</p>
+<h3 id="Http长连接、短连接"><a href="#Http长连接、短连接" class="headerlink" title="Http长连接、短连接"></a>Http长连接、短连接</h3><p>在HTTP/1.0中默认使用短连接。<br>也就是说，客户端和服务器每进行一次HTTP操作，就建立一次连接，任务结束就中断连接。<br>当客户端浏览器访问的某个HTML或其他类型的Web页中包含有其他的Web资源（如javaScript文件、图像文件、CSS文件等），<br>每遇到这样一个Web资源，浏览器就会重新建立一个HTTP会话。</p>
+<p>而从HTTP/1.1起，默认使用长连接，用以保持连接特性。<br>使用长连接的HTTP协议，会在响应头加入这行代码：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connection: keep-alive</span><br></pre></td></tr></table></figure>
+
+<p>在使用长连接的情况下，当一个网页打开完成后，客户端和服务器之间用于传输HTTP数据的TCP连接不会关闭<br>客户端再次访问这个服务器时，会继续使用这一条已经建立的连接。</p>
+<p>Keep-alive 不会永久保持连接，它会保持一个时间，可以在不同的服务器软件（如Apache）中设定时间。<br>实现长连接需要客户端和服务端都支持长连接。</p>
+<p><strong>HTTP协议的长连接和短链接， 实质是TCP协议的长连接和短连接。</strong></p>
+<h2 id="No2、对称加密和非对称加密"><a href="#No2、对称加密和非对称加密" class="headerlink" title="No2、对称加密和非对称加密"></a>No2、对称加密和非对称加密</h2><h3 id="基本概念-1"><a href="#基本概念-1" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li>对称加密是指加密和解密<strong>使用的是同一个密钥</strong>的方式。</li>
+</ul>
+<p>​       这种方法存在的最大问题就是密钥发送问题，即如何将密钥安全的发给对方，密钥在网络中传输，安全性不高。</p>
+<ul>
+<li>非对称加密是指<strong>使用的是一对非对称的密钥</strong>的方式，它使用了一对密钥，公钥（public key）和私钥（private key）。<br>公钥可以随意发布，但私钥只有自己知道。发送密文的一方使用对方的公钥进行加密处理，对方接收到加密信息后，使用自己的私钥进行解密。</li>
+</ul>
+<h3 id="加密方法"><a href="#加密方法" class="headerlink" title="加密方法"></a>加密方法</h3><p>由于非对称加密的方式 不需要发送用来解密的私钥，所以可以保证安全性；<br>但是和对称加密比起来，它非常的慢，<br>所以我们还是<strong>要用对称加密来传送消息，但对称加密所使用的密钥我们可以通过非对称加密的方式 发送出去。</strong></p>
+<h2 id="No3、从输入网址到获得页面的过程"><a href="#No3、从输入网址到获得页面的过程" class="headerlink" title="No3、从输入网址到获得页面的过程"></a>No3、从输入网址到获得页面的过程</h2><p><strong>（1）域名解析，其实就是根据用户输入的网址去寻找它对应的IP地址</strong><br>浏览器查询DNS，获取域名对应的IP地址<br><strong>（2）建立TCP连接</strong><br>浏览器获得域名对应的IP地址后，浏览器向服务器请求建立链接，TCP/IP 链接建立起来后，浏览器向服务器发送HTTP请求<br><strong>（3）根据SpringMVC后台业务返回数据，并把数据填充到HTML页面上，然后返回给浏览器</strong><br>服务器接收到这个请求，并根据路径参数映射到特定的请求处理器进行处理<br><strong>（4）浏览器进行处理</strong><br>浏览器解析并渲染视图，若遇到对js文件、css文件及图片等静态资源的引用，则重复上述步骤并向服务器请求这些资源<br><strong>（5）绘制网页</strong><br>浏览器根据其请求到的资源、数据渲染页面，最终向用户呈现一个完整的页面</p>
+<h3 id="浏览器解析DNS的过程"><a href="#浏览器解析DNS的过程" class="headerlink" title="浏览器解析DNS的过程"></a>浏览器解析DNS的过程</h3><p>1.先从浏览器缓存里找IP,因为浏览器会缓存DNS记录一段时间</p>
+<p>2.如没找到,再从Hosts文件查找是否有该域名和对应IP</p>
+<p>3.如没找到,再从路由器缓存找</p>
+<p>4.如没好到,再从DNS缓存查找</p>
+<p>5.如果都没找到,浏览器域名服务器向根域名服务器(baidu.com)查找域名对应IP,还没找到就把请求转发到下一级,直到找到IP<br><img src="https://img-blog.csdnimg.cn/20200519215003101.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h4 id="过程及其使用的协议"><a href="#过程及其使用的协议" class="headerlink" title="过程及其使用的协议"></a>过程及其使用的协议</h4><p><img src="https://img-blog.csdnimg.cn/20200519214642408.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="No4、TCP中的拥塞控制"><a href="#No4、TCP中的拥塞控制" class="headerlink" title="No4、TCP中的拥塞控制"></a>No4、TCP中的拥塞控制</h2><p>计算机网络中的带宽、交换节点中的缓存及处理机等都是网络的资源。<br>在某段时间里，若对网络中某一资源的需求超过了该资所能提供的可用部分，网络的性能就会变坏，这种情况就叫做阻塞。<br>拥塞控制就是防止过多的数据注入网络中，这样可以使网络中的路由器或链路不致过载。<br>注意：拥塞控制和流量控制的不同，前者是一个全局性的过程，而后者指点对点通信量的控制。</p>
+<h3 id="慢启动"><a href="#慢启动" class="headerlink" title="慢启动"></a>慢启动</h3><p>不要一开始就发送大量的数据，先探测一下网络的拥塞成读，也就是说由小到大逐渐增加拥塞窗口的大小。</p>
+<h3 id="拥塞避免"><a href="#拥塞避免" class="headerlink" title="拥塞避免"></a>拥塞避免</h3><p>拥塞避免算法让拥塞窗口缓慢增长，即每经过一个往返时间RTT就把发送方的拥塞窗口cwnd加1，而不是加倍，这样拥塞窗口按线性规律缓慢增长。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200524213553435.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="快重传"><a href="#快重传" class="headerlink" title="快重传"></a>快重传</h3><p>快重传要求接收方在收到一个<strong>失序的报文段</strong>后就立即发出<strong>重复确认</strong>（为的是使发送方及早知道有报文段没有到达对方）而不要等到自己发送数据时捎带确认。<br>快重传算法规定，发送方只要一连收到三个重复确认就应当立即重传对方尚未收到的报文段，而不必继续等待设置的重传计时器时间到期。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200524214010568.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="快恢复"><a href="#快恢复" class="headerlink" title="快恢复"></a>快恢复</h3><p>快重传配合使用的还有快恢复方法，<br>当发送方连续收到三个重复确认时，就执行“乘法减小” 算法，把ssthresh门限减半，但是接下来并不执行慢开始算法<br>因为如果网络出现拥塞的话就不会收到好几个重复的确认，所以放发送现在认为网络可能没有出现拥塞，所以现在不执行慢开始算法<br>而是将cwnd设置为ssthresh的大小，然后执行拥塞避免算法。<br><img src="https://img-blog.csdnimg.cn/20200524214351244.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h2 id="No5、OSI网络体系结构与TCP-IP协议模型"><a href="#No5、OSI网络体系结构与TCP-IP协议模型" class="headerlink" title="No5、OSI网络体系结构与TCP/IP协议模型"></a>No5、OSI网络体系结构与TCP/IP协议模型</h2><h3 id="体系结构图"><a href="#体系结构图" class="headerlink" title="体系结构图"></a>体系结构图</h3><p>TCP/IP与OSI最大的不同在于：OSI是一个理论上的网络通信模型，而TCP/IP则是实际的网络通信标准。<br>但是，它们的初衷是一样的，都是为了使得两台计算机能够像两个知心朋友那样互相准确理解对方的意思并作出优雅的回应。<br>学习计算机网络我们采取的是折中的办法，采取的是一种只有五层协议的体系结构。<br><img src="https://img-blog.csdnimg.cn/20200525105747699.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h3><p>在物理层上所传送的数据单位是比特。</p>
+<p>参考模型的最底层，<strong>作用是实现相邻计算机节点之间比特流的透明传输，尽可能屏蔽掉具体传输介质和物理设备的差异，使其上面的数据链路层不必考虑网络的传输介质是什么。</strong></p>
+<p>“透明传送比特流”表示经实际电路传送后的比特流没有发生变化，对传送的比特流来说，这个电路好像是看不见的。</p>
+<h3 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h3><p>数据链路层负责两台主机之间的数据传输，接收来自物理层的位流形式的数据并封装成帧，传送到上一层；同样，也将来自上层的数据帧帧拆分成位流形式的数据，转发到物理层。（在两个相邻节点的链路上传送帧。） 数据链路层在物理层提供的比特流的基础上，通过差错控制、流量控制方法，使有差错的物理链路变为无差错的数据链路，（不仅要检错还要纠错）即提供可靠的通过物理介意传输数据的方法。</p>
+<h3 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h3><p>网络层<strong>负责为不同主机提供逻辑通信服务，</strong>并<strong>通过路由选择算法为分组通过通信子网选择最适当的路径。</strong></p>
+<p>在发送数据时，网络层把传输层产生的报文段或用户数据包封装成分组和包进行传送。</p>
+<p>在TCP/IP体系结构中，由于网络层使用IP协议，因此分组也叫IP数据报，简称数据报。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200525112538829.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h3><p>传输层的主要任务就是<strong>负责两台主机进程之间的通信提供通用的数据传输服务。</strong></p>
+<p>在源端和目的端之间提供可靠的透明数据传输，使上层服务用户不必关心通信子网的实现细节。</p>
+<p>“通用的”是指并不针对某一特定的网络应用，而是多种应用可以使用同一个运输层服务。<br>由于一台主机可同时运行多个线程，因此传输层用复用和分用的功能。<br>所谓复用就是指多个应用层进程可同时使用下面运输层的服务<br>分用和复用相反，是运输层把收到的信息分别交付上面应用层中的相应进程。</p>
+<p><strong>在协议栈中，传输层位于网络层之上，传输层协议为不同主机上的进程提供逻辑通信，而网络层协议为不同主机提供逻辑通信。</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200525113010270.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p><strong>TCP协议如何来保证传输的可靠性</strong></p>
+<p>TCP提供一种面向连接的，可靠的字节流服务。其中，面向连接意味着两个使用TCP的应用在彼此交换数据之前必须先建立一个TCP连接。在一个TCP连接中，仅有两方进行彼此通信；而字节流服务意味着两个应用程序通过TCP链接交换8bit字节构成的字节流，TCP不在字节流中插入记录标识符。</p>
+<p><strong>对于可靠性，TCP通过以下方式进行保证：</strong></p>
+<p>数据包校验：目的是检测数据在传输过程中的任何变化，若校验出包有错，则丢弃报文段并且不给出响应，这时TCP发送数据端超时后会重发数据；</p>
+<p>对失序数据包重排序：既然TCP报文段作为IP数据报来传输，而IP数据报的到达可能会失序，因此TCP报文段的到达也可能会失序。TCP将对失序数据进行重新排序，然后才交给应用层；</p>
+<p>丢弃重复数据：对于重复数据，能够丢弃重复数据；</p>
+<p>应答机制：当TCP收到发自TCP连接另一端的数据，它将发送一个确认。这个确认不是立即发送，通常将推迟几分之一秒；</p>
+<p>超时重发：当TCP发出一个段后，它启动一个定时器，等待目的端确认收到这个报文段。如果不能及时收到一个确认，将重发这个报文段；</p>
+<p>流量控制：TCP连接的每一方都有固定大小的缓冲空间。TCP的接收端只允许另一端发送接收端缓冲区所能接纳的数据，这可以防止较快主机致使较慢主机的缓冲区溢出，这就是流量控制。TCP使用的流量控制协议是可变大小的滑动窗口协议。</p>
+<p><strong>TCP与UDP的区别</strong></p>
+<p>　TCP (Transmission Control Protocol)和UDP(User Datagram Protocol)协议属于传输层协议，它们之间的区别包括：</p>
+<p>TCP是面向连接的，UDP是无连接的；</p>
+<p>TCP是可靠的，UDP是不可靠的；</p>
+<p>TCP只支持点对点通信，UDP支持一对一、一对多、多对一、多对多的通信模式；</p>
+<p>TCP是面向字节流的，UDP是面向报文的；</p>
+<p>TCP有拥塞控制机制;UDP没有拥塞控制，适合媒体通信；</p>
+<p>TCP首部开销(20个字节)比UDP的首部开销(8个字节)要大；</p>
+<h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><p>应用层的任务是通过应用进程间的交互来完成特定网络应用。<br>应用层协议定义的是应用进程间的通信和交互的规则。对于不同的网络应用需要不同的应用层协议。<br>在互联网中，应用层协议有很多，如域名系统DNS，，支持万维网应用的HTTP协议，支持电子邮件的SMTP协议等。<br>我们把应用层交互的数据单元成为报文。</p>
+<ul>
+<li><p>域名系统</p>
+<blockquote>
+<p>域名系统(Domain Name System缩写 DNS，DomainName被译为域名)是因特网的一项核心服务，它作为可以将域名和IP地址相互映射的一个分布式数据库，能够使人更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。（百度百科）<br>例如：一个公司的Web网站可看作是它在网上的门户，而域名就相当于其门牌地址，通常域名都使用该公司的名称或简称。<br>例如上面提到的微软公司的域名，类似的还有：IBM公司的域名是 <a target="_blank" rel="noopener" href="http://www.ibm.com、oracle/">www.ibm.com、Oracle</a> 公司的域名是 <a target="_blank" rel="noopener" href="http://www.oracle.com、cisco公司的域名是www.cisco.com/">www.oracle.com、Cisco公司的域名是www.cisco.com</a> 等。</p>
+</blockquote>
+</li>
+<li><p>HTTP协议</p>
+<blockquote>
+<p>超文本传输协议（HTTP，HyperText Transfer Protocol)是互联网上应用最为广泛的一种网络协议。<br>所有的 WWW（万维网） 文件都必须遵守这个标准。设计 HTTP 最初的目的是为了提供一种发布和接收 HTML 页面的方法。（百度百科）</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="TCP和UDP分别对应的常见应用层协议"><a href="#TCP和UDP分别对应的常见应用层协议" class="headerlink" title="TCP和UDP分别对应的常见应用层协议"></a>TCP和UDP分别对应的常见应用层协议</h3><p><strong>TCP对应的常见应用层协议</strong></p>
+<p>FTP：定义了文件传输协议，使用21端口<br>常说某某计算机开了FTP服务便是启动了文件传输服务。下载文件，上传主页，都要用到FTP服务。<br>Telnet：它是一种用于远程登陆的端口<br>用户可以以自己的身份远程连接到计算机上，通过这种端口可以提供一种基于DOS模式下的通信服务。<br>如以前的BBS是纯字符界面的，支持BBS的服务器将23端口打开，对外提供服务。<br>SMTP：定义了简单邮件传送协议<br>现在很多邮件服务器都用的是这个协议，用于发送邮件。<br>如常见的免费邮件服务中用的就是这个邮件服务端口，所以在电子邮件设置中常见到有SMTP端口设置这一栏，服务器开放的是25端口<br>POP3：它是和SMTP对应，POP3用于接收邮件<br>通常情况下，POP3协议所用的是110端口。<br>也就是说，只要你有相应的使用POP3协议的程序（例如Foxmail或Outlook），就可以不以Web方式登陆进邮箱界面，直接用邮件程序就可以收到邮件（如是163邮箱就没有必要先进网易网站，再进入自己的邮箱来收信）<br><strong>UDP对应的常见应用层协议</strong></p>
+<p>DNS： 用于域名解析，将域名地址转换为IP地址。DNS用的是53端口</p>
+<p>SNMP：简单网络管理协议，使用161端口，是用来管理网络设备的<br>由于网络设备很多，无连接的服务就体现出其优势</p>
+<p>TFTP（Trival File Transfer Protocal ）：简单文件传输协议<br>该协议在熟知端口69端口使用UDP服务。<br><strong>图示：</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200527142647950.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="网络层的地址解析协议ARP协议"><a href="#网络层的地址解析协议ARP协议" class="headerlink" title="网络层的地址解析协议ARP协议"></a>网络层的地址解析协议ARP协议</h3><p>ARP（地址解析协议）：该协议可以把网络层IP32位地址转化为数据链路层MAC48位地址。</p>
+<p>网络层的ARP完成了<strong>IP地址与物理地址的映射。</strong></p>
+<p><strong>ARP协议的工作过程</strong></p>
+<p>第一步，首先，每台主机都会在自己的ARP缓冲区中建立一个ARP列表，以表示IP地址和MAC地址的对应关系。</p>
+<p>第二步，当源主机需要将一个数据包要发送到目的主机时：会首先检查自己的ARP列表中是否存在该IP地址对应的MAC地址；如果有，就直接将这个数据包发送到这个MAC地址；如果没有，就向本地网段发起一个ARP请求的广播包，查询此目的主机对应的MAC地址。此ARP请求数据包里包括源主机的IP地址、硬件地址、以及目的主机的IP地址</p>
+<p>第三步， 网络中所有的主机收到这个ARP请求后，会检查数据包中的目的IP是否和自己的IP地址一致。<br>如果不相同直接忽略，<br>如果相同，该主机首先将发送端的MAC地址和IP地址添加到自己的ARP列表中，<br>如果ARP表中已经存在该IP的信息，则将其覆盖，然后给源主机发送一个ARP响应数据包，告诉对方自己是它需要查找的MAC地址</p>
+<p>第四步，源主机收到这个ARP响应数据包后，将得到的目的主机的IP地址和MAC地址添加到自己的ARP列表中，并利用此信息开始数据的传输<br>如果源主机一致没有收到ARP响应数据包，表示ARP查询失败</p>
+<p>ARP缓存表：IP地址-MAC地址映射表。 ARP缓存表是ARP协议和RARP协议运行的关键；<br>ARP缓存表缓存了IP地址到硬件地址之间的映射关系；<br>ARP缓存表中的记录并不是永久有效的，有一定的期限，因为<strong>IP地址是不断变化的</strong>。</p>
+<p><strong>查询ARP表会出现两种情况：</strong></p>
+<ul>
+<li>ARP缓存表缓存有IP地址和MAC地址的映射关系：发送端可以直接告知自身的数据链路层目的MAC地址。</li>
+<li>ARP缓存表没有缓存IP地址和MAC地址的映射关系：向除了接受的数据报的发送者以外广播信息，接收到回信记录对应的地址。</li>
+</ul>
+<h2 id="No6、客户端不断进行请求连接会怎样？DDOS（Distributed-Denial-of-Service）攻击？"><a href="#No6、客户端不断进行请求连接会怎样？DDOS（Distributed-Denial-of-Service）攻击？" class="headerlink" title="No6、客户端不断进行请求连接会怎样？DDOS（Distributed Denial of Service）攻击？"></a>No6、客户端不断进行请求连接会怎样？DDOS（Distributed Denial of Service）攻击？</h2><p>服务器端会为每个请求创建一个链接，并向其发送确认报文，然后等待客户端进行确认。</p>
+<h3 id="DDOS攻击"><a href="#DDOS攻击" class="headerlink" title="DDOS攻击"></a>DDOS攻击</h3><ul>
+<li>客户端向服务端发送请求链接数据包</li>
+<li>服务端向客户端发送确认数据包</li>
+<li>客户端不向服务端发送确认数据包，服务器一直等待来自客户端的确认</li>
+</ul>
+<h3 id="DDOS预防（没有彻底根治的方法，除非不使用TCP）"><a href="#DDOS预防（没有彻底根治的方法，除非不使用TCP）" class="headerlink" title="DDOS预防（没有彻底根治的方法，除非不使用TCP）"></a>DDOS预防（没有彻底根治的方法，除非不使用TCP）</h3><ul>
+<li>限制同时打开SYN半链接的数目</li>
+<li>缩短SYN半链接的Time out 时间</li>
+<li>关闭不必要的服务</li>
+</ul>
+<h2 id="No7、Get与Post的区别"><a href="#No7、Get与Post的区别" class="headerlink" title="No7、Get与Post的区别"></a>No7、Get与Post的区别</h2><p>Get与POST是我们常用的HTTP Method, 二者的区别主要表现在如下五个方面:</p>
+<ul>
+<li><p>(1)从功能上讲，</p>
+<p>Get一般用来从服务器上<strong>获取资源</strong>，POST一般用来<strong>更新服务器上的资源</strong></p>
+</li>
+<li><p>从REST服务角度来说</p>
+<p>GET是<strong>幂等</strong>的,即读取同一个资源,总是得到相同的数据,<br>而POST<strong>不是幂等的</strong>,为每次请求对资源的改变并不是相同的;进一步的,Get不会改变服务器上的资源,而POST会对服务器资源进行改变.</p>
+</li>
+<li><p>从请求参数形式上来看</p>
+<p>Get请求的数据会附在URL之后,即将请求数据放在<strong>HTTP报文的请求头中</strong>,以? 分割URL和传输数据,参数之间以&amp;相连<br>而POST请求会把提交的数据则放置在是HTTP请求报文的<strong>请求体中</strong></p>
+</li>
+<li><p>就安全性而言</p>
+<p>POST的安全性要比GET的安全性高，因为Get请求提交的数据讲<strong>明文出现在URL上，</strong>而且POST请求参数则被包装到<strong>请求体中，</strong>相对更安全</p>
+</li>
+<li><p>从请求的大小看</p>
+<p>GET请求的长度受限于<strong>浏览器或服务器对URL长度的限制，</strong>允许发送的数据量比较小，</p>
+<p>而POST请求则是没有大小限制的。</p>
+</li>
+</ul>
+<blockquote>
+<p>GET和POST还有一个重大区别，简单的说：GET产生一个TCP数据包；POST产生两个TCP数据包。<br>长的说：对于GET方式的请求，浏览器会把http header和data一并发送出去，服务器响应200（返回数据）；<br>而对于POST，浏览器先发送header，服务器响应100 continue，浏览器再发送data，服务器响应200 ok（返回数据）。<br>也就是说，GET只需要汽车跑一趟就把货送到了，而POST得跑两趟，第一趟，先去和服务器打个招呼“嗨，我等下要送一批货来，你们打开门迎接我”，然后再回头把货送过去。</p>
+</blockquote>
+<h2 id="No8、Session、Cookie与Application"><a href="#No8、Session、Cookie与Application" class="headerlink" title="No8、Session、Cookie与Application"></a>No8、Session、Cookie与Application</h2><p>Cookie与Session都是客户端与服务器<strong>保持状态</strong>的解决方法，具体来说，Cookie机制采用的是在客户端保持状态的方案，而Session机制采用的是在<strong>服务器端</strong>保持状态的方案。</p>
+<h3 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h3><p>Cookie实际上是一小段的文本信息.<br>客户端请求服务器,如果服务器需要记录该用户状态,就使用response向客户端浏览器颁发一个Cookie,而客户端浏览器会把Cookie保存起来.<br>当浏览器再请求该网站时, 浏览器把请求的网址连同该Cookie一同提交给服务器,服务器检查该Cookie,以此来辨认用户状态.<br>服务器还可以根据需要修改Cookie的内容</p>
+<h3 id="Session"><a href="#Session" class="headerlink" title="Session"></a>Session</h3><p>同样的,会话状态也可以保存在服务器端.<br>客户端请求服务器,如果服务器记录该用户状态,就获取Session来保存状态<br>此时,如果服务器已经为此客户创建过Session,服务器就按照Sessionid把这个Session检索出来使用<br>如果客户端请求不包含Sessionid,则为此客户端创建一个Session并且生成一个与此Session相关联的Sessionid,并将这个Sessionid在本次相应中返回给客户端保存</p>
+<p>保存这个Sessionid的方式可以采用cookie机制,这样在交互的过程中浏览器可以自动的按照规则把这个标识发送给服务器,<br>若浏览器禁用Cookie的话,可以通过URL重写机制将Sessionid传回服务器.</p>
+<h3 id="Cookie与Session的对比"><a href="#Cookie与Session的对比" class="headerlink" title="Cookie与Session的对比"></a>Cookie与Session的对比</h3><ul>
+<li><p>实现机制</p>
+<p>Session的实现常常依赖于Cookie机制,通过Cookie机制回传SessionID</p>
+</li>
+</ul>
+<p>(2)大小限制<br>Cookie有大小限制并且浏览器对每个站点也有Cookie的个数限制;,Session没有大小限制,理论上只与服务器的内存大小有关<br>(3) 安全性<br>Cookie存在安全隐患,通过拦截或本地文件找到Cookie后可以进行攻击,而Session 由于保存在服务器端,相对更加安全<br>(4) 服务器资源消耗<br>Session 是保存在服务器端上会存在一段时间才会小时,如果Session过多会增加服务器的压力</p>
+<h3 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h3><p>Application(java Web 中的ServletContext) :与一个Web应用程序相对应,为应用程序提供了一个全局的状态,所有客户都可以使用该状态。</p>
+<h2 id="No9、SQL注入"><a href="#No9、SQL注入" class="headerlink" title="No9、SQL注入"></a>No9、SQL注入</h2><p>SQL注入是目前黑客最常用的攻击手段，它的原理是利用数据库对特殊标识符的解析强行从页面向后台传入。改变SQL语句结构，达到扩展权限、创建高等级用户、强行修改用户资料等等操作。<br>SQL注入就是通过把SQL命令插入到Web表单提交或输入域名或页面请求的查询字符串，最终达到欺骗服务器执行恶意的SQL命令。</p>
+<h3 id="SQL注入攻击的总体思路"><a href="#SQL注入攻击的总体思路" class="headerlink" title="SQL注入攻击的总体思路"></a>SQL注入攻击的总体思路</h3><p>寻找SQL注入的位置</p>
+<p>判断服务器类型和后台数据库类型</p>
+<p>针对不同的服务器和数据库特点进行SQL注入攻击</p>
+<h3 id="SQL注入攻击实例"><a href="#SQL注入攻击实例" class="headerlink" title="SQL注入攻击实例"></a>SQL注入攻击实例</h3><p>比如在一个登录界面，要求输入用户名和密码：</p>
+<p>可以这样输入实现免帐号登录：</p>
+<p>用户名： ‘or 1 = 1 –</p>
+<p>密 码：</p>
+<p>点登陆,如若没有做特殊处理,那么这个非法用户就很得意的登陆进去了.(当然现在的有些语言的数据库API已经处理了这些问题)</p>
+<p>这是为什么呢? 下面我们分析一下：</p>
+<p>从理论上说，后台认证程序中会有如下的SQL语句：</p>
+<p>String sql = “select * from user_table where username=</p>
+<p>’ “+userName+” ’ and password=’ “+password+” ‘“;</p>
+<p>当输入了上面的用户名和密码，上面的SQL语句变成：<br><strong>SELECT * FROM user_table WHERE username=<br>‘’or 1 = 1 – and password=’’</strong></p>
+<p><strong>条件后面username=”or 1=1 用户名等于 ” 或1=1 那么这个条件一定会成功；<br>然后后面加两个-，这意味着注释，它将后面的语句注释，让他们不起作用，这样语句永远都能正确执行，用户轻易骗过系统，获取合法身份。</strong></p>
+<p>这还是比较温柔的，如果是执行</p>
+<p>SELECT * FROM user_table WHERE</p>
+<p>username=’’ ;DROP DATABASE (DB Name) –’ and password=’’</p>
+<p>….其后果可想而知…</p>
+<h3 id="应对方法"><a href="#应对方法" class="headerlink" title="应对方法"></a>应对方法</h3><p>（1）参数绑定，使用预编译语句<br>使用预编译手段，绑定参数是最好的防SQL注入的方法。<br>目前许多的ORM框架及JDBC等都实现了SQL预编译及参数绑定功能，攻击者的恶意SQL会被当作SQL的参数而不是SQL命令被执行。<br>在mybatis的mapper稳健者，对于传递的参数我们一般是使用#和KaTeX parse error: Expected ‘EOF’, got ‘#’ at position 12: 来获取参数值。 当使用#̲时，变量是占位符，就是一般我们…时，变量就是直接追加在sql中，一般会有sql注入问题</p>
+<p>（2） 使用正则表达式过滤传入的参数</p>
+<p>（3） 检查变量数据类型和格式<br>只要是固定格式的变量，在SQL语句执行前，应该严格按照固定格式检查，确保变量是我们预想的格式！</p>
+<h2 id="No10、XSS攻击"><a href="#No10、XSS攻击" class="headerlink" title="No10、XSS攻击"></a>No10、XSS攻击</h2><p>XSS是一种经常出现在web应用中的计算机安全漏洞，与SQL注入一起成为web中最主流的攻击方式。<br>XSS全称cross-site scripting（跨站点脚本），是当前 web 应用中最危险和最普遍的漏洞之一。攻击者向网页中注入恶意脚本，当用户浏览网页时，脚本就会执行，进而影响用户，比如关不完的网站、盗取用户的 cookie 信息从而伪装成用户去操作，携带木马等等</p>
+<p>XSS是指恶意攻击者利用网站没有对用户提交数据进行转移处理或者过滤不足的缺点， 进而添加一些脚本代码嵌入到web页面中去，使别的用户访问都会执行相应的嵌入代码，从而盗取用户资料、利用用户身份进行某种动作或者对访问者进行病毒侵害的一种攻击方式。</p>
+<h3 id="XSS攻击的危害"><a href="#XSS攻击的危害" class="headerlink" title="XSS攻击的危害"></a>XSS攻击的危害</h3><p>盗取各类的用户账号，如及其登陆账号、用户网银账号、各类管理账号<br>控制企业数据，包括读取、篡改、添加、删除企业敏感数据的能力<br>盗窃企业重要的具有商业价值的资料<br>非法转账<br>强制发送电子邮件<br>网站挂马<br>控制受害者机器向其他网站发起攻击</p>
+<h3 id="XSS攻击发生的原因解析"><a href="#XSS攻击发生的原因解析" class="headerlink" title="XSS攻击发生的原因解析"></a>XSS攻击发生的原因解析</h3><p>解决办法：不信任任何客户端提交的数据，只要是客户端提交的数据就应该先进行相应的过滤处理然后方可进行下一步的操作</p>
+<p>进一步分析细节：<br>客户端提交的数据本来就是应用所需要的，但是恶意攻击者利用网站对客户端提交数据的信任，在数据中插入一些符号以及javascript代码，那么这些数据将会成为应用代码中的一部分了，那么攻击者就可以肆无忌惮的展开攻击啦，因此我们绝不可以信任任何客户端提交的数据。</p>
+<h3 id="XSS攻击分类"><a href="#XSS攻击分类" class="headerlink" title="XSS攻击分类"></a>XSS攻击分类</h3><p>（1） 反射性XSS攻击（非持久性XSS攻击）<br>漏洞产生的原因是攻击者注入的数据反映在响应中。<br>利用网站某些页面会直接输出请求参数的特性，通过在url的请求参数包含恶意脚本,诱使用户点击嵌入恶意脚本的url链接执行恶意脚本以达到攻击的目的。目前有很多攻击者利用论坛、微博发布含有恶意脚本的URL就属于这种方式。</p>
+<p>一个典型的非持久性XSS攻击包含一个带XSS攻击向量的链接（即每次攻击需要用户的点击）。<br>例如，正常发送消息：<br><img src="https://img-blog.csdnimg.cn/20200527111202224.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>（2）存储型XSS（持久性XSS攻击）<br>XSS攻击向量（一般指XSS攻击代码）存储在网站数据库，当一个页面被用户打开的时候执行。<br>也就是说，每个用户使用浏览器打开指定页面时，脚本便执行。<br>与非持久性XSS攻击相比，持久性XSS攻击危害性更大，<br>从名字就可以了解到，持久性XSS攻击就是将攻击代码存入数据库中 ，然后客户端打开时就执行这些攻击代码。<br>通过表单输入（比如发布文章、回复评论等功能中）插入一些恶意脚本，并且提交到被攻击网站的服务器数据库中。<br>当用户浏览指定网页时，恶意脚本从数据库中被加载到页面执行，QQ邮箱的早期版本就曾经被利用作为持久型跨站脚本攻击的平台。<br>与反射型 XSS 相比，该类的攻击更具有危害性，因为它影响的不只是一个用户，而是大量用户，而且该种类型还可进行蠕虫传播<br><img src="https://img-blog.csdnimg.cn/20200527111826612.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQzNTg0ODQ3,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>（3）DOM Based XSS（基于 dom 的跨站点脚本攻击）<br>通过前面两种类型的方式，注入的脚本是通过改变 DOM 来进行攻击的。采用该种方式有一个好处就是从源代码中不易被发现。</p>
+<h3 id="XSS攻击防护规范"><a href="#XSS攻击防护规范" class="headerlink" title="XSS攻击防护规范"></a>XSS攻击防护规范</h3><p>防范xss攻击的原则就是不相信用户输入的数据，我们可以从俩方面入手：</p>
+<p>（1）消毒（对危险字符进行转义）<br>（2）HttpOnly（防范XSS攻击者窃取Cookie数据）。</p>
+<p>消毒<br>对数据进行转义，比如&lt;转义成&lt;,这样脚本就运行不了了<br>录入数据设置白名单，比如javaWeb项目，设置过滤器过滤特殊字符<br>前端页面限制用户输入数据类型，比如用户输入完年龄后验证输入内容只能是数字。<br>过滤JS事件的标签，比如onclick、load等<br>HttpOnly<br>将重要的cookie标记为http only, 这样的话Javascript 中的document.cookie语句就不能获取到cookie了</p>
+<h2 id="No11-常见的状态码及原因短语"><a href="#No11-常见的状态码及原因短语" class="headerlink" title="No11 常见的状态码及原因短语"></a>No11 常见的状态码及原因短语</h2><p>HTTP请求结构：请求方式+请求URL+协议及其版本</p>
+<p>HTTP响应结构：状态码+原因短语+协议及其版本</p>
+<ul>
+<li><p>1**：请求处理中，请求已被接收，正在处理</p>
+</li>
+<li><p>2**：请求成功，请求被成功处理</p>
+</li>
+<li><p>3**：重定向，要完成请求必须进一步处理</p>
+<p>301：永久性转移</p>
+<p>302：暂时性转移</p>
+<p>304：已缓存</p>
+</li>
+<li><p>4**：客户端错误，请求不合法</p>
+<p>400：Bad Request，请求有语法问题</p>
+<p>403：拒绝请求</p>
+<p>404：客户端访问的页面不存在</p>
+</li>
+<li><p>5**：服务器端错误，服务器不能处理合法请求</p>
+<p>500：服务器内部错误</p>
+<p>503：服务器不可，稍等</p>
+</li>
+</ul>
+<h2 id="No12、IP地址的分类"><a href="#No12、IP地址的分类" class="headerlink" title="No12、IP地址的分类"></a>No12、IP地址的分类</h2><p>IP地址是指互联网协议地址，是IP协议提供的一种统一的地址格式，<br>它为互联网上的每一个网络和每一台主机分配一个逻辑地址，以此来屏蔽物理地址的差异。</p>
+<p>IP地址编址方案将IP地址空间划分为A，B，C，D，E五类，其中A，B，C是基本类，D，E作为多播和保留使用，为特殊地址。</p>
+<p>每个IP地址包括两个标识码（ID）即网络ID和主机ID。<br>同一个物理网络上的所有主机都使用同一个网络ID，<br>网络上的一个主机（包括网络上的工作站，服务器和路由器等）有一个主机ID与其对应。</p>
+<p>A~~E类地址的特点如下：</p>
+<ul>
+<li>A类地址：以0开头，第一个字节范围：0-127；</li>
+<li>B类地址：以10开头，第一个字节范围：128-191</li>
+<li>C类地址：以110开头，第一个字节范围：192-223</li>
+<li>D类地址：以1110开头，第一个字节范围：224-239</li>
+<li>E类地址：以1111开头，保留地址</li>
+</ul>
+<h2 id="A类地址：1字节的网络地址-3字节的主机地址，网络地址的最高位必须是“0”"><a href="#A类地址：1字节的网络地址-3字节的主机地址，网络地址的最高位必须是“0”" class="headerlink" title="A类地址：1字节的网络地址+3字节的主机地址，网络地址的最高位必须是“0”"></a>A类地址：1字节的网络地址+3字节的主机地址，网络地址的最高位必须是“0”</h2><p>一个A类IP地址是指，在IP地址的四段号码中，第一段号码为网络号码，剩下的三段号码为本地计算机的号码<br>如果用二进制表示IP地址的话，A类IP地址就由1字节的网络地址和3字节主机地址组成，网络地址的最高位必须是“0”</p>
+<p>A类IP地址中网络的标识长度为8位，主机标识的长度为24位，<br>A类网络地址数量较少，有126个网络，每个网络可容纳主机数达1600多万台</p>
+<p>A类地址的地址范围1.0.0.0–127.255.255.255，最后一个是广播地址<br>（二进制表示为二进制表示为：0000000100000000 00000000 00000001 - 01111110 11111111 11111111 11111110））<br>A类IP地址的子网掩码为255.0.0.0，每个网络支持的最大主机数为256的3次方 = 16777214台。</p>
+<h3 id="B类地址：2字节的网络地址-2字节的主机地址，网络地址的最高位必须是“10”"><a href="#B类地址：2字节的网络地址-2字节的主机地址，网络地址的最高位必须是“10”" class="headerlink" title="B类地址：2字节的网络地址+2字节的主机地址，网络地址的最高位必须是“10”"></a>B类地址：2字节的网络地址+2字节的主机地址，网络地址的最高位必须是“10”</h3><p>一个B类地址是指，在IP地址的四段号码中，前两段号码为网络号码，剩下的两段号码为本地计算机的号码<br>如果用二进制表示IP地址的话，B类IP地址就由2字节的网络地址和2字节的主机地址组成，网络地址的最高位必须是“10”</p>
+<p>B类IP地址中网络的标识长度为16位，主机标识的长度位16位，<br>B类网络地址适用于中等规模的网络，有16384个网络，每个网络所能容纳的主机数为6万多台</p>
+<p>B类地址的地址范围128.0.0.0 – 191.255.255.255，最后一个是广播地址<br>（二进制表示为：1000000000000001 00000000 00000001 - 10111111 11111110 11111111 11111111）<br>B类IP地址的子网掩码为255.255.0。0，每个网络支持的最大主机数为256的2次方 - 2 = 65534 台</p>
+<h3 id="C类地址：3字节的网络地址-1字节主机地址，网络地址的最高位必须是“110”"><a href="#C类地址：3字节的网络地址-1字节主机地址，网络地址的最高位必须是“110”" class="headerlink" title="C类地址：3字节的网络地址+1字节主机地址，网络地址的最高位必须是“110”"></a>C类地址：3字节的网络地址+1字节主机地址，网络地址的最高位必须是“110”</h3><p>一个C类地址是指，在IP地址的四段号码中，前三段号码为网络号码，剩下的一段号码为本地计算机的号码。<br>如果用二进制表示IP地址的话，C类地址就由3字节的网络地址和1字节主机地址组成，网络地址的最高位必须是“110”</p>
+<p>C类地址中网络的表示长度为24位，主机标识的长度为8位，C类网络地址数量较多，有209余万个网络，<br>适用于小规模的局域网络，每个网络最多只能包含254台计算机。C类IP地址是局域网最常用的类型.</p>
+<p>C类地址的地址范围192.0.0.0 – 223.255.255.255<br>（二进制表示为: 1100000000000000 00000001 00000001 - 11011111 11111111 11111110 11111111）<br>C类IP地址的子网掩码为255.255.255.0， 每个网络支持的最大主机数为256 - 2 = 254台</p>
+<h3 id="D类地址：多播地址，用于1对多通信，最高位必须是“1110”"><a href="#D类地址：多播地址，用于1对多通信，最高位必须是“1110”" class="headerlink" title="D类地址：多播地址，用于1对多通信，最高位必须是“1110”"></a>D类地址：多播地址，用于1对多通信，最高位必须是“1110”</h3><p>D类IP地址在历史上被叫做多播地址（multicast address），即组播地址。<br>在以太网中，多播地址命名了一组应该在这个网络中应用接收到一个分组的站点。<br>多播地址的最高位必须是“110”，范围从224.0.0.0 – 239.255.255.255</p>
+<p>D类地址用于多点广播（Multicast）。</p>
+<p>D类IP地址第一个字节以“lll0”开始，它是一个专门保留的地址。它并不指向特定的网络，目前这一类地址被用在多点广播（Multicast）中。多点广播地址用来一次寻址一组计算机，它标识共享同一协议的一组计算机。</p>
+<p>D类地址多为操作系统使用.</p>
+<h3 id="E类地址：为保留地址，最高位必须是”1111”"><a href="#E类地址：为保留地址，最高位必须是”1111”" class="headerlink" title="E类地址：为保留地址，最高位必须是”1111”"></a>E类地址：为保留地址，最高位必须是”1111”</h3><h2 id="No13、三次握手与四次握手"><a href="#No13、三次握手与四次握手" class="headerlink" title="No13、三次握手与四次握手"></a>No13、三次握手与四次握手</h2><p>（1）三次握手（我要和你建立链接，你真的要和我建立链接么，我真的要和你建立链接，成功）：</p>
+<ul>
+<li><p>第一次握手：Client将标志位SYN置为1，随机产生一个值seq=J，并将数据包发送给Server，Client进入SYN_SENT状态，等待Server确认。</p>
+</li>
+<li><p>第二次握手：Server收到数据包后由标志位SYN=1知道Client请求建立连接，Server将标志位SYN和ACK都置为1，ack=J+1，随机产生一个值seq=K，并将该数据包发送给Client以确认连接请求，Server进入SYN_RCVD状态。</p>
+</li>
+<li><p>第三次握手：Client收到确认后，检查ack是否为J+1，ACK是否为1，如果正确则将标志位ACK置为1，ack=K+1，并将该数据包发送给Server，Server检查ack是否为K+1，ACK是否为1，如果正确则连接建立成功，Client和Server进入ESTABLISHED状态，完成三次握手，随后Client与Server之间可以开始传输数据了。</p>
+</li>
+</ul>
+<p>（2）四次挥手（我要和你断开链接；好的，断吧。我也要和你断开链接；好的，断吧）：</p>
+<p>第一次挥手：Client发送一个FIN，用来关闭Client到Server的数据传送，Client进入FIN_WAIT_1状态。</p>
+<p>第二次挥手：Server收到FIN后，发送一个ACK给Client，确认序号为收到序号+1（与SYN相同，一个FIN占用一个序号），Server进入CLOSE_WAIT状态。此时TCP链接处于半关闭状态，即客户端已经没有要发送的数据了，但服务端若发送数据，则客户端仍要接收。</p>
+<p>第三次挥手：Server发送一个FIN，用来关闭Server到Client的数据传送，Server进入LAST_ACK状态。</p>
+<p>第四次挥手：Client收到FIN后，Client进入TIME_WAIT状态，接着发送一个ACK给Server，确认序号为收到序号+1，Server进入CLOSED状态，完成四次挥手。<br><strong>为什么TCP链接需要三次握手，两次不可以么，为什么？</strong></p>
+<p>为了防止<strong>已失效的链接请求报文突然又传送到了服务端，</strong>因而产生错误。</p>
+<p>客户端发出的链接请求报文并未丢失，而是在某个网络节点滞留了，以致延误到链接释放以后的某个时间才到达Server。这时，Server误认为这是Client发出的一个新的链接请求，于是就向客户端发送确认数据包，同意建立链接。若不采用“三次握手”，那么只要Server发出确认数据包，新的链接就建立了。由于client此时并未发出建立链接的请求，所以其不会理睬Server的确认，也不与Server通信；而这时Server一直在等待Client的请求，这样Server就白白浪费了一定的资源。若采用“三次握手”，在这种情况下，由于Server端没有收到来自客户端的确认，则就会知道Client并没有要求建立请求，就不会建立链接。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E7%BB%8F/" rel="tag"># 面经</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/27/java%E5%A4%9A%E7%BA%BF%E7%A8%8B2/" rel="prev" title="java多线程2">
+      <i class="fa fa-chevron-left"></i> java多线程2
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/02/java%E5%9F%BA%E7%A1%80-1/" rel="next" title="java基础">
+      java基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#No1%E3%80%81Http%E5%92%8CHttps"><span class="nav-number">1.</span> <span class="nav-text">No1、Http和Https</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BA%E5%88%AB"><span class="nav-number">1.2.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Http%E9%95%BF%E8%BF%9E%E6%8E%A5%E3%80%81%E7%9F%AD%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.3.</span> <span class="nav-text">Http长连接、短连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No2%E3%80%81%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E5%92%8C%E9%9D%9E%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86"><span class="nav-number">2.</span> <span class="nav-text">No2、对称加密和非对称加密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5-1"><span class="nav-number">2.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E6%96%B9%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">加密方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No3%E3%80%81%E4%BB%8E%E8%BE%93%E5%85%A5%E7%BD%91%E5%9D%80%E5%88%B0%E8%8E%B7%E5%BE%97%E9%A1%B5%E9%9D%A2%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">No3、从输入网址到获得页面的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E8%A7%A3%E6%9E%90DNS%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">3.1.</span> <span class="nav-text">浏览器解析DNS的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E7%9A%84%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.1.1.</span> <span class="nav-text">过程及其使用的协议</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No4%E3%80%81TCP%E4%B8%AD%E7%9A%84%E6%8B%A5%E5%A1%9E%E6%8E%A7%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">No4、TCP中的拥塞控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%85%A2%E5%90%AF%E5%8A%A8"><span class="nav-number">4.1.</span> <span class="nav-text">慢启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A5%E5%A1%9E%E9%81%BF%E5%85%8D"><span class="nav-number">4.2.</span> <span class="nav-text">拥塞避免</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E9%87%8D%E4%BC%A0"><span class="nav-number">4.3.</span> <span class="nav-text">快重传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%AB%E6%81%A2%E5%A4%8D"><span class="nav-number">4.4.</span> <span class="nav-text">快恢复</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No5%E3%80%81OSI%E7%BD%91%E7%BB%9C%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E4%B8%8ETCP-IP%E5%8D%8F%E8%AE%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">5.</span> <span class="nav-text">No5、OSI网络体系结构与TCP&#x2F;IP协议模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84%E5%9B%BE"><span class="nav-number">5.1.</span> <span class="nav-text">体系结构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E7%90%86%E5%B1%82"><span class="nav-number">5.2.</span> <span class="nav-text">物理层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="nav-number">5.3.</span> <span class="nav-text">数据链路层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="nav-number">5.4.</span> <span class="nav-text">网络层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="nav-number">5.5.</span> <span class="nav-text">传输层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82"><span class="nav-number">5.6.</span> <span class="nav-text">应用层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E5%92%8CUDP%E5%88%86%E5%88%AB%E5%AF%B9%E5%BA%94%E7%9A%84%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%B1%82%E5%8D%8F%E8%AE%AE"><span class="nav-number">5.7.</span> <span class="nav-text">TCP和UDP分别对应的常见应用层协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82%E7%9A%84%E5%9C%B0%E5%9D%80%E8%A7%A3%E6%9E%90%E5%8D%8F%E8%AE%AEARP%E5%8D%8F%E8%AE%AE"><span class="nav-number">5.8.</span> <span class="nav-text">网络层的地址解析协议ARP协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No6%E3%80%81%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8D%E6%96%AD%E8%BF%9B%E8%A1%8C%E8%AF%B7%E6%B1%82%E8%BF%9E%E6%8E%A5%E4%BC%9A%E6%80%8E%E6%A0%B7%EF%BC%9FDDOS%EF%BC%88Distributed-Denial-of-Service%EF%BC%89%E6%94%BB%E5%87%BB%EF%BC%9F"><span class="nav-number">6.</span> <span class="nav-text">No6、客户端不断进行请求连接会怎样？DDOS（Distributed Denial of Service）攻击？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DDOS%E6%94%BB%E5%87%BB"><span class="nav-number">6.1.</span> <span class="nav-text">DDOS攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DDOS%E9%A2%84%E9%98%B2%EF%BC%88%E6%B2%A1%E6%9C%89%E5%BD%BB%E5%BA%95%E6%A0%B9%E6%B2%BB%E7%9A%84%E6%96%B9%E6%B3%95%EF%BC%8C%E9%99%A4%E9%9D%9E%E4%B8%8D%E4%BD%BF%E7%94%A8TCP%EF%BC%89"><span class="nav-number">6.2.</span> <span class="nav-text">DDOS预防（没有彻底根治的方法，除非不使用TCP）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No7%E3%80%81Get%E4%B8%8EPost%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">7.</span> <span class="nav-text">No7、Get与Post的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No8%E3%80%81Session%E3%80%81Cookie%E4%B8%8EApplication"><span class="nav-number">8.</span> <span class="nav-text">No8、Session、Cookie与Application</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie"><span class="nav-number">8.1.</span> <span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Session"><span class="nav-number">8.2.</span> <span class="nav-text">Session</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie%E4%B8%8ESession%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">8.3.</span> <span class="nav-text">Cookie与Session的对比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Application"><span class="nav-number">8.4.</span> <span class="nav-text">Application</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No9%E3%80%81SQL%E6%B3%A8%E5%85%A5"><span class="nav-number">9.</span> <span class="nav-text">No9、SQL注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E7%9A%84%E6%80%BB%E4%BD%93%E6%80%9D%E8%B7%AF"><span class="nav-number">9.1.</span> <span class="nav-text">SQL注入攻击的总体思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%AE%9E%E4%BE%8B"><span class="nav-number">9.2.</span> <span class="nav-text">SQL注入攻击实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E6%96%B9%E6%B3%95"><span class="nav-number">9.3.</span> <span class="nav-text">应对方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No10%E3%80%81XSS%E6%94%BB%E5%87%BB"><span class="nav-number">10.</span> <span class="nav-text">No10、XSS攻击</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E6%94%BB%E5%87%BB%E7%9A%84%E5%8D%B1%E5%AE%B3"><span class="nav-number">10.1.</span> <span class="nav-text">XSS攻击的危害</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E6%94%BB%E5%87%BB%E5%8F%91%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0%E8%A7%A3%E6%9E%90"><span class="nav-number">10.2.</span> <span class="nav-text">XSS攻击发生的原因解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E6%94%BB%E5%87%BB%E5%88%86%E7%B1%BB"><span class="nav-number">10.3.</span> <span class="nav-text">XSS攻击分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSS%E6%94%BB%E5%87%BB%E9%98%B2%E6%8A%A4%E8%A7%84%E8%8C%83"><span class="nav-number">10.4.</span> <span class="nav-text">XSS攻击防护规范</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No11-%E5%B8%B8%E8%A7%81%E7%9A%84%E7%8A%B6%E6%80%81%E7%A0%81%E5%8F%8A%E5%8E%9F%E5%9B%A0%E7%9F%AD%E8%AF%AD"><span class="nav-number">11.</span> <span class="nav-text">No11 常见的状态码及原因短语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No12%E3%80%81IP%E5%9C%B0%E5%9D%80%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">12.</span> <span class="nav-text">No12、IP地址的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#A%E7%B1%BB%E5%9C%B0%E5%9D%80%EF%BC%9A1%E5%AD%97%E8%8A%82%E7%9A%84%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80-3%E5%AD%97%E8%8A%82%E7%9A%84%E4%B8%BB%E6%9C%BA%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E7%9A%84%E6%9C%80%E9%AB%98%E4%BD%8D%E5%BF%85%E9%A1%BB%E6%98%AF%E2%80%9C0%E2%80%9D"><span class="nav-number">13.</span> <span class="nav-text">A类地址：1字节的网络地址+3字节的主机地址，网络地址的最高位必须是“0”</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E7%B1%BB%E5%9C%B0%E5%9D%80%EF%BC%9A2%E5%AD%97%E8%8A%82%E7%9A%84%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80-2%E5%AD%97%E8%8A%82%E7%9A%84%E4%B8%BB%E6%9C%BA%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E7%9A%84%E6%9C%80%E9%AB%98%E4%BD%8D%E5%BF%85%E9%A1%BB%E6%98%AF%E2%80%9C10%E2%80%9D"><span class="nav-number">13.1.</span> <span class="nav-text">B类地址：2字节的网络地址+2字节的主机地址，网络地址的最高位必须是“10”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C%E7%B1%BB%E5%9C%B0%E5%9D%80%EF%BC%9A3%E5%AD%97%E8%8A%82%E7%9A%84%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80-1%E5%AD%97%E8%8A%82%E4%B8%BB%E6%9C%BA%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%BD%91%E7%BB%9C%E5%9C%B0%E5%9D%80%E7%9A%84%E6%9C%80%E9%AB%98%E4%BD%8D%E5%BF%85%E9%A1%BB%E6%98%AF%E2%80%9C110%E2%80%9D"><span class="nav-number">13.2.</span> <span class="nav-text">C类地址：3字节的网络地址+1字节主机地址，网络地址的最高位必须是“110”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D%E7%B1%BB%E5%9C%B0%E5%9D%80%EF%BC%9A%E5%A4%9A%E6%92%AD%E5%9C%B0%E5%9D%80%EF%BC%8C%E7%94%A8%E4%BA%8E1%E5%AF%B9%E5%A4%9A%E9%80%9A%E4%BF%A1%EF%BC%8C%E6%9C%80%E9%AB%98%E4%BD%8D%E5%BF%85%E9%A1%BB%E6%98%AF%E2%80%9C1110%E2%80%9D"><span class="nav-number">13.3.</span> <span class="nav-text">D类地址：多播地址，用于1对多通信，最高位必须是“1110”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#E%E7%B1%BB%E5%9C%B0%E5%9D%80%EF%BC%9A%E4%B8%BA%E4%BF%9D%E7%95%99%E5%9C%B0%E5%9D%80%EF%BC%8C%E6%9C%80%E9%AB%98%E4%BD%8D%E5%BF%85%E9%A1%BB%E6%98%AF%E2%80%9D1111%E2%80%9D"><span class="nav-number">13.4.</span> <span class="nav-text">E类地址：为保留地址，最高位必须是”1111”</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#No13%E3%80%81%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E4%B8%8E%E5%9B%9B%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">14.</span> <span class="nav-text">No13、三次握手与四次握手</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
