@@ -150,6 +150,194 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/10/%E5%9B%BE%E8%A7%A3http%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/10/%E5%9B%BE%E8%A7%A3http%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">图解http笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-10 16:47:52" itemprop="dateCreated datePublished" datetime="2021-02-10T16:47:52+08:00">2021-02-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-15 15:24:45" itemprop="dateModified" datetime="2021-02-15T15:24:45+08:00">2021-02-15</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="第一章"><a href="#第一章" class="headerlink" title="第一章"></a>第一章</h2><p>HTTP（HyperText Transfer Protocol，超文转移协议，超文本传输协议的译法并不严谨。）</p>
+<h3 id="网络基础TCP-IP"><a href="#网络基础TCP-IP" class="headerlink" title="网络基础TCP/IP"></a>网络基础TCP/IP</h3><p><strong>TCP/IP协议族</strong></p>
+<p>TCP/IP协议族是互联网相关联的协议的集合。从电缆的规格到IP地址的选定方法、寻找异地用户的方法、双方建立通信的顺序，以及web页面显式需要处理的步骤，等等。而http是属于它内部的一个子集。</p>
+<p><strong>TCP/IP的分层管理</strong></p>
+<p>TCP/IP 协议族按层次分别分为以下 4 层：应用层、传输层、网络层和数据链路层。 分层的好处：把各层之间的接口部分规划好之后，每个层次内部的设计就能够自由改动了。而且，层次化之后，设计也变得相对简单。处于应用层上的应用可以只考虑分派给自己的任务，而无需弄清对方在地球上哪个地方、对方的传输路线、是否能确保传输送达等问题。</p>
+<ul>
+<li>应用层：决定了向用户提供应用服务时通信的活动。TCP/IP协议族预存了各类通用的应用服务。如FTP（File Transfer Protocol）、DNS和HTTP。</li>
+<li>传输层：该层对上层应用层，提供处于网络连接中的两台计算机之间的数据传输。TCP和UDP。</li>
+<li>网络层：网络层用来处理在网络上流动的数据包。数据包是网络传输的最小数据单位。该层规定了通过怎么样的路径到达对方计算机。</li>
+<li>链路层：用来处理网络的硬件部分。</li>
+</ul>
+<p><strong>TCP/IP通信传输流</strong></p>
+<p><img src="https://camo.githubusercontent.com/b042898f685e28b66c740535b1d8e7b950bcdcdf841ba9a27ce28062684415c4/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d392e6a7067" alt="缺一张照片P9"></p>
+<p>利用TCP/IP协议族进行网路通信时，会通过分层顺序与对方进行通信。发送端从应用层往下走，接收端则往应用层往上走。</p>
+<p>用HTTP 举例来说：首先作为发送端的客户端在应用层（HTTP协议）发出一个HTTP请求。 接着，在传输层（TCP协议）把从应用层处收到的数据（HTTP请求报文）进行分隔，并在各个报文上打上标记序号及端口号后转发给网络层。 在网络层（IP协议），增加作为通信目的地的MAC地址后转发给链路层。这就让发往网络的通信请求准备齐全了。 接收端的服务器在链路层接收到数据后，按序往上层发送，一直到应用层。当传输到应用层，才能算真正接收到客户端发送过来的HTTP请求。</p>
+<p><img src="https://camo.githubusercontent.com/cfd3eff10113cb844f43eb253477d20e763cb1989d3dbae7317ecb5cbfff0b7e/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d31302e6a7067" alt="&gt; 缺一张照片P10"></p>
+<p>发送端在层与层之间传输数据时，每经过一层时必定会被打上一个该层所属的首部信息。反之，接收端在层与层传输数据时，每经过一层时会把对应的首部消去。把数据信息包装起来的做法称为封装。</p>
+<h3 id="与HTTP关系密切的协议：IP、TCP和DNS"><a href="#与HTTP关系密切的协议：IP、TCP和DNS" class="headerlink" title="与HTTP关系密切的协议：IP、TCP和DNS"></a>与HTTP关系密切的协议：IP、TCP和DNS</h3><p><strong>负责传输的IP协议</strong></p>
+<p>IP（网际协议）位于网络层。该协议的作用是把各种数据包传送给对方。而要保证确实传送到对方那里，则需要满足各类条件。其中最重要的两个条件是 IP 地址和 MAC地址。 IP 地址指明了节点被分配到的地址，MAC地址是指网卡所属的固定地址。IP地址可以和MAC地址进行配对。</p>
+<p><strong>使用ARP协议凭借MAC地址进行通信</strong> IP间通信通信依赖MAC地址。通信的双方通常会经过多台计算机和网络设备中转才能连接到对方，而在进行中转时，会利用下一站中转设备的MAC地址来搜索下一个中转目标。这时，会采用ARP协议。该协议是一种用以解析地址的协议，根据通信方的IP地址就可以反查出对应的MAC地址。</p>
+<p><img src="https://camo.githubusercontent.com/5e168ebb2e85b5042d51ec7abd0bbcf144009610a869e29f978a4cbaf2e9f698/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d31322e6a7067" alt="此处输入图片的描述"></p>
+<p><strong>确保可靠性的TCP协议</strong></p>
+<p>TCP属于传输层，提供可靠的字节流服务。字节流服务是指：为了方便传输，将大块数据分割成以报文段为单位的数据包进行管理。这就是为什么下载高清大图时，图片会一块一块地加载。</p>
+<p><strong>三次握手</strong>为了准确无误地将数据送达目标处，TCP协议在发送数据的准备阶段采用了三次握手策略（若在握手过程中某个阶段中断，TCP协议会再以相同的顺序发送相同的数据包）。</p>
+<p><img src="https://camo.githubusercontent.com/5052b0fda439c493c0305e9495deba5a0cd316dd951cc83c42a03184bdeb381b/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d31332e6a7067" alt="&gt; 缺图片P13"></p>
+<p>当然，除了三次握手，TCP还有其它各种手段确保通信的可靠性。</p>
+<h3 id="负责域名解析的DNS服务"><a href="#负责域名解析的DNS服务" class="headerlink" title="负责域名解析的DNS服务"></a>负责域名解析的DNS服务</h3><p>DNS服务提供域名到IP地址之间的解析服务。即可通过域名查找IP，或逆向从IP地址反查询域名服务。</p>
+<p><img src="https://camo.githubusercontent.com/ca546afb0ebd451b7926a76a6398c1fb12503241d10438eedfdf50d9dad713a1/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d31342e6a7067" alt="此处输入图片的描述"></p>
+<p><strong>URI和URL</strong></p>
+<p>URI（uniform Resource Identifier）Uniform:规定统一的格式可方便处理多种不同类型的资源。Resource:可标识的任何东西Identifier:标识符</p>
+<p>URI就是某个协议方案表示的资源的定位标识符。协议方案是指访问资源所使用的协议类型名称，如http、ftp。</p>
+<p>URI 用字符串标识某一个互联网资源，而URL表示资源的地点。URL是URI的子集。</p>
+<p>表示指定的URI，要使用涵盖全部必要信息的绝对URI、绝对URL以及相对URL。相对URL是指从浏览器中基本URI处指定的URL，如<code>/image/logo.gif</code>.</p>
+<p>绝对URI的格式如下：</p>
+<p><img src="https://camo.githubusercontent.com/ef4a26a5f83c09791980bc94140312b926c480f3edc182af01c111d8eb9cd7e2/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d31382e6a7067" alt="图片P18"></p>
+<h2 id="第二章-简单的HTTP协议"><a href="#第二章-简单的HTTP协议" class="headerlink" title="第二章 简单的HTTP协议"></a>第二章 简单的HTTP协议</h2><p>HTTP协议规定，先从客户端开始建立通信，服务端在没有接收到请求之前不会发送响应。</p>
+<p>请求报文由请求方法、请求URI、协议版本、可选的请求首部字段和内容实体构成的。</p>
+<p><img src="https://camo.githubusercontent.com/60c9513a2ca5927f006b20a8950f59d84b8c3d2f3ff8d58d0561e295b2821e37/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d32342e6a7067" alt="&gt; 图片P24"></p>
+<p>响应报文基本上由协议版本、状态码、用以解释状态码的原因短语、可选的响应首部字段以及实体主体构成。</p>
+<p><img src="https://camo.githubusercontent.com/ac4031c04d349053fd3818439b5a21f8da096ea5aefd6519e95e8a99a61f4f43/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d32352e6a7067" alt="&gt; 图片P25"></p>
+<p><strong>HTTP是不保存状态的协议</strong></p>
+<p>HTTP是无状态协议。自身不对请求和响应之间通信状态进行保存（即不做持久化处理）。HTTP之所以设计得如此简单，是为了更快地处理大量事物，确保协议得可伸缩性。HTTP/1.1随时无状态协议，但可通过Cookie技术保存状态。</p>
+<h3 id="告知服务器意图得HTTP方法"><a href="#告知服务器意图得HTTP方法" class="headerlink" title="告知服务器意图得HTTP方法"></a>告知服务器意图得HTTP方法</h3><ul>
+<li>GET：获取资源</li>
+<li>POST：传输实体主体</li>
+<li>PUT：传输文件</li>
+<li>HEAD：获得报文首部，与GET方法一样，只是不返回报文主体内容。用于确认URI的有效性及资源更新的日期时间等。</li>
+<li>DELETE：删除文件，与PUT相反</li>
+<li>OPTIONS：询问支持的方法，查询针对请求URI指定的资源支持的方法</li>
+<li>TRACE：追踪路径</li>
+<li>CONNECT：要求用隧道协议连接代理</li>
+</ul>
+<p>向请求URI指定的资源发送请求报文时，采用称为方法的命令。方法名区分大小写，主要要用大写字母。</p>
+<h3 id="持久连接节省通信量"><a href="#持久连接节省通信量" class="headerlink" title="持久连接节省通信量"></a>持久连接节省通信量</h3><p><strong>持久连接</strong></p>
+<p>HTTP协议的初始版本中，每进行一次HTTP通信就要断开一次TCP连接。</p>
+<p><img src="https://camo.githubusercontent.com/0b38dcc8b73925247087cf4f96e5af05c1a083d815d013777e51a75764f0c559/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d33342e6a7067" alt="此处输入图片的描述"></p>
+<p>发送请求一份包含多张图片的HTML文档对应的Web页面，会产生大量通信开销。</p>
+<p><img src="https://camo.githubusercontent.com/97d2b88a8927bd5c1ae2d8dbf8b4345ee3c4084dd973724e9a236353b4a0a8df/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d33352e6a7067" alt="此处输入图片的描述"></p>
+<p>为了解决上述TCP连接的问题，HTTP/1.1和一部分的HTTP/1.0想出了持久连接（HTTP Persistent Connections，也称为HTTP keep-alive 或 HTTP Connection resue）的方法。 <strong>持久连接的特点</strong>是，只要任意一端没有明确提出断开连接，则保持TCP连接状态。</p>
+<p><img src="https://camo.githubusercontent.com/463cfc1f1f34386f3c4d2613e49e5ac24ca009c6137c466c7c10d05da501ba97/68747470733a2f2f626c6f672d313235313437373232392e636f732e61702d6368656e6764752e6d7971636c6f75642e636f6d2f6f74686572732f67726170686963616c2d687474702d33362e6a7067" alt="TCP持久连接"></p>
+<p>持久连接的好处在于减少了TCP连接的重复建立和断开所造成的额外开销，减轻了服务器端的负载。另外，减少开销的那部分时间，使HTTP请求和响应能够更早地结束，这样Web页面的显示速度也相应提高了。</p>
+<p>在HTTP/1.1中，所有连接默认都是持久连接，但在HTTP/1.0内并未标准化。 毫无疑问，除了服务器端，客户端也需要支持持久连接。</p>
+<p><strong>管线化</strong></p>
+<p>持久连接使得多数请求以管线化方式发送成为可能。以前发送请求后需等待并收到响应，才能发送下一个请求。管线技术出现后，不用等待响应亦可直接发送下一个请求。</p>
+<p>注意：尽管HTTP管线化可以克服同域并行请求限制带来的阻塞，但HTTP/1.x有严格的串行返回响应机制，服务器通过TCP连接返回响应时，就是必须按照客户端的请求顺序进行响应，前一个响应没有完成，下一个响应就不能返回。所以使用“HTTP管道”技术时，万一第一个响应时间很长，那么后面的响应处理完了也无法发送，只能被缓存起来，占用服务器内存，这就是传说中的“队首阻塞”。</p>
+<h3 id="使用Cookie的状态管理"><a href="#使用Cookie的状态管理" class="headerlink" title="使用Cookie的状态管理"></a>使用Cookie的状态管理</h3><p>Cookie技术通过在请求和响应报文中写入cookie信息来控制客户端的状态。Cookie会根据从服务器端发送的响应报文内的一个叫做<code>Set-Cookie</code>的首部字段信息，通知客户端保存Cookie当下次客户端再往该服务器发送请求时，客户端会自动在请求报文中加入Cookie值后发送出去。</p>
+<h2 id="第三章-HTTP报文内的HTTP信息"><a href="#第三章-HTTP报文内的HTTP信息" class="headerlink" title="第三章 HTTP报文内的HTTP信息"></a>第三章 HTTP报文内的HTTP信息</h2><p>用于HTTP协议交互的信息被称为HTTP报文，请求端的HTTP报文叫做请求报文，响应端的叫做响应报文。</p>
+<p>HTTP报文本身是由多行（用CR+LF做换行符）数据构成的字符串文本。</p>
+<p>HTTP报文大致可分为报文首部和报文主体两部块。两者由最初出现的空行（CR+LF、回车符+换行符）来划分。通常，并不一定要有报文主体。</p>
+<h3 id="编码提升传输效率"><a href="#编码提升传输效率" class="headerlink" title="编码提升传输效率"></a>编码提升传输效率</h3><p>HTTP在传输数据时可以按照数据原貌直接传输，但也可以在传输过程中通过编码提升传输速率，但这会消耗更多的CPU等资源。</p>
+<p><strong>报文主体和实体主体的差异</strong></p>
+<p>报文：是HTTP通信中的基本单位，由8位组字节流组成，通过HTTP通信传输。 实体：作为请求或响应的有效载荷数据（补充项）被传输，其内容由实体首部和实体主体组成。</p>
+<p>HTTP报文的主体用于传输请求或响应的实体主体。 通常，报文主体等于实体主体。只有当传输中进行编码操作时，实体主体的内容发生变化，才导致它和报文主体产生差异。</p>
+<p><strong>压缩传输的内容编码</strong></p>
+<p>内容编码指明应用在实体内容上的编码格式，并保持实体信息原样压缩。内容编码后的实体由客户端接收并负责解码。 常见的内容编码有：gzip（GNU zip）、compress（UNIX系统的标准压缩）、deflate（zlib）、identity（不进行编码）</p>
+<p><strong>分隔发送的分块传输编码</strong></p>
+<p>在HTTP通信过程中，请求的编码实体资源尚未全部传输完成之前，浏览器无法显示请求页面。在传输大容量数据时，通过把数据分割成多块，能够让浏览器逐步显示页面。 这种把实体主体分块的功能称为<strong>分块传输编码</strong>（Chunked Transfer Coding）。</p>
+<p>分块传输编码会将实体主体分成多个部分（块）。每一块都会用十六进制来标记块的大小，而实体主体的最后一块会使用“0（CR+LF）”来标记。</p>
+<p>使用分块传输编码的实体主体会由接收的客户端负责解码，恢复到编码前的实体主体。</p>
+<h3 id="发送多种数据的多部分对象集合"><a href="#发送多种数据的多部分对象集合" class="headerlink" title="发送多种数据的多部分对象集合"></a>发送多种数据的多部分对象集合</h3><p>HTTP协议中采纳了多部分对象集合，发送的一份报文主体内可含有多类型实体。通常实在图片或文本文件等上传时使用。</p>
+<h3 id="获取部分内容的范围请求"><a href="#获取部分内容的范围请求" class="headerlink" title="获取部分内容的范围请求"></a>获取部分内容的范围请求</h3><p>下载大尺寸的图片的过程中，如果网络中断，则需要重新下载。因此需要一种可恢复的机制。 实现该功能需要指定下载的实体范围，像这样，指定范围发送的请求叫做<strong>范围请求</strong>。 执行范围请求时，会用到首部字段Range来指定资源的byte范围。响应会返回状态码206 Partial Content。</p>
+<p>如果服务器端无法响应范围请求，则会返回状态码200 OK和完整的实体内容。</p>
+<h3 id="内容协商返回最合适的内容"><a href="#内容协商返回最合适的内容" class="headerlink" title="内容协商返回最合适的内容"></a>内容协商返回最合适的内容</h3><p>内容协商机制是指客户端和服务器端就响应的资源内容进行交涉，然后提供给客户端最为适合的资源。内容协商会以响应资源的语言、字符集、编码方式等作为判断的基准。</p>
+<h3 id="返回结果的HTTP状态码"><a href="#返回结果的HTTP状态码" class="headerlink" title="返回结果的HTTP状态码"></a>返回结果的HTTP状态码</h3><p>状态码的职责是当客户端向服务器端发送请求时，描述返回的请求结果。状态码如200 OK，以3为数字和原因短语组成。数字中的第一位定义了响应类别，后两位无分类。响应类别有以下五种：</p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>原因短语</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1XX</td>
+<td>Informational(信息性状态码)</td>
+<td>接收的请求正在处理</td>
+</tr>
+<tr>
+<td>2XX</td>
+<td>Success（成功状态码）</td>
+<td>请求正常处理完毕</td>
+</tr>
+<tr>
+<td>3XX</td>
+<td>Redirection（重定向状态码）</td>
+<td>需要进行附加操作以完成请求</td>
+</tr>
+<tr>
+<td>4XX</td>
+<td>Client Error（客户端错误状态码）</td>
+<td>服务器无法处理请求</td>
+</tr>
+<tr>
+<td>5XX</td>
+<td>Server Error（服务器错误状态码）</td>
+<td>服务器处理请求出错</td>
+</tr>
+</tbody></table>
+<h3 id="常用的状态码14种："><a href="#常用的状态码14种：" class="headerlink" title="常用的状态码14种："></a>常用的状态码14种：</h3><p><strong>2XX成功</strong></p>
+<ul>
+<li>200 OK：请求被正常处理</li>
+<li>204 No Content:一般在只需从客户端往服务器发送信息，而对客户端不需要发送新信息内容的情况下使用。</li>
+<li>206 Partial Content：客户端进行范围请求</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/10/restful%E9%A3%8E%E6%A0%BCAPI/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1704,188 +1892,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/31/java%E7%BB%A7%E6%89%BF%E3%80%81%E5%A4%9A%E6%80%81%E4%B8%8E%E7%B1%BB%E7%9A%84%E5%A4%8D%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/31/java%E7%BB%A7%E6%89%BF%E3%80%81%E5%A4%9A%E6%80%81%E4%B8%8E%E7%B1%BB%E7%9A%84%E5%A4%8D%E7%94%A8/" class="post-title-link" itemprop="url">java继承、多态与类的复用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-31 19:53:17" itemprop="dateCreated datePublished" datetime="2021-01-31T19:53:17+08:00">2021-01-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-01 10:05:39" itemprop="dateModified" datetime="2021-02-01T10:05:39+08:00">2021-02-01</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h1><p>本文结合Java的类的复用对面向对象两大特征继承和多态进行了全面的介绍。首先，我们介绍了继承的实质和意义，并探讨了继承，组合和代理在类的复用方面的异同。紧接着，我们根据继承引入了多态，介绍了它的实现机制和具体应用。此外，为了更好地理解继承和多态，我们对final关键字进行了全面的介绍。在此基础上，我们介绍了Java中类的加载及初始化顺序。最后，我们对面向对象设计中三个十分重要的概念–重载、覆盖与隐藏进行了详细的说明。</p>
-<p><strong>要点：</strong></p>
-<ul>
-<li>继承</li>
-<li>组合、继承、代理</li>
-<li>多态</li>
-<li>final关键字</li>
-<li>类加载及初始化顺序</li>
-<li>重载、覆盖与隐藏</li>
-</ul>
-<h2 id="一、继承"><a href="#一、继承" class="headerlink" title="一、继承"></a>一、继承</h2><p>继承是所有OOP语言不可缺少的部分，在java中，使用extends关键字来表示继承关系。当创建一个类时，总是在继承，如果没有明确指出要继承的类，就总是隐式地从根类Object进行继承。如果两个类存在继承关系，则子类会自动继承父类的方法和变量，在子类中可以直接调用父类的方法和变量。需要指出的是，在java中，只允许单继承，也就是说，一个类最多只能显式地继承于一个父类。但是，一个类却可以被多个类继承，也就是说，一个类可以拥有多个子类。此外，<strong>我们需要特别注意以下几点：</strong></p>
-<p>1、成员变量的继承</p>
-<p>当子类继承了某个类之后，便可以使用父类中的成员变量，但是并不是完全继承父类的所有成员变量。具体的原则如下：</p>
-<ul>
-<li>子类能够继承父类的public和protected成员变量，不能够继承父类的private成员变量，但可以通过父类相应的getter/setter方法进行访问；</li>
-<li>对于父类的包访问权限成员变量，如果子类和父类在同一个包下，则子类能够继承，否则，子类不能够继承；</li>
-<li>对于子类可以继承的父类成员变量，如果在子类中出现了同名称的成员变量，则会发生隐藏现象，即子类的成员变量会屏蔽掉父类的同名成员变量。如果要在子类中访问父类中同名成员变量，需要使用super关键字来进行引用。</li>
-</ul>
-<p>2、成员方法的继承</p>
-<p>同样地，当子类继承了某个类之后，便可以使用父类中的成员方法，但是子类并不是完全继承父类的所有方法。具体的原则如下：</p>
-<ul>
-<li>子类能够继承父类的public和protected成员方法，不能够继承父类的private成员方法；</li>
-<li>对于父类的包访问权限成员方法，如果子类和父类在同一个包下，则子类能够继承，否则，子类不能够继承；</li>
-<li>对于子类可以继承的父类成员方法，如果在子类中出现了同名称的成员方法，则称为覆盖，即子类的成员方法会覆盖掉父类的同名成员方法。如果要在子类中访问父类中同名成员方法，需要使用super关键字来进行引用。</li>
-</ul>
-<p><strong>程序示例：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String gentle = <span class="string">&quot;Father&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">extends</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String gentle = <span class="string">&quot;Son&quot;</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">print</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">super</span>.gentle;	<span class="comment">//在子类中访问父类中同名成员变</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException</span>&#123;</span><br><span class="line">        Student student= <span class="keyword">new</span> Student();</span><br><span class="line">        System.out.println(<span class="string">&quot;####&quot;</span> + student.gentle);</span><br><span class="line">        Person p = student;</span><br><span class="line">        System.out.println(<span class="string">&quot;*****&quot;</span> + p.gentle);	<span class="comment">//隐藏：编译时决定，不会发生多态</span></span><br><span class="line">        </span><br><span class="line">        Sytem.out.println(<span class="string">&quot;----&quot;</span> + student.print());</span><br><span class="line">        System.out.println(<span class="string">&quot;----&quot;</span> + p.print());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>隐藏和覆盖是不同的。隐藏是针对成员变量和静态方法的，而覆盖是针对普通方法的。</p>
-<p>3、基类的初始化与构造器</p>
-<p>导出类就像是一个与基类具有相同接口的新类，或许还会有一些额外的方法和域。但是，继承并不只是复制基类的接口。当创建一个导出类对象时，该对象会包含一个基类的子对象。这个子对象与我们用基类直接创建的对象是一样的。二者的区别在于，后者来自于外部，而基类的子对象被包装在导出类对象的内部。</p>
-<p>因此，对基类子对象的正确初始化是至关重要的，并且java也提供了相应的方法来保证这一点：导出类必须在构造器中调用基类构造器来执行初始化，而基类构造器具有执行基类初始化所需的所有知识和能力。当基类含有默认构造时，java会自动在导出类的构造器插入对该基类默认构造器的调用，因为编译器不必考虑要传递什么样的参数的问题。但是，若父类不含有默认构造器，或者导出类想调用一个带参数的父类构造器，那么在导出类的构造器中就必须使用super关键字显式的进行调用相应的基类的构造器，并且该调用语句必是导出类构造器的第一条语句。</p>
-<h2 id="二、组合，继承，代理"><a href="#二、组合，继承，代理" class="headerlink" title="二、组合，继承，代理"></a>二、组合，继承，代理</h2><p>组合、继承和代理三种技术都可以实现代码的复用。</p>
-<p><strong>（1）组合（has-a）</strong></p>
-<p><strong>通过在新的类中加入现有类的对象即可实现组合。</strong>即，新的类是由现有类的对象所组成。<strong>该技术通常用于想在新类中使用现有类的功能而非它的接口这种情形。</strong>也就是说，在新类中嵌入某个对象，让其实现所需要的功能，但新类的用户看到的只是为新类所定义的接口，而非所嵌入对象的接口。</p>
-<p><strong>（2）继承 （is-a）</strong></p>
-<p>继承可以使我们按照现有类的类型来创建新类。即，我们采用现有类的形式并在其中添加新代码。通常，这意味着我们在使用一个通用类，并为了某种特殊需要而将其特殊化。本质上，组合和继承都允许在新的类中放置子对象，组合是显式地这样做，而继承则是隐式地做。</p>
-<p><strong>（3）代理（继承与组合之前的一种中庸之道：像组合一样使用已有类的功能，同时像继承一样使用已有类的接口)</strong></p>
-<p>代理是继承与组合之前的一种中庸之道，java并没有提供对它的直接支持。在代理中，我们将一个成员对象置于所要构造的类中（就像组合），但与此同时我们在新类中暴漏了该成员对象的接口/方法。（就像继承）</p>
-<p><strong>程序示例：</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 控制模块</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpaceShipControls</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">up</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">down</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">left</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">right</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">forward</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">back</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">turboBoost</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>太空船需要一个控制模块，那么，构造太空船的一种方式是使用继承：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpaceShip</span> <span class="keyword">extends</span> <span class="title">SpaceShipControls</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SpaceShip</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        SpaceShip protector = <span class="keyword">new</span> SpaceShip(<span class="string">&quot;NSEA Protector&quot;</span>);</span><br><span class="line">        protector.forward(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然而，SpaceShip 并不是真正的 SpaceShipControls 类型，即便你可以“告诉” SpaceShip 向前运动（forward()）。<strong>更准确的说，SpaceShip 包含 SpaceShipControls ，与此同时， SpaceShipControls 的所有方法在 SpaceShip 中都暴露出来。</strong> <strong>代理（SpaceShip 的运动行为由 SpaceShipControls 代理完成）</strong> 正好可以解决这种问题：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SpaceShip 的行为由 SpaceShipControls 代理完成</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpaceShipDelegation</span> </span>&#123; </span><br><span class="line">    <span class="keyword">private</span> String name; </span><br><span class="line">    <span class="keyword">private</span> SpaceShipControls controls = <span class="keyword">new</span> SpaceShipControls(); </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SpaceShipDelegation</span><span class="params">(String name)</span> </span>&#123; </span><br><span class="line">        <span class="keyword">this</span>.name = name; </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 代理方法: </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">back</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.back(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">down</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.down(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forward</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.forward(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">left</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.left(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">right</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.right(velocity); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">turboBoost</span><span class="params">()</span> </span>&#123; </span><br><span class="line">        controls.turboBoost(); </span><br><span class="line">    &#125; </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">up</span><span class="params">(<span class="keyword">int</span> velocity)</span> </span>&#123; </span><br><span class="line">        controls.up(velocity); </span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123; </span><br><span class="line">        SpaceShipDelegation protector = <span class="keyword">new</span> SpaceShipDelegation(<span class="string">&quot;NSEA Protector&quot;</span>); </span><br><span class="line">        protector.forward(<span class="number">100</span>); </span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>实际上，使用代理时可以拥有更多的控制力，因为我们可以选择只提供在成员对象中方法的某个子集。</p>
-<h2 id="三、final关键字"><a href="#三、final关键字" class="headerlink" title="三、final关键字"></a>三、final关键字</h2><p>　许多编程语言都需要某种方法来向编译器告知一块数据是恒定不变的。有时，数据的恒定不变是很有用的，比如：</p>
-<ul>
-<li>一个永不改变的编译时常量；</li>
-<li>一个在运行时被初始化的值，而你不希望它被改变。</li>
-</ul>
-<p>对于编译期常量这种情况，编译器可以将该常量值带入任何可能用到它的计算式中，也即是说，可以在编译时执行计算式，这减轻了一些运行时负担。在java中，这类常量必须满足两个条件：</p>
-<ul>
-<li>是基本类型，并且用final修饰；</li>
-<li>在对这个常量进行定义的时候，必须对其进行赋值。</li>
-</ul>
-<p>此外，当用final修饰对象引用时，final使其引用恒定不变。一旦引用被初始化指向一个对象，就无法再把它指向另一个对象。然而，对象本身是可以被修改的，这同样使用于数组，因为它也是对象。</p>
-<p>特别需要注意的是，我们不能因为某数据是final的，就认为在编译时就可以知道它的值。例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span></span>&#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> i4=rand.nextInt(<span class="number">20</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>1、空白final</p>
-<p>　　Java允许生成 <strong>空白final</strong> , 即：<strong>声明final但又未给定初值的域。</strong>但无论什么情况，编译器都会确保空白final在使用前被初始化。但是，<strong>空白final在关键字final的使用上提供了更大的灵活性:</strong> <strong>一个类中的 final域 就可以做到根据对象而有所不同，却又保持其恒定不变的特性</strong></p>
-<p>必须在域的定义处或者每个构造器中使用表达式对final进行赋值，这正是final域在使用前总是被初始化的原因所在。</p>
-<p>2、final参数</p>
-<p>final参数主要应用于局部内部类和匿名内部类中。</p>
-<p>3、final方法</p>
-<p><strong>final关键字作用域方法时，用于锁定方法，以防任何继承类修改它的含义。**</strong>这是出于设计的考虑：想要确保在继承中使方法行为保持不变，并且不会被覆盖。**</p>
-<p>　　<strong>对于成员方法，只有在明确禁止覆盖时，才将方法设为final的。</strong></p>
-<p>4、final类</p>
-<p>当讲某个类定义为final时，就表明你不打算继承该类，而且也不允许别人这样做。换句话说，出于某种考虑，你对该类的设计永不需要做任何变动，或者出于安全考虑，你不希望它有子类。</p>
-<p>需要注意的是，final类的域可以根据实际情况选择是否为final的。不论是否被定义为final，相同的规则都适用于定义final的域。然而，由于final类禁止继承，所以final类中的所有方法都隐式指定为final的，因为无法覆盖它们。在final类中可以给方法添加final修饰，但这不会增添任何意义。</p>
-<p>5、final与private</p>
-<p><strong>类中所有的private方法都隐式地指定为final的。</strong>由于无法取用private方法，所以也就无法覆盖它。可以对private方法添加final修饰，但这并不会给该方法添加任何额外的意义。</p>
-<p>特别需要注意的是，覆盖只有在某方法是基类接口的一部分时才会出现。如果一个方法是private的，它就不是基类接口中的一部分，而仅仅是一些隐藏于类中的程序代码。但若在类中以相同的名称生成一个非private方法，此时我们并没有覆盖该方法，仅仅是生成了一个新的方法。由于private方法无法触及并且能有效隐藏，所以除了把它看成是由于它所归属的类的组织结构的原因而存在外，其他任何情况都不需要考虑它。</p>
-<p>6、final与static</p>
-<ul>
-<li>static修饰变量时，其具有默认值，且可改变，且其只能修饰成员变量和成员方法。</li>
-<li>一个static final域只占据一段不能改变的存储空间，且只能在声明时进行初始化。因为其是final的，因而没有默认值；且又是static的，因此在类没有实例化时，其已被赋值，所以只能在声明时初始化。</li>
-</ul>
-<h2 id="四、多态"><a href="#四、多态" class="headerlink" title="四、多态"></a>四、多态</h2><p>继承允许将对象视为它自己本身的类型或基类型加以处理，从而使同一份代码可以毫无差别地运行在这些不同的类型之上。其中，多态方法调用允许一种类型表现出其他相似类型之间的区别，只要这些类型由同一个基类所导出。所以，多态的作用主要体现在两个方面：</p>
-<ul>
-<li>多态通过分离做什么和怎么做，从另一个角度将接口和实现分离开来，从而实现将改变的事物与未变的事物分离开来；</li>
-<li>消除类型之间的耦合关系</li>
-</ul>
-<p>1、实现机制</p>
-<p>方法的覆盖很好的体现了多态，但是当使用一个基类引用去调用一个覆盖方法时，到底该调用哪个方法才正确呢？</p>
-<p>将一个方法调用同一个方法主体关联起来被称作绑定。若在程序执行前进行绑定，叫做前期绑定。但是，显然，这种机制并不能解决上面的问题，因为在编译时编译器并不知道上述基类引用到底指向哪个对象。解决的办法就是后期绑定（动态绑定/运行时绑定）：在运行时根据对象的具体类型进行绑定。</p>
-<p>事实上，在java中，除了static方法和final方法外，其他所有的方法都是后期绑定。这样，一个方法声明为final后，可以防止其他人覆盖该方法，但更重要的一点是：这样做可以有效地关闭动态绑定，或者说，告诉编译器不需要对其进行动态绑定，以便为final方法调用生成更有效的代码。</p>
-<p>基于动态绑定机制，我们就可以编写只与基类打交道的代码了，并且这些代码对所有的导出类都可以正确运行。或者说，发送消息给某个对象，让该对象去断定该做什么事情。</p>
-<p>2、向下转型与运行时类型识别</p>
-<p>由于向上转型会丢失具体的类型信息，所以我们可能会想，通过向下转型也应该能够获取类型信息。然而，向上转型是安全的，因为基类不会具有大于导出类的接口。因此，我们通过基类接口发送的消息都能被接受，但是对于向下转型，我们就无法保证了。</p>
-<p>要解决这个问题，必须有某种方法来确保向下转型的正确性，使我们不至于贸然转型到一种错误的类型，进而发出该对象无法接受的消息。在java中，运行时类型识别（RTTI）机制可以处理这个问题，它保证java中所有的转型都会得到检查。所以，即使我们只是进行一次普通的加括弧形式的类型转换，再进入运行期时仍会对其进行检查，以便保证它的确是我们希望的那种类型。如果不是，我们就会得到一个类型转换异常：ClassCastException。</p>
-<p>3、多态的应用举例</p>
-<ul>
-<li>策略模式</li>
-<li>适配器模式</li>
-</ul>
-<h2 id="五、类加载及初始化顺序"><a href="#五、类加载及初始化顺序" class="headerlink" title="五、类加载及初始化顺序"></a>五、类加载及初始化顺序</h2><p>类加载及初始化顺序：父类静态代码块-&gt;子类静态代码块-&gt;父类非静态代码块-&gt;父类构造函数-&gt;子类非静态代码块-&gt;子类构造函数</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SuperClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String STR = <span class="string">&quot;Super Class Static Variable&quot;</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Super Class Static Block:&quot;</span> + STR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SuperClass</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Super Class Constructor Method&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Super Class Block&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectInit</span> <span class="keyword">extends</span> <span class="title">SuperClass</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String STR = <span class="string">&quot;Class Static Variable&quot;</span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Class Static Block:&quot;</span> + STR);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObjectInit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Constructor Method&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;Class Block&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="meta">@SuppressWarnings(&quot;unused&quot;)</span></span><br><span class="line">        ObjectInit a = <span class="keyword">new</span> ObjectInit();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="comment">/* Output:</span></span><br><span class="line"><span class="comment">        Super Class Static Block:Super Class Static Variable</span></span><br><span class="line"><span class="comment">        Class Static Block:Class Static Variable</span></span><br><span class="line"><span class="comment">        Super Class Block</span></span><br><span class="line"><span class="comment">        Super Class Constructor Method</span></span><br><span class="line"><span class="comment">        Class Block</span></span><br><span class="line"><span class="comment">        Constructor Method</span></span><br><span class="line"><span class="comment"> */</span><span class="comment">//:~ </span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>在运行该程序时，所发生的第一件事就是试图访问ObjectInit.main方法（一个static方法），于是加载器开始启动并加载ObjectInit类。在对其加载时，编译器注意到它有一个基类（由关键字extends得知），于是先进行加载其基类。如果该基类还有其自身的基类，那么先加载这个父基类，如此类推（本例中是先加载Object类，再加载SuperClass类，最后加载ObjectInit类）。接下来，根基类中的static域和static代码块会被执行，然后是下一个导出类，以此类推这种方式很重要，因为导出类的static初始化可能会依赖于基类成员能否正确初始化。到此为止，所有的类都已加载完毕，对象就可以创建了。首先，初始化根基类所有的普通成员变量和代码块，然后执行根基类构造器以便创建一个基对象，然后是下一个导出类，依次类推，知道初始化完成。</p>
-<h2 id="六、重载、覆盖与隐藏"><a href="#六、重载、覆盖与隐藏" class="headerlink" title="六、重载、覆盖与隐藏"></a>六、重载、覆盖与隐藏</h2><p>1、重载与覆盖</p>
-<p>重载：如果在一个类中定义了多个同名的方法，但它们有不同的参数（包含三方面：参数个数，参数类型和参数顺序），则称为方法的重载。其中，不能通过访问权限、返回类型和抛出异常进行重载。</p>
-<p>覆盖：子类中定义的某个方法与其父类中某个方法具有相同的方法签名（包含相同的名称和参数列表），则称为方法的覆盖。子类对象使用这个方法时，将调用该方法在子类中的定义，对它而言，父类中该方法的定义被屏蔽了。</p>
-<p>总的来说，重载和覆盖是java多态性的不同表现。前者是一个类中多态性的一种表现，后者是父类与子类之间多态性的一种表现。</p>
-<p>2、实现机制</p>
-<p>重载是一种参数多态机制，即通过方法参数的差异实现多态机制。并且，其属于一种静态绑定机制，在编译时已经知道具体执行哪个方法。</p>
-<p>覆盖是一种动态绑定的多态机制。即，在父类与子类中具有相同签名的方法具有不同的具体实现，至于最终执行哪个方法根据运行时的实际情况而定。</p>
-<p><strong>覆盖与隐藏</strong></p>
-<p>定义：</p>
-<p>覆盖：指运行时系统调用当前对象引用<strong>运行时类型</strong>中定义的方法，属于运行期绑定。</p>
-<p>隐藏：指运行时系统调用当前对象引用<strong>编译时类型</strong>中定义的方法，即被声明或者转换为什么类型就调用对应类型中的方法或变量，属于编译器绑定。</p>
-<p>范围：</p>
-<p>覆盖：只针对示例方法。</p>
-<p>隐藏：只针对静态方法和成员变量。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1957,7 +1963,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
