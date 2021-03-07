@@ -150,6 +150,309 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/18/Spring-AOP%E7%90%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/18/Spring-AOP%E7%90%86%E8%A7%A3/" class="post-title-link" itemprop="url">Spring AOP理解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-02-18 16:41:18" itemprop="dateCreated datePublished" datetime="2021-02-18T16:41:18+08:00">2021-02-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-23 21:11:47" itemprop="dateModified" datetime="2021-02-23T21:11:47+08:00">2021-02-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1、AOP概念"><a href="#1、AOP概念" class="headerlink" title="1、AOP概念"></a>1、AOP概念</h2><p>面向切面编程，指扩展功能不修改源代码，将功能代码从业务逻辑代码中分离出来。</p>
+<ul>
+<li>主要功能：日志记录，性能统计，安全控制，事务处理，异常处理等等。</li>
+<li>主要意图：将日志记录，性能统计，安全控制，事务处理，异常处理等代码从业务逻辑代码中划分出来，通过对这些行为的分离，我们希望可以将它们独立到非指导业务逻辑的方法中，进而改变这些行为的时候不影响业务逻辑的代码。</li>
+</ul>
+<h2 id="2、AOP特点"><a href="#2、AOP特点" class="headerlink" title="2、AOP特点"></a>2、AOP特点</h2><blockquote>
+<p>采用横向抽取机制，取代了传统纵向继承体系重复性代码</p>
+</blockquote>
+<h2 id="3、AOP底层实现"><a href="#3、AOP底层实现" class="headerlink" title="3、AOP底层实现"></a>3、AOP底层实现</h2><p>AOP底层使用动态代理实现。包括两种方式：</p>
+<ul>
+<li>使用JDK动态代理实现</li>
+<li>使用cglib来实现</li>
+</ul>
+<p><strong>JDK动态代理实现：</strong></p>
+<p> 只能对实现了接口的类生成代理，而不是针对类，该目标类型实现的接口都将被代理。原理是通过在运行期间创建一个接口的实现类来完成对目标对象的代理。步骤如下：</p>
+<ol>
+<li>定义一个实现接口<code>InvocationHandler</code>的类</li>
+<li>通过构造函数，注入被代理类</li>
+<li>实现<code>invoke（ Object proxy, Method method, Object[] args）</code>方法</li>
+<li>在主函数中获得被代理类的类加载器</li>
+<li>使用<code>Proxy.newProxyInstance( )</code>产生一个代理对象</li>
+<li>通过代理对象调用各种方法</li>
+</ol>
+<p><strong>cglib动态代理实现：</strong></p>
+<p>针对类实现代理，对是否实现接口无要求。原理是对指定的类生成一个子类，覆盖其中的方法，因为是继承，所以被代理的类或方法最好不要声明为final类型。</p>
+<ul>
+<li>定义一个实现了<code>MethodInterceptor</code>接口的类</li>
+<li>实现其<code>intercept（）</code>方法，在其中调用<code>proxy.invokeSuper( )</code></li>
+</ul>
+<p><strong>代理方式的选择</strong></p>
+<ol>
+<li>如果目标对象实现了接口，默认情况下回采用JDK的动态代理实现AOP，也可以强制使用cglib实现AOP</li>
+<li>如果目标对象没有实现接口，必须采用cglib库，Spring会自动在JDK动态代理和cglib之间转换</li>
+</ol>
+<p><strong>静态代理和动态代理的区别：</strong></p>
+<ul>
+<li>静态代理：自己编写创建代理类，然后再进行编译，在程序运行前，代理类的.class文件就已经存在了。</li>
+<li>动态代理：在实现阶段不用关心代理谁，而在运行阶段（通过反射机制）才指定代理哪一个对象。</li>
+</ul>
+<h2 id="AOP原理"><a href="#AOP原理" class="headerlink" title="AOP原理"></a>AOP原理</h2><p><img src="https://img-blog.csdn.net/20170716175506888?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjU4Mjc4NDU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p><img src="https://img-blog.csdn.net/20170716175528540?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjU4Mjc4NDU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<h2 id="5、AOP操作术语"><a href="#5、AOP操作术语" class="headerlink" title="5、AOP操作术语"></a>5、AOP操作术语</h2><ul>
+<li><strong>Joinpoint(连接点)</strong>: 类里面可以被增强的方法，这些方法称为连接点</li>
+<li><strong>Pointcut(切入点)</strong>:所谓切入点是指我们要对哪些Joinpoint进行拦截的定义</li>
+<li><strong>Advice(通知/增强)</strong>:所谓通知是指拦截到Joinpoint之后所要做的事情就是通知.通知分为前置通知,后置通知,异常通知,最终通知,环绕通知(切面要完成的功能)</li>
+<li><strong>Aspect(切面)</strong>: 是切入点和通知（引介）的结合</li>
+<li><strong>Introduction(引介)</strong>:引介是一种特殊的通知在不修改类代码的前提下, Introduction可以在运行期为类动态地添加一些方法或Field.</li>
+<li><strong>Target(目标对象)</strong>:代理的目标对象(要增强的类)</li>
+<li><strong>Weaving(织入)</strong>:是把增强应用到目标的过程，把advice 应用到 target的过程</li>
+<li><strong>Proxy（代理）</strong>:一个类被AOP织入增强后，就产生一个结果代理类  </li>
+</ul>
+<p>其实我们只需要这么记忆即可：</p>
+<ul>
+<li><p><strong><em>\</em>切入点：**</strong>在类里边可以有很多方法被增强，比如实际操作中，只是增强了个别方法，则定义实际被增强的某个方法为切入点。</p>
+</li>
+<li><p><strong>通知/增强：</strong></p>
+<p>增强的逻辑，称为增强，比如扩展日志功能，这个日志功能称为增强。包括：</p>
+<ul>
+<li><strong>前置通知</strong>：在方法之前执行</li>
+<li><strong>后置通知</strong>：在方法之后执行</li>
+<li><strong>异常通知</strong>：方法出现异常执行</li>
+<li><strong>最终通知</strong>：在后置之后执行</li>
+<li><strong>环绕通知</strong>：在方法之前和之后执行</li>
+</ul>
+</li>
+<li><p><strong><em>切面：*</em></strong>把增强应用到具体方法上面的过程称为切面。</p>
+</li>
+</ul>
+<h2 id="6、AOP操作案例"><a href="#6、AOP操作案例" class="headerlink" title="6、AOP操作案例"></a>6、AOP操作案例</h2><p><strong>导入和AOP相关的jar包</strong></p>
+<p><img src="https://img-blog.csdn.net/20170716180550635?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjU4Mjc4NDU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p><strong>创建Spring核心配置文件，导入aop约束</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:aop</span>=<span class="string">&quot;http://www.springframework.org/schema/aop&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>使用表达式配置切入点</strong></p>
+<p>常用的表达式：<br>execution(&lt;访问修饰符&gt;?&lt;返回类型&gt;&lt;方法名&gt;(&lt;参数&gt;)&lt;异常&gt;)</p>
+<ul>
+<li>execution(* cn.itcast.aop.Book.add(..))</li>
+<li>execution(* cn.itcast.aop.Book.*(..))</li>
+<li>execution(* <em>.</em>(..))</li>
+<li>匹配所有save开头的方法 execution(* save*(..))</li>
+</ul>
+<h2 id="7、举例"><a href="#7、举例" class="headerlink" title="7、举例"></a>7、举例</h2><p>1、首先定义一个Book类，里边有方法add（），也就是切入点（被增强的方法）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.ywq.aop;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;add...........&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、定义一个MyBook类，里边有可以用来增强的方法，即某些功能方法代码。我们要实现的就是将某些功能方法加入切入点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.ywq.aop;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> org.aspectj.lang.ProceedingJoinPoint;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyBook</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">before1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;前置增强......&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">after1</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;后置增强......&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//环绕通知</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">around1</span><span class="params">(ProceedingJoinPoint proceedingJoinPoint)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">		<span class="comment">//方法之前</span></span><br><span class="line">		System.out.println(<span class="string">&quot;方法之前.....&quot;</span>);</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//执行被增强的方法</span></span><br><span class="line">		proceedingJoinPoint.proceed();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//方法之后</span></span><br><span class="line">		System.out.println(<span class="string">&quot;方法之后.....&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、核心配置文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:aop</span>=<span class="string">&quot;http://www.springframework.org/schema/aop&quot;</span> <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd&quot;</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">&lt;!-- 1  配置对象 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;book&quot;</span> <span class="attr">class</span>=<span class="string">&quot;cn.ywq.aop.Book&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;myBook&quot;</span> <span class="attr">class</span>=<span class="string">&quot;cn.ywq.aop.MyBook&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">&lt;!-- 2 配置aop操作 --&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">		<span class="comment">&lt;!-- 2.1 配置切入点 --&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">expression</span>=<span class="string">&quot;execution(* cn.ywq.aop.Book.*(..))&quot;</span> <span class="attr">id</span>=<span class="string">&quot;pointcut1&quot;</span>/&gt;</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">&lt;!-- 2.2 配置切面 </span></span><br><span class="line"><span class="comment">			把增强用到方法上面</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">aop:aspect</span> <span class="attr">ref</span>=<span class="string">&quot;myBook&quot;</span>&gt;</span></span><br><span class="line">			<span class="comment">&lt;!-- 配置增强类型 </span></span><br><span class="line"><span class="comment">				method： 增强类里面使用哪个方法作为前置</span></span><br><span class="line"><span class="comment">			--&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">aop:before</span> <span class="attr">method</span>=<span class="string">&quot;before1&quot;</span> <span class="attr">pointcut-ref</span>=<span class="string">&quot;pointcut1&quot;</span>/&gt;</span></span><br><span class="line">			</span><br><span class="line">			<span class="tag">&lt;<span class="name">aop:after-returning</span> <span class="attr">method</span>=<span class="string">&quot;after1&quot;</span> <span class="attr">pointcut-ref</span>=<span class="string">&quot;pointcut1&quot;</span>/&gt;</span></span><br><span class="line">			</span><br><span class="line">			<span class="tag">&lt;<span class="name">aop:around</span> <span class="attr">method</span>=<span class="string">&quot;around1&quot;</span> <span class="attr">pointcut-ref</span>=<span class="string">&quot;pointcut1&quot;</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">aop:aspect</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br><span class="line">	</span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>4、测试类如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.ywq.aop;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> org.junit.Test;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.ApplicationContext;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestAnno</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Test</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		ApplicationContext context = </span><br><span class="line">				<span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;bean3.xml&quot;</span>);</span><br><span class="line">		Book book = (Book) context.getBean(<span class="string">&quot;book&quot;</span>);</span><br><span class="line">		book.add();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>5、结果如下：        </p>
+<p><img src="https://img-blog.csdn.net/20170716181323013?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMjU4Mjc4NDU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>以上就是使用aop的一个基本简单介绍，这样便可以在业务逻辑代码前后加一些功能性代码了，比如<strong>日志记录，性能统计，安全控制，事务处理，异常处理</strong>。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/18/spring-core%E6%BA%90%E7%A0%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/18/spring-core%E6%BA%90%E7%A0%81/" class="post-title-link" itemprop="url">spring-core源码</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-18 11:55:17 / 修改时间：12:41:32" itemprop="dateCreated datePublished" datetime="2021-02-18T11:55:17+08:00">2021-02-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="基本"><a href="#基本" class="headerlink" title="基本"></a>基本</h1><p>本部分从最基本的Spring开始。配置文件:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span>    </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span>    </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;base.SimpleBean&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>启动代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ClassPathXmlApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;config.xml&quot;</span>);</span><br><span class="line">    SimpleBean bean = context.getBean(SimpleBean.class);</span><br><span class="line">    bean.send();</span><br><span class="line">    context.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>SimpleBean</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleBean</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;I am send method from SimpleBean!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ClassPathXmlApplicationContext"><a href="#ClassPathXmlApplicationContext" class="headerlink" title="ClassPathXmlApplicationContext"></a>ClassPathXmlApplicationContext</h2><p>整个继承体系如下：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/ResourceLoader.jpg" alt="ResourceLoader继承体系"></p>
+<p>ResourceLoader代表了<strong>加载资源的一种方式，正是策略模式的实现。</strong></p>
+<p>构造器源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ClassPathXmlApplicationContext</span><span class="params">(String[] configLocations, <span class="keyword">boolean</span> refresh, ApplicationContext parent)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//null</span></span><br><span class="line">    <span class="keyword">super</span>(parent);</span><br><span class="line">    setConfigLocations(configLocations);</span><br><span class="line">    <span class="comment">//默认true</span></span><br><span class="line">    <span class="keyword">if</span> (refresh) &#123;</span><br><span class="line">        refresh();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h3><p>首先看父类构造器，沿着继承体系一直向上调用，直到AbstractApplicationContext:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractApplicationContext</span><span class="params">(ApplicationContext parent)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>();</span><br><span class="line">    setParent(parent);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractApplicationContext</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.resourcePatternResolver = getResourcePatternResolver();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>getResourcePatternResolver:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> ResourcePatternResolver <span class="title">getResourcePatternResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> PathMatchingResourcePatternResolver(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PathMatchingResourcePatternResolver支持Ant风格的路径解析。</p>
+<h3 id="设置配置文件路径"><a href="#设置配置文件路径" class="headerlink" title="设置配置文件路径"></a>设置配置文件路径</h3><p>即AbstractRefreshableConfigApplicationContext.setConfigLocations:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setConfigLocations</span><span class="params">(String... locations)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (locations != <span class="keyword">null</span>) &#123;</span><br><span class="line">        Assert.noNullElements(locations, <span class="string">&quot;Config locations must not be null&quot;</span>);</span><br><span class="line">        <span class="keyword">this</span>.configLocations = <span class="keyword">new</span> String[locations.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; locations.length; i++) &#123;</span><br><span class="line">            <span class="keyword">this</span>.configLocations[i] = resolvePath(locations[i]).trim();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">this</span>.configLocations = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>resolvePath:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">resolvePath</span><span class="params">(String path)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getEnvironment().resolveRequiredPlaceholders(path);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此方法的目的在于将占位符(placeholder)解析成实际的地址。比如可以这么写: <code>new ClassPathXmlApplicationContext(&quot;classpath:config.xml&quot;);</code>那么classpath:就是需要被解析的。</p>
+<p>getEnvironment方法来自于ConfigurableApplicationContext接口，源码很简单，如果为空就调用createEnvironment创建一个。AbstractApplicationContext.createEnvironment:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> ConfigurableEnvironment <span class="title">createEnvironment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> StandardEnvironment();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Environment接口"><a href="#Environment接口" class="headerlink" title="Environment接口"></a>Environment接口</h4><p>继承体系：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/Environment.jpg" alt="Environment继承体系"></p>
+<p>Environmen接口<strong>代表了当前应用所处的环境。</strong>从此接口的方法可以看出，其主要和profile、Property相关。</p>
+<h5 id="Profile"><a href="#Profile" class="headerlink" title="Profile"></a>Profile</h5><p>Spring Profile特性是从3.1开始的，其主要是为了解决这样一种问题: 线上环境和测试环境使用不同的配置或是数据库或是其它。有了Profile便可以在 不同环境之间无缝切换。<strong>Spring容器管理的所有bean都是和一个profile绑定在一起的。</strong>使用了Profile的配置文件示例:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;develop&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc-develop.properties&quot;</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;production&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc-production.properties&quot;</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">profile</span>=<span class="string">&quot;test&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">&quot;classpath*:jdbc-test.properties&quot;</span>/&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在启动代码中可以用如下代码设置活跃Profile:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">context.getEnvironment().setActiveProfiles(<span class="string">&quot;dev&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h5 id="Property"><a href="#Property" class="headerlink" title="Property"></a>Property</h5><p>这里的Property指的是程序运行时的一些参数，引用注释:</p>
+<blockquote>
+<p>properties files, JVM system properties, system environment variables, JNDI, servlet context parameters, ad-hoc Properties objects,Maps, and so on.</p>
+</blockquote>
+<h4 id="Environment构造器"><a href="#Environment构造器" class="headerlink" title="Environment构造器"></a>Environment构造器</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> MutablePropertySources propertySources = <span class="keyword">new</span> MutablePropertySources(<span class="keyword">this</span>.logger);</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AbstractEnvironment</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    customizePropertySources(<span class="keyword">this</span>.propertySources);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="PropertySources接口"><a href="#PropertySources接口" class="headerlink" title="PropertySources接口"></a>PropertySources接口</h5><p>继承体系：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/PropertySources.jpg" alt="PropertySources继承体系"></p>
+<p>此接口实际上是PropertySource的容器，默认的MutablePropertySources实现内部含有一个CopyOnWriteArrayList作为存储载体。</p>
+<p>StandardEnvironment.customizePropertySources:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** System environment property source name: &#123;<span class="doctag">@value</span>&#125; */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME = <span class="string">&quot;systemEnvironment&quot;</span>;</span><br><span class="line"><span class="comment">/** JVM system properties property source name: &#123;<span class="doctag">@value</span>&#125; */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME = <span class="string">&quot;systemProperties&quot;</span>;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">customizePropertySources</span><span class="params">(MutablePropertySources propertySources)</span> </span>&#123;</span><br><span class="line">    propertySources.addLast(<span class="keyword">new</span> MapPropertySource</span><br><span class="line">        (SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, getSystemProperties()));</span><br><span class="line">    propertySources.addLast(<span class="keyword">new</span> SystemEnvironmentPropertySource</span><br><span class="line">        (SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, getSystemEnvironment()));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="PropertySource接口"><a href="#PropertySource接口" class="headerlink" title="PropertySource接口"></a>PropertySource接口</h5><p>PropertySource接口代表了键值对的Property来源。继承体系：</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/PropertySource.jpg" alt="PropertySource继承体系"></p>
+<p>AbstractEnvironment.getSystemProperties:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title">getSystemProperties</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (Map) System.getProperties();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (AccessControlException ex) &#123;</span><br><span class="line">        <span class="keyword">return</span> (Map) <span class="keyword">new</span> ReadOnlySystemAttributesMap() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> String <span class="title">getSystemAttribute</span><span class="params">(String attributeName)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> System.getProperty(attributeName);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">catch</span> (AccessControlException ex) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">                        logger.info(format(<span class="string">&quot;Caught AccessControlException when accessing system &quot;</span> +</span><br><span class="line">                                <span class="string">&quot;property [%s]; its value will be returned [null]. Reason: %s&quot;</span>,</span><br><span class="line">                                attributeName, ex.getMessage()));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的实现很有意思，如果安全管理器阻止获取全部的系统属性，那么会尝试获取单个属性的可能性，如果还不行就抛异常了。</p>
+<p>getSystemEnvironment方法也是一个套路，不过最终调用的是System.getenv，可以获取jvm和OS的一些版本信息。</p>
+<h4 id="路径Placeholder处理"><a href="#路径Placeholder处理" class="headerlink" title="路径Placeholder处理"></a>路径Placeholder处理</h4><p>AbstractEnvironment.resolveRequiredPlaceholders:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">resolveRequiredPlaceholders</span><span class="params">(String text)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">    <span class="comment">//text即配置文件路径，比如classpath:config.xml</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>.propertyResolver.resolveRequiredPlaceholders(text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>propertyResolver是一个PropertySourcesPropertyResolver对象:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ConfigurablePropertyResolver propertyResolver =</span><br><span class="line">            <span class="keyword">new</span> PropertySourcesPropertyResolver(<span class="keyword">this</span>.propertySources);</span><br></pre></td></tr></table></figure>
+
+<h5 id="ProperytResolver接口"><a href="#ProperytResolver接口" class="headerlink" title="ProperytResolver接口"></a>ProperytResolver接口</h5><p>PropertyResolver继承体系(排除Environment分支):</p>
+<p><img src="https://github.com/seaswalker/spring-analysis/raw/master/note/images/PropertyResolver.jpg" alt="PropertyResolver继承体系"></p>
+<p>此接口正是用来解析PropertyResource。</p>
+<h5 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h5><p>AbstractPropertyResolver.resolveRequiredPlaceholders:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">resolveRequiredPlaceholders</span><span class="params">(String text)</span> <span class="keyword">throws</span> IllegalArgumentException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.strictHelper == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">this</span>.strictHelper = createPlaceholderHelper(<span class="keyword">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> doResolvePlaceholders(text, <span class="keyword">this</span>.strictHelper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> PropertyPlaceholderHelper <span class="title">createPlaceholderHelper</span><span class="params">(<span class="keyword">boolean</span> ignoreUnresolvablePlaceholders)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//三个参数分别是$&#123;, &#125;, :</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> PropertyPlaceholderHelper(<span class="keyword">this</span>.placeholderPrefix, <span class="keyword">this</span>.placeholderSuffix,</span><br><span class="line">        <span class="keyword">this</span>.valueSeparator, ignoreUnresolvablePlaceholders);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>doResolvePlaceholders：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">doResolvePlaceholders</span><span class="params">(String text, PropertyPlaceholderHelper helper)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//PlaceholderResolver接口依然是策略模式的体现</span></span><br><span class="line">    <span class="keyword">return</span> helper.replacePlaceholders(text, <span class="keyword">new</span> PropertyPlaceholderHelper.PlaceholderResolver() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">resolvePlaceholder</span><span class="params">(String placeholderName)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> getPropertyAsRawString(placeholderName);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实代码执行到这里的时候还没有进行xml配置文件的解析，那么这里的解析placeHolder是什么意思呢，原因在于可以这么写:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">System.setProperty(<span class="string">&quot;spring&quot;</span>, <span class="string">&quot;classpath&quot;</span>);</span><br><span class="line">ClassPathXmlApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">&quot;$&#123;spring&#125;:config.xml&quot;</span>);</span><br><span class="line">SimpleBean bean = context.getBean(SimpleBean.class);</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以正确解析。placeholder的替换其实就是字符串操作，这里只说一下正确的属性是怎么来的。实现的关键在于PropertySourcesPropertyResolver.getProperty:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">getPropertyAsRawString</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getProperty(key, String.class, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">protected</span> &lt;T&gt; <span class="function">T <span class="title">getProperty</span><span class="params">(String key, Class&lt;T&gt; targetValueType, <span class="keyword">boolean</span> resolveNestedPlaceholders)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.propertySources != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">for</span> (PropertySource&lt;?&gt; propertySource : <span class="keyword">this</span>.propertySources) &#123;</span><br><span class="line">            Object value = propertySource.getProperty(key);</span><br><span class="line">            <span class="keyword">return</span> value;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>很明显了，就是从System.getProperty和System.getenv获取，但是由于环境变量是无法自定义的，所以其实此处只能通过System.setProperty指定。</p>
+<p>注意，classpath:XXX这种写法的classpath前缀到目前为止还没有被处理。</p>
+<h2 id="refresh"><a href="#refresh" class="headerlink" title="refresh"></a>refresh</h2>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/10/%E5%9B%BE%E8%A7%A3http%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1518,380 +1821,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/01/java-String%E7%BB%BC%E8%BF%B01/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/01/java-String%E7%BB%BC%E8%BF%B01/" class="post-title-link" itemprop="url">java String综述1</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-01 15:45:06 / 修改时间：20:37:34" itemprop="dateCreated datePublished" datetime="2021-02-01T15:45:06+08:00">2021-02-01</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="一、java内存模型与常量池"><a href="#一、java内存模型与常量池" class="headerlink" title="一、java内存模型与常量池"></a>一、java内存模型与常量池</h2><p>1、java内存模型</p>
-<ul>
-<li><p>程序计数器</p>
-<p>多线程时，当线程数超过CPU数量或CPU内核数量，线程之间就要根据时间片轮询抢夺CPU时间资源。因此，每个线程要有一个独立的程序计数器，记录下一条要运行的指令，其为线程私有的内存区域。如果执行的是JAVA方法，计数器记录正在执行的java字节码地址，如果执行的是native方法，则计数器为空。</p>
-</li>
-<li><p>虚拟机栈</p>
-<p>线程私有的，与线程在同一时间创建，是管理java方法执行的内存模型。栈中主要存放一些基本类型的变量数据（int,short,long,byte,float,double,boolean,char）和对象引用。每个方法执行时都会创建一个帧栈来存储方法的变量表、操作数栈、动态链接方法、返回值、返回地址等信息。栈的大小决定了方法调用的可达深度（递归多少层次，或嵌套调用多少层其他方法，-Xss参数可以设置虚拟机栈大小）。栈的大小可以是固定的，或者是动态扩展的。如果请求的栈深度大于最大可用深度，则抛出stackOverflowError；如果栈是可动态扩展的，但没有内存空间支持扩展，则抛出OutofMemoryError。使用jclasslib工具可以查看class类文件的结构。</p>
-</li>
-<li><p>本地方法区</p>
-<p>和虚拟机栈功能相似，但管理的不是java方法，是本地方法，本地方法是用C实现的。</p>
-</li>
-<li><p>java堆</p>
-<p>线程共享的，存放所有对象实例和数组，是垃圾回收的主要区域。堆是一个运行时数据区，类的对象从中分配空间，这些对象通过new、newarray，anewarray和multianewarray等指令建立，它们不需要程序代码来显式的释放。堆可以分为新生代和老年代（tenured）。新生代用于存放刚创建的对象以及年轻的对象，如果对象一直没有被回收，生存得足够长，老年对象就会被移入老年代。新生代又可进一步细分为eden、survivorSpace0、survivorSpace1(s1,tospace)。刚创建的对象都放入eden，s0和s1都至少经过一次GC并幸存。如果幸存对象经过一定实践仍存在，则进入老年代（tenured）。</p>
-</li>
-<li><p>方法区</p>
-<p>线程共享的，用于存放被虚拟机加载的类的元数据信息：如常量、静态变量、即时编译器编译后的代码，也成为永久代。如果hotspot虚拟机确定一个类的定义信息不会被使用，也会将其回收。回收的基本条件至少有：所有该类的实例被回收，而且装载该类的ClassLoader被回收。</p>
-</li>
-</ul>
-<p>2、常量池</p>
-<p>常量池属于类信息的一部分，而类信息反映到JVM内存模型中对应于方法区，也就是说，常量池位于方法区。常量池主要存放两大常量：字面量（Literal）和符号引用（Symbolic ）。其中，字面量主要包括字符串字面量，整型字面量和声明为final的常量值等；而符号引用则属于编译原理方面的概念，包括了下面三类常量：</p>
-<ul>
-<li>类和接口的全限定名</li>
-<li>字段的名称和描述符</li>
-<li>方法的名称和描述符</li>
-</ul>
-<h2 id="二、常量与变量"><a href="#二、常量与变量" class="headerlink" title="二、常量与变量"></a>二、常量与变量</h2><ul>
-<li><p>一般把内存地址不变，值可以改变的东西称为变量，换句话说，在内存地址不变的前提下内存的内容是可变的，例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">String_2</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">f</span><span class="params">()</span></span>&#123;</span><br><span class="line">        Human_1 h =<span class="keyword">new</span> Human_1(<span class="number">1</span>,<span class="number">30</span>);</span><br><span class="line">        Human_1 h2=h;</span><br><span class="line">        System.out.printf(<span class="string">&quot;h: %s\n&quot;</span>,h.toString());</span><br><span class="line">        Syytem.out.printf(<span class="string">&quot;h2: %s\n\n&quot;</span>,h.toString());</span><br><span class="line">        h.id=<span class="number">3</span>;</span><br><span class="line">        h.age=<span class="number">32</span>;</span><br><span class="line">        System.out.printf(<span class="string">&quot;h:%s\n&quot;</span>,h.toString());</span><br><span class="line">        System.out.printf(<span class="string">&quot;h2:%s\n\n&quot;</span>,h.toString());</span><br><span class="line">        </span><br><span class="line">        System.out.println(h==h2);	<span class="comment">//引用值不变，即对象内存底子不变，但内容改变</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们一般把若内存地址不变，则值也不可以改变的东西称为常量，典型的String就是不可变的，所以称之为常量（constant）。此外，我们可以通过final关键字来定义常量，但严格来说，只有基本类型被其修饰后才是常量（对基本类型来说是其值不可变，而对于对象变量来说其引用不可再变）。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> i=<span class="number">5</span>;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h2 id="三、String定义与基础"><a href="#三、String定义与基础" class="headerlink" title="三、String定义与基础"></a>三、String定义与基础</h2><ol>
-<li><p>String的声明</p>
-<p>由JDK中关于String的声明可以知道：</p>
-<ol>
-<li>不同字符串可能共享同一个底层char数组，例如字符串String s=”abc”与s.substring(1)就共享同一个char数组：char[] c={‘a’,’b’,’c’}。其中，前者的offset和count的值分别为0和3，后者的offset和count的值分别为1和2.</li>
-<li>offset和count两个成员变量不是多余的，比如，在执行substring操作时。</li>
-</ol>
-</li>
-<li><p>JDK中关于String的描述</p>
-<p>The String class represents character Strings. All string literals(字符串字面值) in java programs, such as “abc”, are implemented as instances of this class. Strings are constant(常量); their values cannot be changed after they are created. String buffers[StringBuilder OR StringBuffer] support mutable strings. Because String objects are immutable, they can be shared(享元模式).</p>
-</li>
-<li><p>String类所内置的操作</p>
-<p>The class String includes methods for examining individual characters of the sequence, for examining individual characters of the sequence, for comparing strings, for searching strings, for extracting substrings and for creating a copy of a string with all characters translated to uppercase or to lowercase. Case mapping is based on the Unicode standard version specified by the java.lang.Character class.</p>
-</li>
-</ol>
-<p>4、字符串串联符号（”+”）以及将其他对象转换为字符串的特殊支持</p>
-<p>　　The Java language provides special support for the <strong>string concatenation operator (+)</strong>, and for conversion of other objects to strings. String concatenation is implemented through the <strong>StringBuilder(JDK1.5 以后) OR StringBuffer(JDK1.5 以前)</strong> class and <strong>its append method</strong>. String conversions(转化为字符串) are implemented through the method <strong>toString</strong>, defined by class Object and inherited by all classes in Java.</p>
-<p>注意：</p>
-<ul>
-<li><p>String不属于八种基本数据类型，String的实例是一个对象。因为对象的默认值是null，所以String的默认值也是null；但它又是一种特殊的对象，有其他对象没有的一些特性(String的不可变性导致其像八种基本类型一样，比如，作为方法参数时，像基本类型的传值效果一样)。例如，以下代码片段：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StringTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">changeStr</span><span class="params">(String str)</span></span>&#123;</span><br><span class="line">        String s=str;</span><br><span class="line">        str+=<span class="string">&quot;welcome&quot;</span>;</span><br><span class="line">        System.out.println(s);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        String str=<span class="string">&quot;1234&quot;</span>;</span><br><span class="line">        changeStr(str);</span><br><span class="line">        System.out.println(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/* Output: </span></span><br><span class="line"><span class="comment">        1234</span></span><br><span class="line"><span class="comment">        1234 </span></span><br><span class="line"><span class="comment">*/</span><span class="comment">//:~ </span></span><br></pre></td></tr></table></figure>
-</li>
-<li><p>new String()和new String(“”都是声明一个新的空字符串)，是空串不是null；</p>
-</li>
-</ul>
-<h2 id="四、String的不可变性"><a href="#四、String的不可变性" class="headerlink" title="四、String的不可变性"></a>四、String的不可变性</h2><p>1、什么是不可变对象？</p>
-<p>众所周知，在java中，String类是不可变类（基本类型的包装类都是不可改变的）的典型代表，也是Immutable设计模式的典型应用。String变量一旦初始化后就不能更改，禁止改变对象的状态，从而增加共享对象的坚固性、减少对象访问的错误，同时还避免了在多线程共享时进行同步的需要。什么是不可变的对象呢？可以这样认为：如果一个对象，在它创建完成之后，不能再改变它的状态，那么这个对象就是不可变的。不能改变状态指的是不能改变对象内的成员变量，包括：</p>
-<ul>
-<li>基本数据类型的值不能改变；</li>
-<li>引用类型的变量不能指向其他的对象；</li>
-<li>引用类型指向的对象的状态也不能改变；</li>
-</ul>
-<p>除此之外，还应具有以下特点：</p>
-<ul>
-<li>除了构造函数之外，不应该有其他任何函数（至少是任何public函数）修改任何成员变量；</li>
-<li>任何使成员变量获得新值的函数都应该将新的值保存在新的对象中，而保持原来的对象不被修改。</li>
-</ul>
-<p>2、区分引用和对象</p>
-<p>对于java初学者，对于String是不可变对象总是存有疑惑。看下面代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="string">&quot;ABCabc&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;s = &quot;</span> + s);    <span class="comment">// s = ABCabc</span></span><br><span class="line"></span><br><span class="line">s = <span class="string">&quot;123456&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;s = &quot;</span> + s);    <span class="comment">// s = 123456</span></span><br></pre></td></tr></table></figure>
-
-<p>首先创建了一个String对象s，然后让s的值为”ABCabc“，然后又让s的值为”1234560“。从打印结果可以看出，s的值确实改变了。那么怎么还说String对象是不可变的呢？其实这里存在一个误区：s只是一个String对象的引用，并不是对象本身。对象在内存中是一块内存区，成员变量越多，这块内存区占的空间越大。引用只是一个4字节的数据，里面存放了它所指向的对象的地址，通过这个地址可以访问对象。也就是说，s只是一个引用，它指向了一个具体的对象，当s=”123456”；这句代码执行过之后，又创建了一个新的对象”123456“，而引用s重新指向了这个心的对象，原来的对象”ABCabc”还在内存中存在，并没有改变。</p>
-<p>Java和C++的一个不同点是，<strong>在 Java 中，引用是访问、操纵对象的唯一方式： 我们不可能直接操作对象本身，所有的对象都由一个引用指向，必须通过这个引用才能访问对象本身</strong>，包括获取成员变量的值，改变对象的成员变量，调用对象的方法等。而在C++中存在引用，对象和指针三个东西，这三个东西都可以访问对象。其实，Java中的引用和C++中的指针在概念上是相似的，他们都是存放的对象在内存中的地址值，只是在Java中，引用丧失了部分灵活性，比如Java中的引用不能像C++中的指针那样进行加减运算。</p>
-<p>3、为什么String对象是不可变的？</p>
-<p>在JDK1.6中，String的成员变量有以下几个：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">string</span>&gt;, <span class="title">CharSequence</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The offset is the first index of the storage that is used. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> offset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The count is the number of characters in the String. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Cache the hash code for the string */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0&lt;/string&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>在JDK1.7中，String类做了一些改动，主要是改变了substring方法执行时的行为，这和本文的主题不相关。JDK1.7中String类的主要成员变量就剩下了两个：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">string</span>&gt;, <span class="title">CharSequence</span> </span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Cache the hash code for the string */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0&lt;/string&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>在java中，String类其实就是对字符数组的封装。JDK6中，value是String封装的数组，offset是String在这个value数组中的起始位置，count是String所占的字符的个数。在JDK7中，只有一个value变量，也就是value中的所有字符都是属于String这个对象的。这个改变不影响本文的讨论。除此之外还有一个hash成员变量，是该String对象的哈希值的缓存，这个成员的变量也和本文的讨论无关。在java中，数组也是对象。所以value也只是一个引用，它指向一个真正的数组对象。其实执行了String s =”ABCabc”；这句代码之后，真正的内存布局应该是这样的：</p>
-<p>value、offset和count这三个变量都是private的，并且没有提供setValue，setOffset和setCount等公共方法来修改这些值，所以在String类的外部无法修改String。也就是说一旦初始化就不能修改，并且在String类的外部不能访问这三个成员。此外，value，offset和count这三个变量都是final的，也就是说在String类内部，一旦这三个值初始化了，也不能被改变。所以，可以认为String对象是不可变的了。</p>
-<p>那么在String中，明明存在一些方法，调用他们可以得到改变后的值。这些方法包括substring， replace， replaceAll， toLowerCase等。例如如下代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String a = <span class="string">&quot;ABCabc&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;a = &quot;</span> + a);    <span class="comment">// a = ABCabc</span></span><br><span class="line"></span><br><span class="line">a = a.replace(<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">System.out.println(<span class="string">&quot;a = &quot;</span> + a);    <span class="comment">//a = aBCabc</span></span><br></pre></td></tr></table></figure>
-
-<p>那么a的值看似改变了，其实也是同样的误区。再次说明， a只是一个引用， 不是真正的字符串对象，在调用a.replace(‘A’, ‘a’)时， 方法内部创建了一个新的String对象，并把这个心的对象重新赋给了引用a。</p>
-<p>我们可以自己查看其他方法，都是在方法内部重新创建新的String对象，并且返回这个新的对象，原来的对象是不会被改变的。这也是为什么像replace， substring，toLowerCase等方法都存在返回值的原因。也是为什么像下面这样调用不会改变对象的值：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String ss = <span class="string">&quot;123456&quot;</span>;</span><br><span class="line">System.out.println(<span class="string">&quot;ss = &quot;</span> + ss);     <span class="comment">// ss = 123456</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">ss.replace(<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;0&#x27;</span>);</span><br><span class="line">System.out.println(<span class="string">&quot;ss = &quot;</span> + ss);     <span class="comment">//ss = 123456</span></span><br></pre></td></tr></table></figure>
-
-<p>4、String对象真的不可变吗？</p>
-<p>String的成员变量是private final的，也就是初始化之后不可改变。那么在这几个成员中，value比较特殊，因为他是一个引用变量，而不是真正的对象。value是final修饰的，也就是说final不能再指向其他数组对象，那么我能改变value指向的数组吗？比如，将数组中的某个位置上的字符变为下划线”_”。至少在我们自己写的普通代码中不能够做到，因为我们根本不能够访问到这个value引用，更不能通过这个引用去修改数组，那么用什么方式可以访问私有成员呢？没错，用反射，可以反射出String对象中的value属性，进而改变通过获得的value引用改变数组的结构。下面是实例代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testReflection</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建字符串&quot;Hello World&quot;， 并赋给引用s</span></span><br><span class="line">    String s = <span class="string">&quot;Hello World&quot;</span>; </span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;s = &quot;</span> + s); <span class="comment">//Hello World</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取String类中的value字段</span></span><br><span class="line">    Field valueFieldOfString = String.class.getDeclaredField(<span class="string">&quot;value&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//改变value属性的访问权限</span></span><br><span class="line">    valueFieldOfString.setAccessible(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取s对象上的value属性的值</span></span><br><span class="line">    <span class="keyword">char</span>[] value = (<span class="keyword">char</span>[]) valueFieldOfString.get(s);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//改变value所引用的数组中的第5个字符</span></span><br><span class="line">    value[<span class="number">5</span>] = <span class="string">&#x27;_&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;s = &quot;</span> + s);  <span class="comment">//Hello_World</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在这个过程中，s始终引用的同一个String对象，但是再反射前后，这个String对象发生了变化，也就是说，通过反射是可以修改所谓的“不可变”对象的。但是一般不这么做。这个反射的实例还可以说明一个问题：如果一个对象，它组合的其他对象的状态是可以改变的，那么这个对象很可能不是不可变对象。例如一个Car对象，它组合了一个Wheel对象，虽然这个Wheel对象声明成了private final的，但是这个Wheel对象内部的状态可以改变，那么就不能很好的保证Car对象不可变。</p>
-<h2 id="五、String对象创建方式"><a href="#五、String对象创建方式" class="headerlink" title="五、String对象创建方式"></a>五、String对象创建方式</h2><p>1、字面值形式：JVM会自动根据字符串常量池中字符串的实际情况来决定是否创建新对象（要么不创建，要么创建一个对象，关键要看常量池中有没有）</p>
-<p>JDK中明确指出：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String s=<span class="string">&quot;abc&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>等价于：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> data[] =&#123;<span class="string">&#x27;a&#x27;</span>,<span class="string">&#x27;b&#x27;</span>,<span class="string">&#x27;c&#x27;</span>&#125;;</span><br><span class="line">String str = <span class="keyword">new</span> String(data);</span><br></pre></td></tr></table></figure>
-
-<p>这该种方式先在栈中创建一个对String类的对象引用变量s，然后去查找 “abc”是否被保存在字符串常量池中。<strong>若”abc”已经被保存在字符串常量池中，则在字符串常量池中找到值为”abc”的对象，然后将s 指向这个对象</strong>; 否则，<strong>在 \</strong>堆** 中创建char数组 data，然后在 *<em>堆*</em> 中创建一个String对象object，它由 data 数组支持，紧接着这个String对象 object 被存放进字符串常量池，最后将 s 指向这个对象。**</p>
-<p>例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test01</span><span class="params">()</span></span>&#123;  </span><br><span class="line">    String s0 = <span class="string">&quot;kvill&quot;</span>;        <span class="comment">// 1</span></span><br><span class="line">    String s1 = <span class="string">&quot;kvill&quot;</span>;        <span class="comment">// 2</span></span><br><span class="line">    String s2 = <span class="string">&quot;kv&quot;</span> + <span class="string">&quot;ill&quot;</span>;     <span class="comment">// 3</span></span><br><span class="line">    System.out.println(s0 == s1);       <span class="comment">// true  </span></span><br><span class="line">    System.out.println(s0 == s2);       <span class="comment">// true  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>执行第 1 行代码时，“kvill” 入池并被 s0 指向；执行第 2 行代码时，s1 从常量池查询到” kvill” 对象并直接指向它；所以，s0 和 s1 指向同一对象。 由于 ”kv” 和 ”ill” 都是字符串字面值，所以 s2 在编译期由编译器直接解析为 “kvill”，所以 s2 也是常量池中”kvill”的一个引用。 所以，我们得出 s0==s1==s2;</p>
-<p>2.通过new创建字符串对象：一概在堆中创建新对象，无论字符串字面值是否相等（要么创建一个，要么创建两个对象，关键要看常量池中有没有）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;abc&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>等价于：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String original=<span class="string">&quot;abc&quot;</span>;</span><br><span class="line">String s=<span class="keyword">new</span> String(original);</span><br></pre></td></tr></table></figure>
-
-<p>所以，<strong>通过 new 操作产生一个字符串（“abc”）时，会先去常量池中查找是否有“abc”对象，如果没有，则创建一个此字符串对象并放入常量池中。然后，在堆中再创建“abc”对象，并返回该对象的地址。</strong>所以，<strong>对于 String str=new String(“abc”)**：</strong>如果常量池中原来没有”abc”，则会产生两个对象（一个在常量池中，一个在堆中）；否则，产生一个对象。**</p>
-<p>用new String()创建的字符串对象位于堆中，而不是常量池中，它们有自己独立的地址空间，例如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">test02</span><span class="params">()</span></span>&#123;  </span><br><span class="line">    String s0 = <span class="string">&quot;kvill&quot;</span>;  </span><br><span class="line">    String s1 = <span class="keyword">new</span> String(<span class="string">&quot;kvill&quot;</span>);  </span><br><span class="line">    String s2 = <span class="string">&quot;kv&quot;</span> + <span class="keyword">new</span> String(<span class="string">&quot;ill&quot;</span>);  </span><br><span class="line">    String s = <span class="string">&quot;ill&quot;</span>;</span><br><span class="line">    String s3 = <span class="string">&quot;kv&quot;</span> + s;    </span><br><span class="line">    System.out.println(s0 == s1);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s0 == s2);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s1 == s2);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s0 == s3);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s1 == s3);       <span class="comment">// false  </span></span><br><span class="line">    System.out.println(s2 == s3);       <span class="comment">// false  </span></span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
-
-<p>例子中，s0 还是常量池中”kvill”的引用，s1 指向运行时创建的新对象”kvill”，二者指向不同的对象。对于s2，因为后半部分是 new String(“ill”)，所以无法在编译期确定，在运行期会 new 一个 StringBuilder 对象， 并由 StringBuilder 的 append 方法连接并调用其 toString 方法返回一个新的 “kvill” 对象。此外，s3 的情形与 s2 一样，均含有编译期无法确定的元素。因此，以上四个 “kvill” 对象互不相同。StringBuilder 的 toString 为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(value,<span class="number">0</span>,count);	<span class="comment">//new的方式创建字符串</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>构造函数String(String original)的源码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 根据源字符串的底层数组长度与该字符串本身长度是否相等决定是否共用支撑数组</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">String</span><span class="params">(String original)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size = original.count;</span><br><span class="line">    <span class="keyword">char</span>[] originalValue = original.value;</span><br><span class="line">    <span class="keyword">char</span>[] v;</span><br><span class="line">    <span class="keyword">if</span> (originalValue.length &gt; size) &#123;</span><br><span class="line">        <span class="comment">// The array representing the String is bigger than the new</span></span><br><span class="line">        <span class="comment">// String itself. Perhaps this constructor is being called</span></span><br><span class="line">        <span class="comment">// in order to trim the baggage, so make a copy of the array.</span></span><br><span class="line">        <span class="keyword">int</span> off = original.offset;</span><br><span class="line">        v = Arrays.copyOfRange(originalValue, off, off + size);  <span class="comment">// 创建新数组并赋给 v</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// The array representing the String is the same</span></span><br><span class="line">        <span class="comment">// size as the String, so no point in making a copy.</span></span><br><span class="line">        v = originalValue;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">this</span>.offset = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">this</span>.count = size;</span><br><span class="line">    <span class="keyword">this</span>.value = v;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>由源码可以知道，<strong>所创建的对象在大多数情形下会与源字符串 original 共享 char数组 。</strong>但是，<strong>什么情况下不会共享呢？</strong><br>　　<br>　　Take a look at <strong>substring</strong> , and you’ll see how this can happen.</p>
-<p>　　Take for instance String s1 = “Abcd”; String s2 = s1.substring(3). Here s2.size() is 1, but s2.value.length is 4. <strong>This is because s1.value is the same as s2.value. This is done of performance reasons (substring is running in O(1), since it doesn’t need to copy the content of the original String).</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">&quot;Abcd&quot;</span>;       <span class="comment">// s1 的value为Abcd的数组，offset为 0，count为 4</span></span><br><span class="line">String s2 = a.substring(<span class="number">3</span>);      <span class="comment">// s2 的value也为Abcd的数组，offset为 3，count为 1</span></span><br><span class="line">String c = <span class="keyword">new</span> String(s2);      <span class="comment">// s2.value.length 为 4，而 original.count = size = 1, 即 s2.value.length &gt; size 成立</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>Using substring can lead to a memory leak.</strong> Say you have a really long String, and you only want to keep a small part of it. If you just use substring, you will actually keep the original string content in memory. <strong>Doing</strong> <strong>String snippet = new String(reallyLongString.substring(x,y))</strong> , <strong>prevents you from wasting memory backing a large char array no longer needed.</strong></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/01/java%E4%B8%AD%E7%9A%84-equals%E4%B8%8EhashCode%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/01/java%E4%B8%AD%E7%9A%84-equals%E4%B8%8EhashCode%E7%9A%84%E5%8C%BA%E5%88%AB%E4%B8%8E%E8%81%94%E7%B3%BB/" class="post-title-link" itemprop="url">java中的==,equals与hashCode的区别与联系</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-02-01 10:30:44 / 修改时间：14:35:11" itemprop="dateCreated datePublished" datetime="2021-02-01T10:30:44+08:00">2021-02-01</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>1、概念</p>
-<ul>
-<li>==：该操作符生成的是一个boolean结果，它计算的是操作数的值之间的关系</li>
-<li>equals：Object的实例方法，比较两个对象的content是否相同</li>
-<li>hashCode：Object的native方法，获取对象的哈希值，用于确定该对象在哈希表中的索引位置，它实际上是一个int型整数。</li>
-</ul>
-<h2 id="二、关系操作符"><a href="#二、关系操作符" class="headerlink" title="二、关系操作符 =="></a>二、关系操作符 ==</h2><p>1、操作数的值</p>
-<ul>
-<li><p>基本数据类型</p>
-<p>在java中有八种基本数据类型：</p>
-<p>​    浮点型：float(4 byte)，double(8 byte)</p>
-<p>​    整型：byte(1 byte)，short(2 byte)，int（4 byte）,long(8 byte)</p>
-<p>​    字符型：char(2 byte)</p>
-<p>​    布尔型：boolean（JVM规范没有明确规定其所占空间的大小，仅规定其只能够取字面值“true”和”false”</p>
-<p>对于这八种基本数据类型的变量，变量直接存储的是“值”。因此，在使用关系操作符==来进行比较时，比较的就是“值”本身。要注意的是，浮点型和整型都是有符号类型的，而char是无符号类型的。</p>
-</li>
-<li><p>引用类型变量</p>
-<p>在java中，引用类型的变量存储的并不是“值”本身，而是与其关联的对象在内存中的地址。比如下面这行代码，</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String str1;</span><br></pre></td></tr></table></figure>
-
-<p>这句话声明了一个引用类型的变量，此时它没有和任何对象关联。</p>
-<p>而通过new来产生一个对象，并将这个对象和str1进行绑定：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">str1 = <span class="keyword">new</span> String(<span class="string">&quot;hello&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>那么str1就指向了这个对象，此时引用变量str1中存储的是它指向在内存中的存储地址，并不是“值”本身，也就是说并不是直接存储的字符串“hello”。这里面的引用和C/C++中的指针很类似。</p>
-</li>
-</ul>
-<p>2、小结</p>
-<p>因此，对于关系操作符==：</p>
-<ul>
-<li>若操作的类型是基本数据类型，则该关系操作符判断的是左右两边操作数的值是否相等。</li>
-<li>若操作数的类型是引用数据类型，则该关系操作符判断的是左右两边操作数的内存地址是否相同。也就是说，若此时返回true，则该操作符作用的一定是同一个对象。</li>
-</ul>
-<h2 id="三、equals方法"><a href="#三、equals方法" class="headerlink" title="三、equals方法"></a>三、equals方法</h2><p>1、来源</p>
-<p>​    equals方法是基类Object中的实例方法，因此对所有继承于Object的类都会有该方法。</p>
-<p>在Object中的声明：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>2、equals方法的作用</p>
-<p>初衷：判断两个对象的content是否相同</p>
-<p>为了更直观地理解equals方法的作用，先看Object类中equals方法的实现。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>显然，Object类中，equals方法是用来比较两个对象的引用是否相等，即是否指向同一个对象。</p>
-<p>但是String类重写了equals方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object anObject)</span></span>&#123;	<span class="comment">//方法签名与Object类中的一致</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">this</span> == anObject)&#123;	<span class="comment">//先判断引用是否相同（是否为同一对象）</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(anObject <span class="keyword">instanceof</span> String)&#123;	<span class="comment">//再判断类型是否一致，</span></span><br><span class="line">        <span class="comment">//最后判断内容是否一致</span></span><br><span class="line">        String anotherString = (String) anObject;</span><br><span class="line">        <span class="keyword">int</span> n=count;</span><br><span class="line">        <span class="keyword">if</span> (n==anotherString.count)&#123;</span><br><span class="line">            <span class="keyword">char</span> v1[]=value;</span><br><span class="line">            <span class="keyword">char</span> v2[]=anotherString.value;</span><br><span class="line">            <span class="keyword">int</span> i=offset;</span><br><span class="line">            <span class="keyword">int</span> j=anotherString.offset;</span><br><span class="line">            <span class="keyword">while</span> (n--!=<span class="number">0</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span> (v1[i++]!=v2[j++])</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>对于诸如“字符串”比较时用的什么方法，内部实现如何？“之类的回答即为：</p>
-<p>使用equals方法，内部实现分为三个步骤：</p>
-<ul>
-<li>先比较引用是否相同（是否为同一对象）</li>
-<li>再判断类型是否一致（是否为同一类型）</li>
-<li>最后比较内容是否一致</li>
-</ul>
-<p>java中所有内置的类的equals方法的实现步骤均是如此，特别是诸如Integer、Double等包装器类。</p>
-<p>3、equals重写原则</p>
-<p>对象内容的比较才是设计equal()的真正目的，java语言对equals()的要求如下，这些要求是重写该方法时必须遵循的：</p>
-<ul>
-<li>对称性：如果x.equals(y)返回是”true”，那么y.equals(x)也应该返回是”true”；</li>
-<li>自反性：x.equals(x)必须返回是”true“；</li>
-<li>类推性：如果x.equals(y)返回是”true“，而且y.equals(z)返回是”true“，那么z.equals(x)也应该返回是”true“</li>
-<li>一致性：如果x.equals(y)返回是”true”，只要x和y内容一直不变，不管你重复x.equals(y)多少次，返回都是”true“;</li>
-<li>对称性：如果x.equals(y)返回是”true“，那么y.equals(x)也应该返回是”true”。</li>
-<li>任何情况下，x.equals(null) ，永远返回都是”false“；x.equals(和x不同类型的对象)永远返回是”false”.</li>
-</ul>
-<p>4、小结</p>
-<p>因此，对于equals方法：</p>
-<ul>
-<li>其本意是比较两个对象的content是否相同</li>
-<li>必要的时候，我们需要重写该方法，避免违背本意，且要遵循上述原则</li>
-</ul>
-<h2 id="四、hashCode方法"><a href="#四、hashCode方法" class="headerlink" title="四、hashCode方法"></a>四、hashCode方法</h2><p>1、hashCode的来源</p>
-<p>​    hashCode方法是基类Object中的实例native方法，因此对所有继承于Object的类都会有该方法。</p>
-<p>​    在Object类中的声明（native方法暗示这些方法是有实现体的，但不提供实现体，因为其实现体是由非java语言在外面实现的）：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>2、哈希相关概念</p>
-<p>首先了解一下哈希表</p>
-<ul>
-<li><p>概念：哈希就是把任意长度的输入（又叫做预映射，pre-image），通过散列算法，变换成固定长度的输出（int），该输出就是散列值。这种转换是一种压缩映射，也就是说，散列值的空间通常远小于输入的空间。不同的输入可能会散列成相同的输出，从而不可能从散列值来唯一的确定输入值，简单的说，就是一种将任意长度的消息压缩到某一固定长度的消息摘要的函数。</p>
-</li>
-<li><p>应用-数据结构：数组的特点是存址容易，插入和删除困难；而链表的特点是：寻址困难，插入和删除容易。哈希表有一种拉链法，可以理解为链表的数组。如图：</p>
-<p><img src="https://img-blog.csdn.net/20160907231114726" alt="这里写图片描述"></p>
-</li>
-</ul>
-<p>左边很明显是个数组，数组的每个成员是一个链表。该数据结构所容纳的所有元素均包含一个指针，用于元素间的链接。我们根据元素的自身特征把元素分配到不同的链表中去，也是根据这些特征，找到正确的链表，再从链表中找出这个元素。其中，将根据元素特征计算元素数组下标的方法就是散列法。</p>
-<ul>
-<li>拉链法的适用范围：快速查找，删除的基本数据结构，通常需要总数据量可以放入内存。</li>
-<li>要点：hash函数选择，针对字符串，整数，排列，具体相应的hash方法；碰撞处理，一种是open hashing，也称为拉链法，另一种就是closed hashing，也称开地址法，open addressing。</li>
-</ul>
-<p>3、hashCode简述</p>
-<p>在java中，由Object类定义的hashCode方法会针对不同的对象返回不同的整数。</p>
-<p><strong>hashCode 的常规协定是：</strong></p>
-<ul>
-<li>在 Java 应用程序执行期间，在对同一对象多次调用 hashCode 方法时，必须一致地返回相同的整数，前提是将对象进行 equals 比较时所用的信息没有被修改。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。</li>
-<li>如果根据 equals(Object) 方法，两个对象是相等的，那么对这两个对象中的每个对象调用 hashCode 方法都必须生成相同的整数结果。</li>
-<li>如果根据 equals(java.lang.Object) 方法，两个对象不相等，那么对这两个对象中的任一对象上调用 hashCode 方法 <strong>不要求</strong> 一定生成不同的整数结果。但是，程序员应该意识到，为不相等的对象生成不同整数结果可以提高哈希表的性能。</li>
-</ul>
-<p>HashCode只是在需要用到哈希算法的数据结构中才有用，比如HashSet，HashMap和Hashtable。</p>
-<p>java中的集合（Collection）有三类，一类是List，一类是Queue，再有一类就是Set。前两个集合内的元素是有序的，元素可以重复；最后一个集合内的元素无序，但元素不可重复。</p>
-<p>那么, 这里就有一个比较严重的问题：要想保证元素不重复，可两个元素是否重复应该依据什么来判断呢？ 这就是 <strong>Object.equals</strong> 方法了。但是，如果每增加一个元素就检查一次，那么当元素很多时，后添加到集合中的元素比较的次数就非常多了。 也就是说，如果集合中现在已经有1000个元素，那么第1001个元素加入集合时，它就要调用1000次equals方法。这显然会大大降低效率。于是，Java采用了<strong>哈希表的原理</strong>。 这样，我们对每个要存入集合的元素使用哈希算法算出一个值，然后根据该值计算出元素应该在数组的位置。所以，当集合要添加新的元素时，可分为两个步骤：</p>
-<ul>
-<li>先调用这个元素的hashCode方法，然后根据所得到的值计算出元素应该在数组的位置。如果这个位置上没有元素，那么直接将它存储在这个位置上；</li>
-<li>如果这个位置上已经有元素了，那么调用它的equals方法与新元素进行比较：相同的话就不存了，否则将其存在这个位置对应的链表中（Java中HashSet，HashMap和Hashtable的实现总将元素放到链表的表头）。</li>
-</ul>
-<p>4、equals与hashCode</p>
-<p><strong>前提：</strong> 谈到hashCode就不得不说equals方法，二者均是Object类里的方法。由于Object类是所有类的基类，所以一切类里都可以重写这两个方法</p>
-<ul>
-<li><strong>原则 1 ：</strong> 如果 x.equals(y) 返回 “true”，那么 x 和 y 的 hashCode() 必须相等 ；</li>
-<li><strong>原则 2 ：</strong> 如果 x.equals(y) 返回 “false”，那么 x 和 y 的 hashCode() 有可能相等，也有可能不等 ；</li>
-<li><strong>原则 3 ：</strong> 如果 x 和 y 的 hashCode() 不相等，那么 x.equals(y) 一定返回 “false” ；</li>
-<li><strong>原则 4 ：</strong> <strong>一般来讲，equals 这个方法是给用户调用的，而 hashcode 方法一般用户不会去调用 ；</strong></li>
-<li><strong>原则 5 ：</strong> <strong>当一个对象类型作为集合对象的元素时，那么这个对象应该拥有自己的equals()和hashCode()设计，而且要遵守前面所说的几个原则。</strong></li>
-</ul>
-<p>5、实现例证</p>
-<p>hashCode()在Object类中定义如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>说明这是一个本地方法，它的实现是根据本地机制相关的。</p>
-<p>String类是这样重写的：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span>, <span class="title">Comparable</span>&lt;<span class="title">String</span>&gt;, <span class="title">CharSequence</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">/** The value is used for character storage. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> value[];     <span class="comment">//成员变量1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The offset is the first index of the storage that is used. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> offset;      <span class="comment">//成员变量2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">/** The count is the number of characters in the String. */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> count;       <span class="comment">//成员变量3</span></span><br><span class="line"></span><br><span class="line">   <span class="comment">/** Cache the hash code for the string */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> hash; <span class="comment">// Default to 0    //非成员变量</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> h = hash;</span><br><span class="line">        <span class="keyword">int</span> len = count;         <span class="comment">//用到成员变量3</span></span><br><span class="line">    <span class="keyword">if</span> (h == <span class="number">0</span> &amp;&amp; len &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> off = offset;         <span class="comment">//用到成员变量2</span></span><br><span class="line">        <span class="keyword">char</span> val[] = value;       <span class="comment">//用到成员变量1</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">                h = <span class="number">31</span>*h + val[off++];       <span class="comment">//递推公式</span></span><br><span class="line">            &#125;</span><br><span class="line">            hash = h;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> h;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h2><ul>
-<li>hashCode是系统用来快速检索对象而使用</li>
-<li>equals方法本意是用来判断引用的对象是否一致</li>
-<li>重写equals方法和hashCode方法时，equals方法中用到的成员也必定会在hashCode方法中用到，只不过前者作为比较项，后者作为生成摘要的信息项，本质上所用到的数据是一样的，从而保证二者的一致性</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1963,7 +1892,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
