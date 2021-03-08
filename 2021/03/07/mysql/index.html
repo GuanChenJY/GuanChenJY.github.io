@@ -20,15 +20,22 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="InnoDB引擎查看使用的存储引擎命令： 1SHOW VARIABLES LIKE &#39;storage_engine&#39;;  InnoDB存储引擎1.InnoDB是事务型数据库的首选引擎，支持事务安全表（ACID） 事务的ACID属性：即原子性、一致性、隔离性、持久性                         a.原子性：原子性也就是说这组语句要么全部执行，要么全部不执行，如果事">
+<meta property="og:type" content="article">
 <meta property="og:title" content="mysql">
 <meta property="og:url" content="http://example.com/2021/03/07/mysql/index.html">
 <meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="InnoDB引擎查看使用的存储引擎命令： 1SHOW VARIABLES LIKE &#39;storage_engine&#39;;  InnoDB存储引擎1.InnoDB是事务型数据库的首选引擎，支持事务安全表（ACID） 事务的ACID属性：即原子性、一致性、隔离性、持久性                         a.原子性：原子性也就是说这组语句要么全部执行，要么全部不执行，如果事">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdn.net/20180712001245363?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdn.net/20180712091941460?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdn.net/20180712094800640?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="article:published_time" content="2021-03-07T08:16:39.000Z">
-<meta property="article:modified_time" content="2021-03-07T08:16:39.282Z">
+<meta property="article:modified_time" content="2021-03-08T09:08:49.787Z">
 <meta property="article:author" content="GCC">
+<meta property="article:tag" content="Mysql">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20180712001245363?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 
 <link rel="canonical" href="http://example.com/2021/03/07/mysql/">
 
@@ -178,6 +185,13 @@
 
               <time title="创建时间：2021-03-07 16:16:39" itemprop="dateCreated datePublished" datetime="2021-03-07T16:16:39+08:00">2021-03-07</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-08 17:08:49" itemprop="dateModified" datetime="2021-03-08T17:08:49+08:00">2021-03-08</time>
+              </span>
 
           
 
@@ -190,7 +204,74 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h2 id="InnoDB引擎"><a href="#InnoDB引擎" class="headerlink" title="InnoDB引擎"></a>InnoDB引擎</h2><p>查看使用的存储引擎命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE &#39;storage_engine&#39;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="InnoDB存储引擎"><a href="#InnoDB存储引擎" class="headerlink" title="InnoDB存储引擎"></a>InnoDB存储引擎</h3><p>1.InnoDB是事务型数据库的首选引擎，支持事务安全表（ACID）</p>
+<p>事务的ACID属性：即原子性、一致性、隔离性、持久性</p>
+<pre><code>                        a.原子性：原子性也就是说这组语句要么全部执行，要么全部不执行，如果事务执行到一半出现错误，数据库就要回滚到事务开始执行的地方。
+
+                         实现：主要是基于MySQ日志系统的redo和undo机制。事务是一组SQL语句，里面有选择，查询、删除等功能。每条语句执行会有一个节点。例如，删除语句执行后，在事务中有个记录保存下来，这个记录中储存了我们什么时候做了什么事。如果出错了，就会回滚到原来的位置，redo里面已经存储了我做过什么事了，然后逆向执行一遍就可以了。
+
+                            b.一致性：事务开始前和结束后，数据库的完整性约束没有被破坏。（eg:比如A向B转账，不可能A扣了钱，B却没有收到）
+
+                            c.隔离性：同一时间，只允许一个事务请求同一数据，不同的事务之间彼此没有任何干扰；
+
+                            如果不考虑隔离性则会出现几个问题：
+
+                             i、脏读：是指在一个事务处理过程里读取了另一个未提交的事务中的数据（当一个事务正在多次修改某个数据，而在这个事务中这多次的修改都还未提交，这时一个并发的事务来访问该数据，就会造成两个事务得到的数据不一致）；（读取了另一个事务未提交的脏数据）
+
+                             ii、不可重复读：在对于数据库中的某个数据，一个事务范围内多次查询却返回了不同的数据值，这是由于在查询间隔，被另一个事务修改并提交了；（读取了前一个事务提交的数据，查询的都是同一个数据项）
+
+                             iii、虚读（幻读）：是事务非独立执行时发生的一种现象（eg:事务T1对一个表中所有的行的某个数据项做了从“1”修改为“2”的操作，这时事务T2又对这个表中插入了一行数据项，而这个数据项的数值还是为“1”并且提交给数据库。而操作事务T1的用户如果再查看刚刚修改的数据，会发现还有一行没有修改，其实这行是从事务T2中添加的，就好像产生幻觉一样）；（读取了前一个事务提交的数据，针对一批数据整体）
+
+                            d.持久性：事务完成后，事务对数据库的所有更新将被保存到数据库，不能回滚</code></pre>
+<p>2.InnoDB是mySQL默认的存储引擎，默认的隔离级别是RR，并且在RR的隔离级别下更近一步，通过多版本并发控制（MVCC）解决不可重复读问题，加上间隙锁（也就是并发控制）解决幻读问题。因此InnoDB的RR隔离级别其实实现了串行化级别的效果，而保留了比较好的并发性能。MySQL数据库为我们提供的四种隔离级别：</p>
+<p>a、Serializable（串行化）：可避免脏读、不可重复读、幻读的发生；</p>
+<p>b、Repeatable read（可重复读）：可避免脏读、不可重复读的发生；</p>
+<p>c、Read committed（读已提交）：可避免脏读的发生；</p>
+<p>d、Read uncommitted（读未提交）：最低级别，任何情况都无法保证；</p>
+<p>从a—-d隔离级别由高到低，级别越高，执行效率越低<br>3、InnoDB支持行级锁。行级锁可以最大程度的支持并发，行级锁是由存储引擎层实现的。</p>
+<p>锁：锁的主要作用是管理共享资源的并发访问，用于实现事务的隔离性</p>
+<p>​    类型：共享锁（读锁）、独占锁（写锁）</p>
+<p>​    mysql锁的力度：表级锁（开销小、并发性低），通常在服务器层实现</p>
+<p>​                                    行级锁（开销大、并发性高），只会在存储引擎层面进行实现</p>
+<p>4、InnoDB是为处理巨大数据量的最大性能设计。它的CPU效率可能是任何基于磁盘的关系型数据库引擎所不能匹敌的</p>
+<p>5、InnoDB存储引擎完全与MySQL服务器整合，InnoDB存储引擎为在主内存中缓存数据和索引而维持它自己的缓冲池。InnoDB将它的表和索引在一个逻辑表空间中，表空间可以包含数个文件（或原始磁盘文件）；</p>
+<p>6、InnoDB支持外键完整性约束，存储表中的数据时，每张表的存储都按照主键顺序存放，如果没有显示在表定义时指定主键。InnoDB会为每一行生成一个6字节的ROWID,并以此作为主键</p>
+<p>7、InnoDB被用在众多需要高性能的大型数据库站点上</p>
+<p>8、InnoDB中不保存表的行数（eg:select count(*)from table时，InnoDB需要扫描一遍整个表来计算有多少行）；清空整个表时，InnoDB是一行一行的删除，效率非常慢；</p>
+<h3 id="InnoDB引擎的底层实现"><a href="#InnoDB引擎的底层实现" class="headerlink" title="InnoDB引擎的底层实现"></a>InnoDB引擎的底层实现</h3><p>InnoDB的存储文件有两个，后缀名分别是.frm和.idb；其中.frm是表的定义文件，.idb是表的数据文件。</p>
+<p>1、InnoDB引擎采用B+Tree结构来作为索引结构</p>
+<p>B Tree（平衡多路查找树）：为磁盘等外存储设备设计的一种平衡查找树</p>
+<p>系统从磁盘读取数据到内存时是以磁盘块为基本单位的，位于同一磁盘块中的数据会被一次性读取出来，而不是按需读取。</p>
+<p>InnoDB存储引擎使用页作为数据读取单位，页是其磁盘管理的最小单位，默认page大小是16k.</p>
+<p>系统的一个磁盘块的存储空间往往没有那么大，因此InnoDB每次申请磁盘空间时都会是若干地址连续磁盘块来达到页的大小16KB。</p>
+<p>InnoDB在把磁盘数据读入到磁盘时会以页为基本单位，在查询数据时，如果一个页中的每条数据都能助于定位数据记录的位置，这将会减少磁盘I/O的次数，提高查询效率。</p>
+<p>B-Tree结构的数据可以让系统高效的找到数据所在的磁盘块</p>
+<p>B-Tree中的每个节点根据实际情况可以包含大量的关键字信息和分支，例：<br><img src="https://img-blog.csdn.net/20180712001245363?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>每个节点占用一个盘块的磁盘空间，一个节点上有两个升序排序的关键字和三个指向子树根节点的指针，指针存储的是子节点所在磁盘块的地址。</p>
+<p>以根节点为例，关键字为17和35，P1指针指向的子树的数据范围小于17，P2指针指向的子树的数据范围为17—-35，P3指针指向的子树的数据范围大于35；<br>模拟查找关键字29的过程：</p>
+<p>a.根据根节点找到磁盘块1，读入内存。【磁盘I/O操作第一次】</p>
+<p>b.比较关键字29在区间（17,35），找到磁盘块1的指针P2;</p>
+<p>c.根据P2指针找到磁盘块3，读入内存。【磁盘I/O操作第二次】</p>
+<p>d.比较关键字29在区间（26,30），找到磁盘块3的指针P2；</p>
+<p>e.根据P2指针找到磁盘块8，读入内存。【磁盘I/O操作第三次】</p>
+<p>f.在磁盘块8中的关键字列表中找到关键字29.<br>MYSQL的InnoDB存储引擎在设计时是根据节点常驻内存的，因此力求达到树的深度不超过3，也就是IO不需要超过三次；</p>
+<p>分析上面的结果，发现需要三次磁盘I/O操作，和三次内存查找操作。由于内存中的关键字是一个有序表结构，可以利用二分法查找提高效率；而三次磁盘I/O操作时影响整个B-Tree查找效率的决定因素。</p>
+<p>B+ Tree</p>
+<p>B+ Tree是在B-Tree基础上的一种优化，使其更适合实现外存储索引结构，B-Tree中每个节点中有key，也有data，而每一页的存储空间是有限的，如果data数据较大时将会导致每个节点能存储的key的数量很小。当存储的数据量很大时同样会导致B-Tree的深度较大，增大查询时的磁盘I/O次数，进而影响查询效率。</p>
+<p>在B+Tree中所有数据记录节点都是按照键值大小顺序存放在同一层的叶子节点上，而非叶子节点上只存储key值信息，这样可以大大加大每个节点存储的key值数量，降低B+Tree的高度；</p>
+<p>B+Tree在B-Tree的基础上有两点变化：（1）数据是存在叶子节点中的</p>
+<pre><code>                                                     （2）数据节点之间是有指针指向的</code></pre>
+<p>由于B+Tree的非叶子节点只存储键值信息，假设每个磁盘块能存储4个键值及指针信息，则变成B+Tree后其结构如下图所示：<br><img src="https://img-blog.csdn.net/20180712091941460?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+<p>通常在B+Tree上有两个头指针，一个指向根节点，另一个指向关键字最小的叶子节点，而且所有叶子节点（即数据节点）之间是一种链式环结构。</p>
+<p>因此可以对B+Tree进行两种查找运算，一种是对于主键的范围查找和分页查找，另一种是从根节点开始，进行随机查找。</p>
+<p>InnoDB中的B+Tree</p>
+<p>InnoDB是以ID为索引的数据存储</p>
+<p>采用InnoDB引擎的数据存储文件有两个，一个定义文件，一个是数据文件。</p>
+<p>InnoDB通过B+Tree结构对ID建索引，然后在叶子节点中存储记录<br><img src="https://img-blog.csdn.net/20180712094800640?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L20wXzM3OTYyNjAw/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="img"></p>
+
     </div>
 
     
@@ -198,6 +279,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Mysql/" rel="tag"># Mysql</a>
+          </div>
 
         
 
@@ -270,6 +354,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#InnoDB%E5%BC%95%E6%93%8E"><span class="nav-number">1.</span> <span class="nav-text">InnoDB引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">1.1.</span> <span class="nav-text">InnoDB存储引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E5%BC%95%E6%93%8E%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">InnoDB引擎的底层实现</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -290,7 +375,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
