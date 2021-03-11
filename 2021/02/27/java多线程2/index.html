@@ -60,7 +60,7 @@
 <meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210308151429595.png">
 <meta property="og:image" content="https://uploadfiles.nowcoder.com/files/20210308/4812884_1615132868706/v2-6d19784f925106618fe4d51502048760_1440w.jpg">
 <meta property="article:published_time" content="2021-02-27T05:37:54.000Z">
-<meta property="article:modified_time" content="2021-03-08T14:23:14.530Z">
+<meta property="article:modified_time" content="2021-03-09T13:14:27.909Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://images2017.cnblogs.com/blog/249993/201710/249993-20171014214424230-602093524.png">
@@ -218,7 +218,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-08 22:23:14" itemprop="dateModified" datetime="2021-03-08T22:23:14+08:00">2021-03-08</time>
+                <time title="修改时间：2021-03-09 21:14:27" itemprop="dateModified" datetime="2021-03-09T21:14:27+08:00">2021-03-09</time>
               </span>
 
           
@@ -1390,6 +1390,12 @@
 <li>synchronized是JVM层面实现的；ReentrantLock是JDK代码层面实现</li>
 <li>synchronized 在加锁代码块执行完或者出现异常，自动释放锁；ReentrantLock 不会自动释放锁，需要在 finally{} 代码块显示释放</li>
 </ul>
+<p><strong>synchronized与volatile的区别</strong></p>
+<ul>
+<li>volatile只能作用于变量，使用范围较小。synchronized可以作用在变量、方法、类、同步代码块等，使用范围比较广。</li>
+<li>volatile只能保证可见性和有序性，不能保证原子性，synchronize都可以保证</li>
+<li>volatile不会造成线程阻塞，synchronized可能会造成线程阻塞</li>
+</ul>
 <p><strong>谈谈对volatile的理解</strong></p>
 <p>volatile是虚拟机提供的轻量级的同步机制，volatile有三大特性：</p>
 <ul>
@@ -1537,7 +1543,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

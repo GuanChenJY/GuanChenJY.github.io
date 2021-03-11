@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9teS1ibG9nLXRvLXVzZS5vc3MtY24tYmVpamluZy5hbGl5dW5jcy5jb20vMjAxOS02L0lPLSVFNiU5MyU4RCVFNCVCRCU5QyVFNiU5NiVCOSVFNSVCQyU4RiVFNSU4OCU4NiVFNyVCMSVCQi5wbmc?x-oss-process=image/format,png">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9teS1ibG9nLXRvLXVzZS5vc3MtY24tYmVpamluZy5hbGl5dW5jcy5jb20vMjAxOS02L0lPLSVFNiU5MyU4RCVFNCVCRCU5QyVFNSVBRiVCOSVFOCVCMSVBMSVFNSU4OCU4NiVFNyVCMSVCQi5wbmc?x-oss-process=image/format,png">
 <meta property="article:published_time" content="2020-12-22T02:43:53.000Z">
-<meta property="article:modified_time" content="2021-03-02T06:36:26.511Z">
+<meta property="article:modified_time" content="2021-03-11T01:04:04.390Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="java相关">
 <meta name="twitter:card" content="summary">
@@ -189,7 +189,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-02 14:36:26" itemprop="dateModified" datetime="2021-03-02T14:36:26+08:00">2021-03-02</time>
+                <time title="修改时间：2021-03-11 09:04:04" itemprop="dateModified" datetime="2021-03-11T09:04:04+08:00">2021-03-11</time>
               </span>
 
           
@@ -344,66 +344,32 @@
 <p>如果整型字面量的值在-128到127之间，那么自动装箱时不会new新的Integer对象，而是直接引用常量池中的Integer对象，超过范围a1==b1的结果是false</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Integer a = <span class="keyword">new</span> Integer(<span class="number">3</span>);</span><br><span class="line">    Integer b = <span class="number">3</span>;  <span class="comment">// 将3自动装箱成Integer类型</span></span><br><span class="line">    <span class="keyword">int</span> c = <span class="number">3</span>;</span><br><span class="line">    System.out.println(a == b); <span class="comment">// false 两个引用没有引用同一对象</span></span><br><span class="line">    System.out.println(a == c); <span class="comment">// true a自动拆箱成int类型再和c比较</span></span><br><span class="line">    System.out.println(b == c); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">    Integer a1 = <span class="number">128</span>;</span><br><span class="line">    Integer b1 = <span class="number">128</span>;</span><br><span class="line">    System.out.println(a1 == b1); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line">    Integer a2 = <span class="number">127</span>;</span><br><span class="line">    Integer b2 = <span class="number">127</span>;</span><br><span class="line">    System.out.println(a2 == b2); <span class="comment">// true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p><strong>transient关键字</strong></p>
+<p>用来表示一个成员变量不是该对象序列化的一部分。当一个对象被序列化的时候，transient型变量的值不包括在序列化的结果中。而非transient型的变量是被包括进去的。static修饰的静态变量天然是不可序列化的。</p>
+<p><strong>JVM出现OOM的原因分析</strong></p>
+<p><strong>堆溢出</strong>:java.lang.OutOfMemoryError: Java heap space</p>
+<p>可能存在大对象分配；可能存在内存泄漏，导致在多次GC之后，还是无法找到一块足够大的内存容纳当前对象。</p>
+<p>检查是否存在大对象的分配，最有可能的是大数组分配；</p>
+<p>通过jmap命令，把堆内存dump下来，使用mat工具分析一下，检查是否存在内存泄漏的问题</p>
+<p>如果没有找到明显的内存泄露，使用 -Xmx 加大堆内存</p>
+<p>还有一点容易被忽略，检查是否有大量的自定义的 Finalizable 对象，也有可能是框架内部提供的，考虑其存在的必要性</p>
+<p><strong>永久代/元空间溢出</strong>：PermGen spacejava.lang.OutOfMemoryError: Metaspace</p>
+<p>1、在Java7之前，频繁的错误使用String.intern()方法 2、运行期间生成了大量的代理类，导致方法区被撑爆，无法卸载 3、应用长时间运行，没有重启</p>
+<p>1、检查是否永久代空间或者元空间设置的过小 2、检查代码中是否存在大量的反射操作 3、dump之后通过mat检查是否存在大量由于反射生成的代理类 4、放大招，重启JVM</p>
+<p><strong>GC overhead limit exceeded</strong>：GC overhead limit exceeded</p>
+<p>一般都是堆太小导致的。</p>
+<p>检查项目中是否有大量的死循环或有使用大内存的代码</p>
+<p>dump内存，检查是否存在内存泄漏，如果没有，加大内存</p>
+<p><strong>方法栈溢出：</strong>unable to create new native Thread</p>
+<p>创建了大量的线程导致的。</p>
+<p>通过 -Xss 降低的每个线程栈大小的容量 </p>
+<p>线程总数也受到系统空闲内存和操作系统的限制，检查是否该系统下有此限制：</p>
+<p><strong>非常规溢出</strong></p>
+<p>分配超大数组：Requested array size exceeds VM limit</p>
+<p>swap溢出：Out of swap space</p>
+<p>原因：swap分区大小分配不足；其他进程消耗了所有的内存</p>
+<p>解决方案：其他服务进程可以选择性的拆分出去；加大swap分区大小，或者加大机器内存大小</p>
+<p>本地方法溢出：stack_trace_with_native_method</p>
 
     </div>
 
@@ -503,7 +469,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
