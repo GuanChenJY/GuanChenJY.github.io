@@ -41,7 +41,7 @@
 <meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201216095741317.png">
 <meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20201216112618858.png">
 <meta property="article:published_time" content="2020-12-13T07:47:31.000Z">
-<meta property="article:modified_time" content="2020-12-16T03:33:11.585Z">
+<meta property="article:modified_time" content="2021-03-23T02:54:40.433Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="Spring">
 <meta name="twitter:card" content="summary">
@@ -200,7 +200,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-16 11:33:11" itemprop="dateModified" datetime="2020-12-16T11:33:11+08:00">2020-12-16</time>
+                <time title="修改时间：2021-03-23 10:54:40" itemprop="dateModified" datetime="2021-03-23T10:54:40+08:00">2021-03-23</time>
               </span>
 
           
@@ -474,6 +474,30 @@
 <p>Spring的IoC容器所起的作用就是以某种方式加载Configuration Metadata(通常也就是XML格式的配置信息)，然后根据这些信息绑定整个系统的对象，最终组装成一个可用的基于轻量级容器的应用系统。</p>
 <p>两个阶段：容器启动阶段和Bean实例化阶段</p>
 <p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201215102356057.png" alt="image-20201215102356057"></p>
+<p><strong>Spring中bean有三种装配机制</strong></p>
+<p>1、在XML中显式配置；</p>
+<p>2、在java中显示配置</p>
+<p>3、隐式的bean发现机制和自动装配。</p>
+<p><strong>Spring的自动转配从两个角度来实现：</strong></p>
+<p>1、组件扫描（Componenet scanning）</p>
+<p>2、自动装配（autowiring）：spring自动满足bean之间的依赖，也就是常说的IoC/DI.</p>
+<p><strong>按名称自动装配</strong></p>
+<p>1、将查找其类中所有的set方法名，例如setCat，获得将set去掉并且首字母小写的字符串，即cat</p>
+<p>2、去spring容器中寻找是否有此字符串名称的id对象。</p>
+<p>3、如果有，就取出注入；如果没有，就报空指针异常。</p>
+<p><strong>按类型自动装配：</strong></p>
+<p>使用autowire byType首先需要保证：同一类型的对象，在spring容器中唯一。如果不唯一，会报不唯一的异常。</p>
+<p><strong>@Autowired：</strong></p>
+<p>@Autowired是按类型自动装配的，不支持id匹配。</p>
+<p>需要导入spring-aop的包。</p>
+<p><strong>@Qualifier：</strong></p>
+<p>@Autowired是根据类型自动装配的，加上@Qualifier则可以根据byName的方式自动装配</p>
+<p>@Qualifier不能单独使用。</p>
+<p><strong>@Resource</strong></p>
+<p>@Resource如有指定的name属性，先按该属性进行byName方式查找装配；</p>
+<p>其次再进行默认的byNamr方式进行装配；</p>
+<p>如果以上都不成功，则按byType自动装配</p>
+<p>都不成功，则报异常。</p>
 <p><strong>容器启动阶段</strong></p>
 <p>容器启动伊始，首先会通过某种途径加载Configuration MetaData。除了代码方式比较直接，在大部分情况下，容器需要依赖某些工具类（BeanDefinitionReader）对加载的Configuration MeatData进行解析和分析，并将分析后的信息编组为相应的BeanDefinition，最后把这些保存了bean定义必要信息的BeanDefinition，注册到相应的BeanDefinition，最后把这些保存了bean定义必要信息的BeanDefinition，注册到相应的BeanDefinitionRegistry，这样容器启动工作就完成了。</p>
 <p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20201215102924177.png" alt="image-20201215102924177"></p>
@@ -599,7 +623,19 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;messageSource&quot;</span> ➥</span></span><br><span class="line"><span class="tag"><span class="attr">class</span>=<span class="string">&quot;org.springframework.context.support.ResourceBundleMessageSource&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;basenames&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">value</span>&gt;</span>messages<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="name">value</span>&gt;</span>errorcodes<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;validator&quot;</span> <span class="attr">class</span>=<span class="string">&quot;...Validator&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;messageSource&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;messageSource&quot;</span>/&gt;</span> 16</span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">...</span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>在Web应用程序中，通常会公开ApplicationContext给视图（View）层，这样，通过标签（tag）就可以直接访问国际化信息了</p>
-<h3 id="容器内部事件发布"><a href="#容器内部事件发布" class="headerlink" title="容器内部事件发布"></a>容器内部事件发布</h3><h3 id="多配置模块加载的简化"><a href="#多配置模块加载的简化" class="headerlink" title="多配置模块加载的简化"></a>多配置模块加载的简化</h3><h2 id="Spring-IoC容器之扩展篇"><a href="#Spring-IoC容器之扩展篇" class="headerlink" title="Spring IoC容器之扩展篇"></a>Spring IoC容器之扩展篇</h2>
+<h3 id="容器内部事件发布"><a href="#容器内部事件发布" class="headerlink" title="容器内部事件发布"></a>容器内部事件发布</h3><h3 id="多配置模块加载的简化"><a href="#多配置模块加载的简化" class="headerlink" title="多配置模块加载的简化"></a>多配置模块加载的简化</h3><p><strong>javaConfig</strong></p>
+<p>javaConfig通过java类的方式提供Bean的定义信息，在Spring4的版本，javaConfig已正式成为Spring4的核心功能。</p>
+<p><strong>AOP的名词：</strong></p>
+<ul>
+<li>横切关注点：跨越应用程序多个模块的方法或功能。即是，与我们业务逻辑无关的，但是我们需要关注额部分，就是横切关注点。如日志、安全、缓存、事务等等。</li>
+<li>切面（Aspect）:横切关注点，被模块化的特殊对象。</li>
+<li>通知（Advice）: 切面必须要完成的工作。即，它是类中的一个方法。</li>
+<li>目标（Target）: 被通知对象。</li>
+<li>代理（Proxy）: 向目标对象应用通知之后创建的对象。</li>
+<li>切入点（PointCut）: 切面通知执行的“地点”的定义。</li>
+<li>连接点(JointPoint): 与切入点匹配的执行点。</li>
+</ul>
+<h2 id="Spring-IoC容器之扩展篇"><a href="#Spring-IoC容器之扩展篇" class="headerlink" title="Spring IoC容器之扩展篇"></a>Spring IoC容器之扩展篇</h2>
     </div>
 
     
@@ -698,12 +734,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">78</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

@@ -29,8 +29,15 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9teS1ibG9nLXRvLXVzZS5vc3MtY24tYmVpamluZy5hbGl5dW5jcy5jb20vMjAxOS02L0lPLSVFNiU5MyU4RCVFNCVCRCU5QyVFNiU5NiVCOSVFNSVCQyU4RiVFNSU4OCU4NiVFNyVCMSVCQi5wbmc?x-oss-process=image/format,png">
 <meta property="og:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9teS1ibG9nLXRvLXVzZS5vc3MtY24tYmVpamluZy5hbGl5dW5jcy5jb20vMjAxOS02L0lPLSVFNiU5MyU4RCVFNCVCRCU5QyVFNSVBRiVCOSVFOCVCMSVBMSVFNSU4OCU4NiVFNyVCMSVCQi5wbmc?x-oss-process=image/format,png">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/42z7tewis8.png?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/42z7tewis8.png?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/42z7tewis8.png?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/hi5stk9uie.jpeg?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/smkgdpetms.png?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/y5i0asgeto.png?imageView2/2/w/1620">
+<meta property="og:image" content="https://ask.qcloudimg.com/http-save/yehe-5086501/a254wlyyrw.png?imageView2/2/w/1620">
 <meta property="article:published_time" content="2020-12-22T02:43:53.000Z">
-<meta property="article:modified_time" content="2021-03-11T01:04:04.390Z">
+<meta property="article:modified_time" content="2021-03-25T02:40:46.069Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="java相关">
 <meta name="twitter:card" content="summary">
@@ -189,7 +196,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-11 09:04:04" itemprop="dateModified" datetime="2021-03-11T09:04:04+08:00">2021-03-11</time>
+                <time title="修改时间：2021-03-25 10:40:46" itemprop="dateModified" datetime="2021-03-25T10:40:46+08:00">2021-03-25</time>
               </span>
 
           
@@ -237,12 +244,87 @@
 <p>InputStream/Reader: 所有的输入流的基类，前者是字节输入流，后者是字符输入流。<br>OutputStream/Writer: 所有输出流的基类，前者是字节输出流，后者是字符输出流。<br><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9teS1ibG9nLXRvLXVzZS5vc3MtY24tYmVpamluZy5hbGl5dW5jcy5jb20vMjAxOS02L0lPLSVFNiU5MyU4RCVFNCVCRCU5QyVFNiU5NiVCOSVFNSVCQyU4RiVFNSU4OCU4NiVFNyVCMSVCQi5wbmc?x-oss-process=image/format,png" alt="IO-操作方式分类"></p>
 <p>按操作对象分类结构图：</p>
 <p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly9teS1ibG9nLXRvLXVzZS5vc3MtY24tYmVpamluZy5hbGl5dW5jcy5jb20vMjAxOS02L0lPLSVFNiU5MyU4RCVFNCVCRCU5QyVFNSVBRiVCOSVFOCVCMSVBMSVFNSU4OCU4NiVFNyVCMSVCQi5wbmc?x-oss-process=image/format,png" alt="IO-操作对象分类"></p>
-<h3 id="BIO-NIO-AIO-有什么区别"><a href="#BIO-NIO-AIO-有什么区别" class="headerlink" title="BIO,NIO,AIO 有什么区别?"></a>BIO,NIO,AIO 有什么区别?</h3><p>简答：</p>
+<h3 id="BIO-NIO-AIO-有什么区别"><a href="#BIO-NIO-AIO-有什么区别" class="headerlink" title="BIO,NIO,AIO 有什么区别?"></a>BIO,NIO,AIO 有什么区别?</h3><p><strong>同步、异步，阻塞与非阻塞：</strong></p>
 <ul>
-<li>BIO：Block IO同步阻塞式IO，就是我们平常使用的传统IO，它的特点是模式简单使用方便，并发处理能力低。</li>
-<li>NIO：Non IO同步非阻塞IO，是传统IO的升级，客户端和服务器端通过Channel(通道)通讯，实现了多路复用。</li>
-<li>AIO：Asynchronous IO是NIO的升级，也叫NIO2，实现了异步非堵塞IO，异步IO的操作基于事件和回调机制。</li>
+<li>同步：一个任务的完成之前不能做其他操作，必须等待。</li>
+<li>异步：一个任务的完成之前，可以进行其他操作</li>
+<li>阻塞：是相对于CPU来说，挂起当前线程，不能做其他操作只能等待</li>
+<li>非阻塞：无须挂起当前线程，可以去执行其他操作。</li>
 </ul>
+<p>简答：</p>
+<ul>
+<li>BIO：Block IO同步阻塞式IO，服务器实现一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理，没处理完之前此线程不能做其他操作，就是我们平常使用的传统IO，它的特点是模式简单使用方便，并发处理能力低。</li>
+<li>NIO：Non IO同步非阻塞IO，是传统IO的升级，服务器实现一个连接一个线程，即客户端发送的连接请求都会注册到多路复用器上，多路复用器轮循到连接有IO请求时才启动一个线程进行处理。客户端和服务器端通过Channel(通道)通讯，实现了多路复用。</li>
+<li>AIO：Asynchronous IO是NIO的升级，也叫NIO2，实现了异步非堵塞IO，服务器实现模式为一个有效请求一个线程，客户端的IO请求都是由操作系统先完成了再通知服务器应用去启动线程进行处理，异步IO的操作基于事件和回调机制。</li>
+</ul>
+<p><strong>NIO相比BIO的优势</strong>：NIO（Non-Blocking IO，在java领域，也称为New I/O）,是一种同步非阻塞的/IO模型，也是I/O多路复用的基础，已经被越来越多地应用到大型应用服务器，成为解决高并发与大量连接、I/O处理问题的有效方式。</p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/42z7tewis8.png?imageView2/2/w/1620" alt="img"></p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/42z7tewis8.png?imageView2/2/w/1620" alt="img"></p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/42z7tewis8.png?imageView2/2/w/1620" alt="img"></p>
+<p><strong>面向流与面向缓冲</strong></p>
+<p>Java NIO和BIO之间第一个最大的区别是，BIO是面向流的，NIO是面向缓冲区的。javaIO面向流意味着每次从流中读一个或多个字节，直至读取所有字节，它们没有被缓存在任何地方。此外，它不能前后移动流中的数据。如果需要前后移动从流中读取的数据，需要先将它缓存到一个缓冲区。Java NIO的缓冲读取方法略有不同。数据读取到一个缓冲区，需要时可在缓冲区前后移动。这就增加了处理过程中的灵活性。但是还需要检查是否该缓冲区中包含所有需要处理的数据，而且需确保更多的数据读入缓冲区时，不要覆盖缓冲区里尚未处理的数据。</p>
+<p><strong>阻塞IO与非阻塞IO</strong></p>
+<p>java IO的各种流是阻塞的。这意味着，当一个线程调用read()或write时，该线程被阻塞，直到有数据被读取或者数据写入。该线程在阻塞期间不能做其他事情。而java NIO的非阻塞模式，如果通道没有东西可读，或不可写，读写函数马上返回，而不会阻塞，这个线程可以去做别的事情。线程通常将非阻塞IO的空闲时间用于在其它通道上执行IO操作，所以一个单独的线程可以管理多个输入和输出通道（channel），即IO多路复用的原理。</p>
+<p><strong>零拷贝</strong></p>
+<p>在传统的文件IO操作中，我们都是调用操作系统提供的底层标准IO系统调用函数read()、write() ，此时调用此函数的进程（在JAVA中即java进程）由当前的用户态切换到内核态，然后OS的内核代码负责将相应的文件数据读取到内核的IO缓冲区，然后再把数据从内核IO缓冲区拷贝到进程的私有地址空间中去，这样便完成了一次IO操作。</p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/hi5stk9uie.jpeg?imageView2/2/w/1620" alt="img"></p>
+<p>而NIO的零拷贝与传统的文件IO操作最大的不同之处就在于它虽然也是要从磁盘读取数据，但是它并不需要将数据读取到OS内核缓冲区，而是直接将进程的用户私有地址空间中的一部分区域与文件对象建立起映射关系，这样直接从内存中读写文件，速度大幅度提升。</p>
+<p><strong>NIO的核心部分</strong></p>
+<p>java NIO主要由以下三个核心部分组成：</p>
+<ul>
+<li>Channel</li>
+<li>Buffer</li>
+<li>Selector</li>
+</ul>
+<p><strong>Channel</strong></p>
+<p>基本上，所有的IO在NIO中都从一个Channel开始。数据可以从Channel读到Buffer中，也可以从Buffer写到Channel中。这里有个图示：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/smkgdpetms.png?imageView2/2/w/1620" alt="img"></p>
+<p>Channel和Buffer有好几种类型。下面是Java NIO中的一些主要Channel的实现：</p>
+<ul>
+<li>FileChannel(file)</li>
+<li>DatagramChannel(UDP)</li>
+<li>SocketChannel(TCP)</li>
+<li>ServerSocketChannel(TCP)</li>
+</ul>
+<p><strong>Buffer</strong></p>
+<p>缓冲区本质上是一块可以写入数据，然后可以从中读取数据的内存。这块内存被包装成NIO Buffer对象，并提供了一组方法，用来方便的访问该块内存。</p>
+<p>java NIO里关键的Buffer实现：</p>
+<ul>
+<li>ByteBuffer</li>
+<li>CharBuffer</li>
+<li>DoubleBuffer</li>
+<li>FloatBuffer</li>
+<li>IntBuffer</li>
+<li>LongBuffer</li>
+<li>ShortBuffer</li>
+</ul>
+<p>这些Buffer覆盖了你能通过IO发送的基本数据类型：byte、short、int、long、float、double和char。</p>
+<p>为了理解Buffer的工作原理，需要熟悉它的三个属性：</p>
+<ul>
+<li>capacity</li>
+<li>position</li>
+<li>limit</li>
+</ul>
+<p>position和limit的含义取决于Buffer处在读模式还是写模式。不管Buffer处在什么模式，capacity的含义总是一样的。</p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/y5i0asgeto.png?imageView2/2/w/1620" alt="img"></p>
+<h3 id="capacity"><a href="#capacity" class="headerlink" title="capacity"></a>capacity</h3><p>作为一个内存块，Buffer有个固定的最大值，就是capacity。Buffer只能写capacity个byte、long、char等类型。一旦Buffer满了，需要将其清空（通过读数据或者清除数据）才能继续写数据往里写数据。</p>
+<h3 id="position"><a href="#position" class="headerlink" title="position"></a>position</h3><p>当写数据到Buffer中时，position表示当前的位置。初始的position值为0。当一个byte、long等数据写到Buffer后， position会向前移动到下一个可插入数据的Buffer单元。position最大可为capacity – 1.</p>
+<p>当读取数据时，也是从某个特定位置读。当将Buffer从写模式切换到读模式，position会被重置为0。当从Buffer的position处读取数据时，position向前移动到下一个可读的位置。</p>
+<h3 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h3><p>在写模式下，Buffer的limit表示最多能往Buffer里写多少数据。写模式下，limit等于capacity。</p>
+<p>当切换Buffer到读模式时， limit表示你最多能读到多少数据。因此，当切换Buffer到读模式时，limit会被设置成写模式下的position值。</p>
+<p><strong>Selector</strong></p>
+<p>Selector允许单线程处理多个Channel。如果你的应用打开了多个连接（通道），但每个连接的流量都很低，使用Selector就会很方便。</p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-5086501/a254wlyyrw.png?imageView2/2/w/1620" alt="img"></p>
+<p>要使用Selector，得向Selector注册Channel，然后调用它的select()方法。这个方法会一直阻塞到某个注册的通道有事件就绪。一旦这个方法返回，线程就可以处理这些事情，事件例如有新连接进来，数据接收等。</p>
+<p><strong>NIO与epoll的关系</strong></p>
+<p><strong>NIO处理消息的核心思路</strong></p>
+<p>结合示例代码，总结NIO的核心思路：</p>
+<ol>
+<li>NIO 模型中通常会有两个线程，每个线程绑定一个轮询器 selector ，在上面例子中serverSelector负责轮询是否有新的连接，clientSelector负责轮询连接是否有数据可读</li>
+<li>服务端监测到新的连接之后，不再创建一个新的线程，而是直接将新连接绑定到clientSelector上，这样就不用BIO模型中1w 个while循环在阻塞，参见(1)</li>
+<li>clientSelector被一个 while 死循环包裹着，如果在某一时刻有多条连接有数据可读，那么通过clientSelector.select(1)方法可以轮询出来，进而批量处理，参见(2)</li>
+<li>数据的读写面向 Buffer，参见(3)</li>
+</ol>
 <p><strong>同步与异步</strong></p>
 <ul>
 <li>同步：同步就是发起一个调用后，被调用者未处理完请求之前，调用不返回。</li>
@@ -453,7 +535,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%AD%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">使用断言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E6%B5%81"><span class="nav-number">2.</span> <span class="nav-text">IO流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#java-%E4%B8%AD-IO-%E6%B5%81%E5%88%86%E4%B8%BA%E5%87%A0%E7%A7%8D"><span class="nav-number">2.1.</span> <span class="nav-text">java 中 IO 流分为几种?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BIO-NIO-AIO-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">BIO,NIO,AIO 有什么区别?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Files%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">Files的常用方法都有哪些？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84"><span class="nav-number">3.</span> <span class="nav-text">反射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">什么是反射机制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">3.2.</span> <span class="nav-text">反射机制优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">3.3.</span> <span class="nav-text">反射机制的应用场景有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E8%8E%B7%E5%8F%96%E5%8F%8D%E5%B0%84%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">Java获取反射的三种方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E7%9B%B8%E5%85%B3"><span class="nav-number">4.</span> <span class="nav-text">String相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E5%9E%8B%E5%B8%B8%E9%87%8F%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.</span> <span class="nav-text">字符型常量和字符串常量的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">什么是字符串常量池？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E6%98%AF%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%90%97"><span class="nav-number">4.3.</span> <span class="nav-text">String是最基本的数据类型吗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E6%9C%89%E5%93%AA%E4%BA%9B%E7%89%B9%E6%80%A7"><span class="nav-number">4.4.</span> <span class="nav-text">String有哪些特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E5%90%97%EF%BC%9F"><span class="nav-number">4.5.</span> <span class="nav-text">String为什么是不可变的吗？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#String%E7%9C%9F%E7%9A%84%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E5%90%97%EF%BC%9F"><span class="nav-number">4.5.1.</span> <span class="nav-text">String真的是不可变的吗？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E7%BB%A7%E6%89%BF-String-%E7%B1%BB"><span class="nav-number">4.6.</span> <span class="nav-text">是否可以继承 String 类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-str-%E2%80%9Di%E2%80%9D%E4%B8%8E-String-str-new-String-%E2%80%9Ci%E2%80%9D-%E4%B8%80%E6%A0%B7%E5%90%97%EF%BC%9F"><span class="nav-number">4.7.</span> <span class="nav-text">String str&#x3D;”i”与 String str&#x3D;new String(“i”)一样吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-s-new-String-%E2%80%9Cxyz%E2%80%9D-%E5%88%9B%E5%BB%BA%E4%BA%86%E5%87%A0%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.8.</span> <span class="nav-text">String s &#x3D; new String(“xyz”);创建了几个字符串对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8F%8D%E8%BD%AC"><span class="nav-number">4.9.</span> <span class="nav-text">如何将字符串反转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%9C%89%E6%B2%A1%E6%9C%89length-%E6%96%B9%E6%B3%95%EF%BC%9FString%E6%9C%89%E6%B2%A1%E6%9C%89length-%E6%96%B9%E6%B3%95"><span class="nav-number">4.10.</span> <span class="nav-text">数组有没有length()方法？String有没有length()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E7%B1%BB%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">4.11.</span> <span class="nav-text">String类的常用方法都有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E4%BD%BF%E7%94%A8HashMap%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E7%94%A8String%E5%81%9Akey%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="nav-number">4.12.</span> <span class="nav-text">在使用HashMap的时候，用String做key有什么好处？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E5%92%8CStringBuffer%E3%80%81StringBuilder%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9FString%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84"><span class="nav-number">4.13.</span> <span class="nav-text">String和StringBuffer、StringBuilder的区别是什么？String为什么是不可变的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Date%E7%9B%B8%E5%85%B3"><span class="nav-number">5.</span> <span class="nav-text">Date相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9B%B8%E5%85%B3"><span class="nav-number">5.1.</span> <span class="nav-text">包装类相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1"><span class="nav-number">5.1.1.</span> <span class="nav-text">自动装箱与拆箱</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#int%E5%92%8CInteger%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">5.2.</span> <span class="nav-text">int和Integer有什么区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Integer-a-127%E4%B8%8EInteger-b-127%E7%9B%B8%E7%AD%89%E5%90%97"><span class="nav-number">5.3.</span> <span class="nav-text">Integer a &#x3D;127与Integer b&#x3D;127相等吗</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%AD%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">使用断言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E6%B5%81"><span class="nav-number">2.</span> <span class="nav-text">IO流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#java-%E4%B8%AD-IO-%E6%B5%81%E5%88%86%E4%B8%BA%E5%87%A0%E7%A7%8D"><span class="nav-number">2.1.</span> <span class="nav-text">java 中 IO 流分为几种?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BIO-NIO-AIO-%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">BIO,NIO,AIO 有什么区别?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#capacity"><span class="nav-number">2.3.</span> <span class="nav-text">capacity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#position"><span class="nav-number">2.4.</span> <span class="nav-text">position</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#limit"><span class="nav-number">2.5.</span> <span class="nav-text">limit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Files%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">2.6.</span> <span class="nav-text">Files的常用方法都有哪些？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84"><span class="nav-number">3.</span> <span class="nav-text">反射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%EF%BC%9F"><span class="nav-number">3.1.</span> <span class="nav-text">什么是反射机制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">3.2.</span> <span class="nav-text">反射机制优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">3.3.</span> <span class="nav-text">反射机制的应用场景有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java%E8%8E%B7%E5%8F%96%E5%8F%8D%E5%B0%84%E7%9A%84%E4%B8%89%E7%A7%8D%E6%96%B9%E6%B3%95"><span class="nav-number">3.4.</span> <span class="nav-text">Java获取反射的三种方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String%E7%9B%B8%E5%85%B3"><span class="nav-number">4.</span> <span class="nav-text">String相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E5%9E%8B%E5%B8%B8%E9%87%8F%E5%92%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.1.</span> <span class="nav-text">字符型常量和字符串常量的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%B8%B8%E9%87%8F%E6%B1%A0%EF%BC%9F"><span class="nav-number">4.2.</span> <span class="nav-text">什么是字符串常量池？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E6%98%AF%E6%9C%80%E5%9F%BA%E6%9C%AC%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%90%97"><span class="nav-number">4.3.</span> <span class="nav-text">String是最基本的数据类型吗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E6%9C%89%E5%93%AA%E4%BA%9B%E7%89%B9%E6%80%A7"><span class="nav-number">4.4.</span> <span class="nav-text">String有哪些特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E5%90%97%EF%BC%9F"><span class="nav-number">4.5.</span> <span class="nav-text">String为什么是不可变的吗？</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#String%E7%9C%9F%E7%9A%84%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E5%90%97%EF%BC%9F"><span class="nav-number">4.5.1.</span> <span class="nav-text">String真的是不可变的吗？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E7%BB%A7%E6%89%BF-String-%E7%B1%BB"><span class="nav-number">4.6.</span> <span class="nav-text">是否可以继承 String 类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-str-%E2%80%9Di%E2%80%9D%E4%B8%8E-String-str-new-String-%E2%80%9Ci%E2%80%9D-%E4%B8%80%E6%A0%B7%E5%90%97%EF%BC%9F"><span class="nav-number">4.7.</span> <span class="nav-text">String str&#x3D;”i”与 String str&#x3D;new String(“i”)一样吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String-s-new-String-%E2%80%9Cxyz%E2%80%9D-%E5%88%9B%E5%BB%BA%E4%BA%86%E5%87%A0%E4%B8%AA%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%AF%B9%E8%B1%A1"><span class="nav-number">4.8.</span> <span class="nav-text">String s &#x3D; new String(“xyz”);创建了几个字符串对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8F%8D%E8%BD%AC"><span class="nav-number">4.9.</span> <span class="nav-text">如何将字符串反转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%9C%89%E6%B2%A1%E6%9C%89length-%E6%96%B9%E6%B3%95%EF%BC%9FString%E6%9C%89%E6%B2%A1%E6%9C%89length-%E6%96%B9%E6%B3%95"><span class="nav-number">4.10.</span> <span class="nav-text">数组有没有length()方法？String有没有length()方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E7%B1%BB%E7%9A%84%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95%E9%83%BD%E6%9C%89%E5%93%AA%E4%BA%9B%EF%BC%9F"><span class="nav-number">4.11.</span> <span class="nav-text">String类的常用方法都有哪些？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E4%BD%BF%E7%94%A8HashMap%E7%9A%84%E6%97%B6%E5%80%99%EF%BC%8C%E7%94%A8String%E5%81%9Akey%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="nav-number">4.12.</span> <span class="nav-text">在使用HashMap的时候，用String做key有什么好处？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%E5%92%8CStringBuffer%E3%80%81StringBuilder%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9FString%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84"><span class="nav-number">4.13.</span> <span class="nav-text">String和StringBuffer、StringBuilder的区别是什么？String为什么是不可变的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Date%E7%9B%B8%E5%85%B3"><span class="nav-number">5.</span> <span class="nav-text">Date相关</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%85%E8%A3%85%E7%B1%BB%E7%9B%B8%E5%85%B3"><span class="nav-number">5.1.</span> <span class="nav-text">包装类相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E8%A3%85%E7%AE%B1%E4%B8%8E%E6%8B%86%E7%AE%B1"><span class="nav-number">5.1.1.</span> <span class="nav-text">自动装箱与拆箱</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#int%E5%92%8CInteger%E6%9C%89%E4%BB%80%E4%B9%88%E5%8C%BA%E5%88%AB"><span class="nav-number">5.2.</span> <span class="nav-text">int和Integer有什么区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Integer-a-127%E4%B8%8EInteger-b-127%E7%9B%B8%E7%AD%89%E5%90%97"><span class="nav-number">5.3.</span> <span class="nav-text">Integer a &#x3D;127与Integer b&#x3D;127相等吗</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -469,12 +551,12 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">78</span>
+          <span class="site-state-item-count">87</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">25</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
