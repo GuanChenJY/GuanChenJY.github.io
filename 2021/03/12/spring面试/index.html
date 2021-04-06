@@ -20,15 +20,20 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="Springbean的生命周期 Bean容器找到配置文件中SpringBean的定义 Bean容器利用java Reflection API创建一个Bean的实例。 如果涉及到一些属性值利用set（）方法设置一些属性值。 如果Bean实现了BeanNameAware接口，调用setBeanName（）方法，传入Bean的名字。 如果Bean实现了BeanClassLoaderAware接口，调用s">
+<meta property="og:type" content="article">
 <meta property="og:title" content="spring面试">
 <meta property="og:url" content="http://example.com/2021/03/12/spring%E9%9D%A2%E8%AF%95/index.html">
 <meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="Springbean的生命周期 Bean容器找到配置文件中SpringBean的定义 Bean容器利用java Reflection API创建一个Bean的实例。 如果涉及到一些属性值利用set（）方法设置一些属性值。 如果Bean实现了BeanNameAware接口，调用setBeanName（）方法，传入Bean的名字。 如果Bean实现了BeanClassLoaderAware接口，调用s">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/48376272.jpg">
+<meta property="og:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/5496407.jpg">
 <meta property="article:published_time" content="2021-03-12T06:53:41.000Z">
-<meta property="article:modified_time" content="2021-03-12T06:53:41.370Z">
+<meta property="article:modified_time" content="2021-04-03T11:29:07.015Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/48376272.jpg">
 
 <link rel="canonical" href="http://example.com/2021/03/12/spring%E9%9D%A2%E8%AF%95/">
 
@@ -178,6 +183,13 @@
 
               <time title="创建时间：2021-03-12 14:53:41" itemprop="dateCreated datePublished" datetime="2021-03-12T14:53:41+08:00">2021-03-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-03 19:29:07" itemprop="dateModified" datetime="2021-04-03T19:29:07+08:00">2021-04-03</time>
+              </span>
 
           
 
@@ -190,7 +202,23 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h3 id="Springbean的生命周期"><a href="#Springbean的生命周期" class="headerlink" title="Springbean的生命周期"></a>Springbean的生命周期</h3><ul>
+<li>Bean容器找到配置文件中SpringBean的定义</li>
+<li>Bean容器利用java Reflection API创建一个Bean的实例。</li>
+<li>如果涉及到一些属性值利用set（）方法设置一些属性值。</li>
+<li>如果Bean实现了BeanNameAware接口，调用setBeanName（）方法，传入Bean的名字。</li>
+<li>如果Bean实现了BeanClassLoaderAware接口，调用setBeanClassLoader()方法，传入ClassLoader对象的实例。</li>
+<li>与上面的类似，如果实现了其他*.Aware接口，就调用相应的方法。</li>
+<li>如果有和加载这个Bean的spring容器相关的BeanPostProcessor对象，执行postProcessBeforeInitialization()方法</li>
+<li>如果Bean实现了InitializingBean接口，执行afterPropertiesSet()方法。</li>
+<li>如果Bean在配置文件中的定义包含init-method属性，执行指定的方法。</li>
+<li>如果有和加载这个Bean的Spring容器相关的BeanPostProcessor对象，执行postProcessAfterInitialization()方法</li>
+<li>当要销毁Bean的时候，如果Bean实现了DisposableBean接口，执行destroy()方法。</li>
+<li>当要销毁Bean的时候，如果Bean在配置文件中的定义包含destroy-method属性，执行指定的方法。</li>
+</ul>
+<p><img src="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/48376272.jpg" alt="Spring Bean 生命周期"></p>
+<p><img src="http://my-blog-to-use.oss-cn-beijing.aliyuncs.com/18-9-17/5496407.jpg" alt="Spring Bean 生命周期"></p>
+
     </div>
 
     
@@ -270,6 +298,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Springbean%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.</span> <span class="nav-text">Springbean的生命周期</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -285,7 +314,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

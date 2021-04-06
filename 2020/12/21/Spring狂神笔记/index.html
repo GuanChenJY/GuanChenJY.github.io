@@ -30,11 +30,13 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200608095331772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200608095331795.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200608095331871.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1162587/201901/1162587-20190108224120891-308387799.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1162587/201901/1162587-20190108223107433-1167042193.png">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200608095331878.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200608095331629.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200608095331795.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70">
 <meta property="article:published_time" content="2020-12-21T00:55:30.000Z">
-<meta property="article:modified_time" content="2020-12-21T03:24:33.522Z">
+<meta property="article:modified_time" content="2021-04-06T10:38:37.870Z">
 <meta property="article:author" content="GCC">
 <meta property="article:tag" content="Spring">
 <meta name="twitter:card" content="summary">
@@ -185,10 +187,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-12-21 08:55:30 / 修改时间：11:24:33" itemprop="dateCreated datePublished" datetime="2020-12-21T08:55:30+08:00">2020-12-21</time>
+              <time title="创建时间：2020-12-21 08:55:30" itemprop="dateCreated datePublished" datetime="2020-12-21T08:55:30+08:00">2020-12-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-04-06 18:38:37" itemprop="dateModified" datetime="2021-04-06T18:38:37+08:00">2021-04-06</time>
+              </span>
 
           
 
@@ -255,6 +263,8 @@
 </ul>
 <p>applicationContext的import配置</p>
 <p><strong>依赖注入（DI）</strong></p>
+<p>依赖：指bean对象的创建依赖于容器，Bean对象的依赖资源。</p>
+<p>注入：指bean对象所依赖的资源，由容器来设置和装配。</p>
 <ol>
 <li><p>构造器注入</p>
 </li>
@@ -292,6 +302,10 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;cat&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.kuang.pojo.Cat&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;dog&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.kuang.pojo.Dog&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--byName：会自动在容器上下文中查找，和自己对象set方法后面的值对应的beanId--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;people&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.kuang.pojo.People&quot;</span> <span class="attr">autowire</span>=<span class="string">&quot;byName&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;小狂神呀&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>在bean配置autowire自动装配</p>
+<p>当一个bean节点带有autowire byName的属性时：</p>
+<p>1、将查找其类中所有的set方法名，例如setCat，获得将set去掉并且首字母小写的字符串，即cat。</p>
+<p>2、去Spring容器中寻找是否有此字符串名称id的对象。</p>
+<p>3、如果有，就取出注入；如果没有，就报空指针异常。</p>
 <p>ByType装配</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;com.kuang.pojo.Cat&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">&quot;com.kuang.pojo.Dog&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">	byName:会自动在容器上下文中查找，和自己对象set方法后面的值对应的beanid！</span></span><br><span class="line"><span class="comment">	byType:会自动在容器上下文中查找，和自己对象属性类型相同的bean！</span></span><br><span class="line"><span class="comment">--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;people&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.kuang.pojo.People&quot;</span> <span class="attr">autowire</span>=<span class="string">&quot;byType&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;小狂神呀&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -310,11 +324,44 @@
 
 <p>自动装配使用方式</p>
 <p>原理实现：通过反射机制来实现访问，所以不需要写set方法</p>
+<p>@Autowoired是根据类型自动装配的，加上@Qualifier则可以根据byName的方式自动装配</p>
+<p>@Qualifier不能单独使用。</p>
 <p><strong>可以配合@qualifier来指定一个唯一的bean对象注入</strong></p>
 <p>@Nullable 如果某个字段标记了这个注解后，说明这个字段可以为Null</p>
 <p>@Autowired里面有个参数required可以为false，说明这个字段可以为null，否则不允许为空</p>
-<p>@Resource注解 也可以实现和@autowired一样的功能</p>
+<p>@Resource注解 也可以实现和@autowired一样的功能：@Resource如有指定的name属性，先按该属性进行byName方式查找装配；其次再进行默认的byName方式进行装配；如果以上都不成功，则按byType的方式自动装配。都不成功则报异常</p>
 <p>注意：@Resource注解是java自带的注解</p>
+<h3 id="spring-bean的循环依赖"><a href="#spring-bean的循环依赖" class="headerlink" title="spring bean的循环依赖"></a>spring bean的循环依赖</h3><p>循环依赖其实就是循环引用，也就是两个或两个以上的bean互相持有对方，最终形成闭环。比如A依赖于B，B依赖于C，C又依赖于A。如下图：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1162587/201901/1162587-20190108224120891-308387799.png" alt="img"></p>
+<p>spring中bean的注入方式：构造器注入方式，settter（单例和多例）</p>
+<h4 id="构造器方式"><a href="#构造器方式" class="headerlink" title="构造器方式"></a>构造器方式</h4><p>spring容器会将每一个正在创建的Bean标识符放在一个<strong>“当前创建bean池”</strong>，Bean中标识符在创建过程中将一直保持在这个池中，因此如果在创建Bean过程中发现自己已经在“当前创建Bean”池里时，将抛出<code>BeanCurrentlyIncreationExeption</code>异常表示循环依赖；而对于创建完毕的Bean将从“当前创建Bean池”中清除掉。spring容器先创建单例StudentA，StudentA依赖StudentB，然后将A放在<strong>“当前创建Bean池”</strong>中，此时创建 StudentB，StudentB 依赖 StudentC ，然后将B放在<strong>“当前创建Bean池”</strong>中，此时创建StudentC，StudentC又依赖StudentA， 但是，此时Student已经在池中，所以会报错，因为在池中的Bean都是未初始化完的，所以会依赖错误 （初始化完的Bean会从池中移除）。</p>
+<h4 id="setter方式"><a href="#setter方式" class="headerlink" title="setter方式"></a>setter方式</h4><p><img src="https://img2018.cnblogs.com/blog/1162587/201901/1162587-20190108223107433-1167042193.png" alt="img"></p>
+<p><strong>为什么用setter方式就不报错了呢</strong></p>
+<p>Spring先是用构造实例化Bean对象，此时spring会将这个实例化结束的对象放到一个Map中，并且Spring提供了获取这个未设置属性的实例化对象引用的方法。当spring实例化了StudentA，StudentB,StudentC后，紧接着会去设置对象的属性，此时StudentA依赖StudentB，就会去Map中取出存在里面的单例StudentB对象，以此类推，不会出现循环的问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** Cache of singleton objects: bean name --&gt; bean instance（缓存单例实例化对象的Map集合） */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; singletonObjects = <span class="keyword">new</span> ConcurrentHashMap&lt;String, Object&gt;(<span class="number">64</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Cache of singleton factories: bean name --&gt; ObjectFactory（单例的工厂Bean缓存集合） */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, ObjectFactory&gt; singletonFactories = <span class="keyword">new</span> HashMap&lt;String, ObjectFactory&gt;(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Cache of early singleton objects: bean name --&gt; bean instance（早期的单身对象缓存集合） */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Map&lt;String, Object&gt; earlySingletonObjects = <span class="keyword">new</span> HashMap&lt;String, Object&gt;(<span class="number">16</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">/** Set of registered singletons, containing the bean names in registration order（单例的实例化对象名称集合） */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Set&lt;String&gt; registeredSingletons = <span class="keyword">new</span> LinkedHashSet&lt;String&gt;(<span class="number">64</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加单例实例</span></span><br><span class="line"><span class="comment"> * 解决循环引用的问题</span></span><br><span class="line"><span class="comment"> * Add the given singleton factory for building the specified singleton</span></span><br><span class="line"><span class="comment"> * if necessary.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;To be called for eager registration of singletons, e.g. to be able to</span></span><br><span class="line"><span class="comment"> * resolve circular references.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> beanName the name of the bean</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> singletonFactory the factory for the singleton object</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addSingletonFactory</span><span class="params">(String beanName, ObjectFactory singletonFactory)</span> </span>&#123;</span><br><span class="line">	Assert.notNull(singletonFactory, <span class="string">&quot;Singleton factory must not be null&quot;</span>);</span><br><span class="line">	<span class="keyword">synchronized</span> (<span class="keyword">this</span>.singletonObjects) &#123;</span><br><span class="line">		<span class="keyword">if</span> (!<span class="keyword">this</span>.singletonObjects.containsKey(beanName)) &#123;</span><br><span class="line">			<span class="keyword">this</span>.singletonFactories.put(beanName, singletonFactory);</span><br><span class="line">			<span class="keyword">this</span>.earlySingletonObjects.remove(beanName);</span><br><span class="line">			<span class="keyword">this</span>.registeredSingletons.add(beanName);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>缓存</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>singletonObjects</td>
+<td>用于存放完全初始化好的 bean，从该缓存中取出的 bean 可以直接使用</td>
+</tr>
+<tr>
+<td>earlySingletonObjects</td>
+<td>存放原始的 bean 对象（尚未填充属性），用于解决循环依赖</td>
+</tr>
+<tr>
+<td>singletonFactories</td>
+<td>存放 bean 工厂对象，用于解决循环依赖</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> 创建原始 bean 实例 → createBeanInstance(beanName, mbd, args)</span><br><span class="line"><span class="number">2.</span> 添加原始对象工厂对象到 singletonFactories 缓存中 </span><br><span class="line">        → addSingletonFactory(beanName, <span class="keyword">new</span> ObjectFactory&lt;Object&gt;&#123;...&#125;)</span><br><span class="line"><span class="number">3.</span> 填充属性，解析依赖 → populateBean(beanName, mbd, instanceWrapper)</span><br></pre></td></tr></table></figure>
+
 <p>使用注解开发</p>
 <p>注解说明</p>
 <p>@Component: 组件，放在类上，<strong>说明这个类被Spring管理了就是Bean</strong></p>
@@ -327,6 +374,10 @@
 
 <p>@Value的属性配置</p>
 <p>@Scope作用域注解 里面可以有prototype和singleton</p>
+<ul>
+<li>singleton:默认的，Spring会采用单例模式创建这个对象。关闭工厂，所有的对象都会销毁。</li>
+<li>prototype:多例模式。关闭工厂，所有的对象不会销毁。内部的垃圾回收机制会回收。</li>
+</ul>
 <p>xml与注解：</p>
 <p>xml更加万能，使用与任何场合！</p>
 <p>注解 不是自己的类使用不了 维护相对复杂</p>
@@ -393,10 +444,8 @@
 </ol>
 <p>缺点：</p>
 <p>1.一个真实角色就会产生一个代理角色；代码量翻倍，开发效率会变低</p>
-<p>AOP图解</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> String name;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//相当于&lt;property name=&quot;name&quot; value=&quot;kuangshen&quot;/&gt;</span></span><br><span class="line">    <span class="meta">@Value(&quot;kuangshen2&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name=name;		<span class="comment">//可以在属性上面直接赋值，也可以在set方法上赋值</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>AOP图解</p>
 <p>动态代理</p>
 <p>1.动态代理和静态代理角色一样</p>
 <p>2.<strong>动态代理的代理类是动态生成的，不是我们直接写好的</strong></p>
@@ -405,6 +454,13 @@
 <p>​    2.基于类：cglib</p>
 <p>​    3.java字节码实现：javasist</p>
 <p>需要了解两个类：Proxy：代理，InvocationHandler:调用处理程序</p>
+<p>InnovationHandler：调用处理程序。InnovationHandler是由代理实例的调用处理程序实现的接口。每个代理实例都有一个关联的调用处理程序。当在代理实例上调用方法时，方法调用将编码并分派到其调用处理程序的invoke方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Object <span class="title">invoke</span><span class="params">(Object proxy, 方法 method, Object[] args)</span>；</span></span><br><span class="line"><span class="function"><span class="comment">//参数</span></span></span><br><span class="line"><span class="function"><span class="comment">//proxy - 调用该方法的代理实例</span></span></span><br><span class="line"><span class="function"><span class="comment">//method -所述方法对应于调用代理实例上的接口方法的实例。方法对象的声明类将是该方法声明的接口，它可以是代理类继承该方法的代理接口的超级接口。</span></span></span><br><span class="line"><span class="function"><span class="comment">//args -包含的方法调用传递代理实例的参数值的对象的阵列，或null如果接口方法没有参数。原始类型的参数包含在适当的原始包装器类的实例中，例如java.lang.Integer或java.lang.Boolean 。</span></span></span><br></pre></td></tr></table></figure>
+
+<p>Proxy：代理，proxy提供了创建动态代理类和实例的静态方法，它也是由这些方法创建的所有动态代理的超类。</p>
+<p>动态代理类是一个实现在类创建时在运行时指定的接口列表的类，具有如下所述的行为。代理接口是由代理类实现的接口。代理实例是代理类的一个实例。每个代理实例都有一个关联的调用处理程序对象，它实现了接口InvocationHandler。通过其代理接口之一的代理实例上的方法调用将被分派到实例调用处理程序的invoke方法，传递代理实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//生成代理类</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">getProxy</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Proxy.newProxyInstance(<span class="keyword">this</span>.getClass().getClassLoader(),</span><br><span class="line">                                  rent.getClass().getInterfaces(),<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>动态代理比静态代理还多的好处：</p>
 <ol>
 <li>一个动态代理类代理的是一个接口类，而不是静态代理中一个接口类中的一个方法，一般就是对应的一类业务</li>
@@ -412,6 +468,14 @@
 </ol>
 <p>使用Spring实现AOP</p>
 <p><img src="https://img-blog.csdnimg.cn/20200608095331795.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L29rRm9ycmVzdDI3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>AOP提供声明式事务；允许用户自定义切面</p>
+<ul>
+<li>横切关注点：跨越应用程序多个模块的方法或功能。即是，与我们业务逻辑无关的，但是我们需要关注的部分，就是横切关注点。如日志，安全，缓存，事务等等…</li>
+<li>切面（Aspect）:横向关注点，被模块化的特殊对象。即，它是一个类。</li>
+<li>通知（Advice）:切面必须要完成的工作。即，它是类中的一个方法。</li>
+<li>目标（Target）：被通知对象。</li>
+<li>代理（Proxy）:向目标</li>
+</ul>
 <p>首先需要导入AOP依赖包</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">方式一：使用Spring的API接口</span><br><span class="line"><span class="comment">&lt;!--方式一：使用原生Spring API接口--&gt;</span></span><br><span class="line"><span class="comment">&lt;!--配置aop--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">aop:config</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--切入点 expression：表达式，execution（要执行的位置）--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">aop:pointcut</span> <span class="attr">id</span>=<span class="string">&quot;pointcut&quot;</span> <span class="attr">expression</span>=<span class="string">&quot;execution(* com.cqh.service.UserServiceImpl.*(..))&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--执行环绕增加--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">aop:advisor</span> <span class="attr">advice-ref</span>=<span class="string">&quot;log&quot;</span> <span class="attr">pointcut-ref</span>=<span class="string">&quot;pointcut&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">aop:advisor</span> <span class="attr">advice-ref</span>=<span class="string">&quot;afterlog&quot;</span> <span class="attr">pointcut-ref</span>=<span class="string">&quot;pointcut&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">aop:config</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
@@ -546,7 +610,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring"><span class="nav-number">1.</span> <span class="nav-text">Spring</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring"><span class="nav-number">1.</span> <span class="nav-text">Spring</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#spring-bean%E7%9A%84%E5%BE%AA%E7%8E%AF%E4%BE%9D%E8%B5%96"><span class="nav-number">1.0.1.</span> <span class="nav-text">spring bean的循环依赖</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%99%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">1.0.1.1.</span> <span class="nav-text">构造器方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setter%E6%96%B9%E5%BC%8F"><span class="nav-number">1.0.1.2.</span> <span class="nav-text">setter方式</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -562,7 +626,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

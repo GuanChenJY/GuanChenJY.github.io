@@ -27,10 +27,13 @@
 <meta property="og:site_name" content="Laplace">
 <meta property="og:description" content="递增子序列递增子序列，主要解题思路就是采用动态规划的思想，比如遍历到i下标对应的值时，然后从0一直扫到i，当nums[j]&lt;nums[i]时候，dp[i]&#x3D;Math.max(dp[i],dp[j+1]);一般都是找到前面比i小的数，然后看它的dp值是多少，直到循环结束找到最大的子序列的值 300题 123456789101112131415161718public int lengthOfL">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210331145942246.png">
+<meta property="og:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210331145951377.png">
 <meta property="article:published_time" content="2021-03-09T05:28:32.000Z">
-<meta property="article:modified_time" content="2021-03-19T11:30:22.346Z">
+<meta property="article:modified_time" content="2021-03-31T10:43:06.982Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/GCC/AppData/Roaming/Typora/typora-user-images/image-20210331145942246.png">
 
 <link rel="canonical" href="http://example.com/2021/03/09/%E5%8A%A8%E8%A7%84/">
 
@@ -185,7 +188,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-19 19:30:22" itemprop="dateModified" datetime="2021-03-19T19:30:22+08:00">2021-03-19</time>
+                <time title="修改时间：2021-03-31 18:43:06" itemprop="dateModified" datetime="2021-03-31T18:43:06+08:00">2021-03-31</time>
               </span>
 
           
@@ -290,28 +293,13 @@
 <p><strong>64、最小路径和</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">minPathSum</span>(<span class="params">self, grid: List[List[<span class="built_in">int</span>]]</span>) -&gt; int:</span></span><br><span class="line">        m=<span class="built_in">len</span>(grid)</span><br><span class="line">        n=<span class="built_in">len</span>(grid[<span class="number">0</span>])</span><br><span class="line">        total=m*n</span><br><span class="line">        dp=[<span class="number">0</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(total)]</span><br><span class="line">        <span class="keyword">if</span> total==<span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">        dp[<span class="number">0</span>]=grid[<span class="number">0</span>][<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,total):</span><br><span class="line">            <span class="keyword">if</span> i&lt;n:</span><br><span class="line">                dp[i]=dp[i-<span class="number">1</span>]+grid[<span class="number">0</span>][i]</span><br><span class="line">            <span class="keyword">elif</span> i%n==<span class="number">0</span>:</span><br><span class="line">                dp[i]=dp[i-n]+grid[i//n][<span class="number">0</span>]</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                dp[i]=<span class="built_in">min</span>(dp[i-<span class="number">1</span>],dp[i-n])+grid[i//n][i%n]</span><br><span class="line">        <span class="keyword">return</span> dp[-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
 
+<h2 id="分割子数组"><a href="#分割子数组" class="headerlink" title="分割子数组"></a>分割子数组</h2><p>分割子数组，一般都是对给定的数组分为m份，要么就是保证每份都不超过一个数，要么就是在分割好后满足一个条件：</p>
+<p>如力扣410题（使得m个子数组各自和的最大值最小）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">splitArray</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> m)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> n=nums.length;</span><br><span class="line">        <span class="keyword">int</span>[][] dp=<span class="keyword">new</span> <span class="keyword">int</span>[m][n];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;m;i++)&#123;</span><br><span class="line">            Arrays.fill(dp[i],Integer.MAX_VALUE);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">int</span>[] sum=<span class="keyword">new</span> <span class="keyword">int</span>[n];</span><br><span class="line">        sum[<span class="number">0</span>]=nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)&#123;</span><br><span class="line">            sum[i]=nums[i]+sum[i-<span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>]=nums[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">1</span>;j&lt;n;j++)&#123;</span><br><span class="line">            dp[<span class="number">0</span>][j]=dp[<span class="number">0</span>][j-<span class="number">1</span>]+nums[j];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;m;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;n;j++)&#123;</span><br><span class="line">                <span class="keyword">if</span> (j&gt;=i)&#123;</span><br><span class="line">                    <span class="keyword">for</span> (<span class="keyword">int</span> k=<span class="number">0</span>;k&lt;j;k++)&#123;</span><br><span class="line">                        dp[i][j]=Math.min(dp[i][j],Math.max(dp[i-<span class="number">1</span>][k],sum[j]-sum[k]));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> dp[m-<span class="number">1</span>][n-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p>算法作业第二题：</p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20210331145942246.png" alt="image-20210331145942246"></p>
+<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20210331145951377.png" alt="image-20210331145951377"></p>
 
     </div>
 
@@ -392,7 +380,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97"><span class="nav-number">1.</span> <span class="nav-text">递增子序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%96%87%E4%B8%B2"><span class="nav-number">2.</span> <span class="nav-text">回文串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8"><span class="nav-number">3.</span> <span class="nav-text">买卖股票</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D"><span class="nav-number">4.</span> <span class="nav-text">打家劫舍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">背包问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">路径问题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%92%E5%A2%9E%E5%AD%90%E5%BA%8F%E5%88%97"><span class="nav-number">1.</span> <span class="nav-text">递增子序列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%96%87%E4%B8%B2"><span class="nav-number">2.</span> <span class="nav-text">回文串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%B0%E5%8D%96%E8%82%A1%E7%A5%A8"><span class="nav-number">3.</span> <span class="nav-text">买卖股票</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%AE%B6%E5%8A%AB%E8%88%8D"><span class="nav-number">4.</span> <span class="nav-text">打家劫舍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">背包问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">路径问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%89%B2%E5%AD%90%E6%95%B0%E7%BB%84"><span class="nav-number">7.</span> <span class="nav-text">分割子数组</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -408,7 +396,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">89</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
