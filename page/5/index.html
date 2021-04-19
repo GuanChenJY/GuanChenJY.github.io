@@ -150,6 +150,266 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/04/java%E5%BC%82%E5%B8%B8%E6%A8%A1%E5%9E%8B%E7%BB%BC%E8%BF%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/java%E5%BC%82%E5%B8%B8%E6%A8%A1%E5%9E%8B%E7%BB%BC%E8%BF%B0/" class="post-title-link" itemprop="url">java异常模型综述</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 16:28:12 / 修改时间：20:28:49" itemprop="dateCreated datePublished" datetime="2021-02-04T16:28:12+08:00">2021-02-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="一、异常的引入及基础"><a href="#一、异常的引入及基础" class="headerlink" title="一、异常的引入及基础"></a>一、异常的引入及基础</h2><p>发现错误的理想时机是在编译阶段，也就是在你试图运行程序之前。然而，编译期间编译器并不能找出所有的错误，余下的错误只有在运行期才能发现和解决，这类错误就是 <strong>Throwable。</strong> 这就需要错误源能够通过某种方式，把适当的信息传递给某个接收者，该接收者将知道如何正确的处理这个问题，这就是Java的错误报告机制 —— 异常机制。该机制使得程序把 <strong>在正常执行过程中做什么事的代码</strong> 与 <strong>出了问题怎么办的代码</strong> 相分离。</p>
+<p>在对异常的处理方面，Java 采用的是 <strong>终止模型</strong> 。在这种模型中，将假设错误非常关键，以至于程序无法返回到异常发生的地方继续执行。一旦异常被抛出，就表明错误已经无法挽回，也不能回来继续执行。相对于终止模型，另一种异常处理模型为 <strong>恢复模型</strong>，它使异常被处理之后能够继续执行程序。虽然该模型很吸引人，但不是很实用，其主要原因是它所导致的耦合：恢复性处理程序需要了解异常的抛出地点，这势必要包含依赖于抛出位置的非通用代码，从而大大增加了代码编写和维护的难度。</p>
+<p>在异常情形中，异常的抛出伴随着以下三件事的发生：</p>
+<ul>
+<li>首先，同java中其他对象的创建一样，将使用new在堆上创建异常对象；</li>
+<li>其次，当前的执行路径被终止，并且从当前环境中弹出对异常对象的引用；</li>
+<li>最后，异常处理机制接管程序，并开始寻找对应的异常处理程序，并将程序从错误状态中恢复。</li>
+</ul>
+<h2 id="二、java标准异常"><a href="#二、java标准异常" class="headerlink" title="二、java标准异常"></a>二、java标准异常</h2><p>1、基本概念</p>
+<p><img src="https://img-blog.csdn.net/20160916105959789" alt="这里写图片描述"></p>
+<p>- <strong>Throwable：所有的异常类型的根类</strong></p>
+<p>　　在 Java 中，<strong>Throwable 是所有的异常类型的根类。</strong>Throwable 有两个直接子类：<strong>Exception</strong> 和 <strong>Error</strong>。二者都是 Java 异常处理的重要子类，各自都包含大量子类。<br>　<br>- <strong>Error：程序本身无法处理的错误</strong></p>
+<p>　　<strong>Error 是程序无法处理的错误，表示运行应用程序中较严重问题。</strong>这些错误大部分与代码编写者执行的操作无关，而与代码运行时的 JVM 、资源等有关。例如，Java虚拟机运行错误（Virtual MachineError），当 JVM 不再有继续执行操作所需的内存资源时，将出现 OutOfMemoryError。这些异常发生时，Java虚拟机（JVM）一般会选择线程终止。<strong>这些错误是不可查的，并且它们在应用程序的控制和处理能力之外。</strong>在 Java 中，错误通过Error的子类描述。</p>
+<ul>
+<li><p><strong>Exception：程序本身可以处理的错误</strong></p>
+<p>　　Exception 通常是Java程序员所关心的，其在Java类库、用户方法及运行时故障中都可能抛出。它由两个分支组成： <strong>运行时异常（派生于 RuntimeException 的异常）</strong> 和 <strong>其他异常</strong> 。<strong>划分这两种异常的规则是：由程序错误（一般是逻辑错误，如错误的类型转换、数组越界等，应该避免）导致的异常属于RuntimeException；而程序本身没有问题，但由于诸如I/O这类错误（eg：试图打开一个不存在的文件）导致的异常就属于其他异常。</strong></p>
+</li>
+</ul>
+<hr>
+<p>此外，Java的异常(包括Exception和Error)通常可分为 <strong>受检查的异常（checked exceptions）</strong> 和 <strong>不受检查的异常（unchecked exceptions）</strong> 两种类型。</p>
+<ul>
+<li><p><strong>不受检查异常：派生于 Error 或 RuntimeException 的所有异常</strong></p>
+<p>　　<strong>不可查异常是编译器不要求强制处理的异常</strong>，包括运行时异常（RuntimeException与其子类）和错误（Error）。也就是说，当程序中可能出现这类异常，即使没有用try-catch语句捕获它，也没有用throws子句声明抛出它，也会编译通过。</p>
+</li>
+<li><p><strong>受检查异常：除去不受检查异常的所有异常</strong></p>
+<p>　　<strong>受检查异常是编译器要求必须处理的异常。</strong>这里所指的处理方式有两种： <strong>捕获并处理异常</strong> 和<strong>声明抛出异常</strong> 。也就是说，当程序中可能出现这类异常，要么用 try-catch 语句捕获它，要么用 throws 子句声明抛出它，否则编译不会通过。</p>
+</li>
+<li><p><strong>准则：**</strong>如果程序出现RuntimeException异常，那么一定是程序员的问题**</p>
+</li>
+<li><p><strong>异常和错误的区别：</strong>异常能被程序本身处理，错误则无法处理</p>
+</li>
+</ul>
+<h2 id="三、java异常处理机制"><a href="#三、java异常处理机制" class="headerlink" title="三、java异常处理机制"></a>三、java异常处理机制</h2><p>1、异常处理</p>
+<p>在java应用程序中，异常处理机制为：抛出异常与捕获异常。</p>
+<p><strong>抛出异常：</strong>当一个方法出现错误引发异常时，方法创建异常对象并交付运行时系统，异常对象中包含了异常类型和异常出现时的程序状态等异常信息。运行时系统负责寻找处理异常的代码并执行。</p>
+<p><strong>捕获异常：</strong>在方法抛出异常之后，运行时系统将转为寻找合适的异常处理器（exception handler）。潜在的异常处理器是异常发生时依次存留在调用栈中的方法的集合。当异常处理器所能处理的异常类型与方法抛出的异常类型相符时，即为合适的异常处理器。运行时系统从发生异常地方法开始，依次回查调用栈中的方法，直至找到含有合适异常处理器的方法并执行。当运行时系统遍历调用栈而未找到合适的异常处理器，则运行时系统终止。同时，意味着java程序的终止。</p>
+<hr>
+<p>对于运行时异常、错误或受检查的异常，java技术所要求的异常处理方式有所不同：</p>
+<ul>
+<li><p>由于<strong>运行时异常是不受检查的</strong>，Java规定：运行时异常将由Java运行时系统自动抛出，允许应用程序忽略运行时异常；</p>
+</li>
+<li><p>对于<strong>方法运行中可能出现的Error</strong>，当运行方法不欲捕捉时，Java允许该方法不做任何抛出声明。因为，大多数Error是不可恢复的，也属于合理的应用程序不该捕捉的异常；</p>
+</li>
+<li><p>对于<strong>所有受检查的异常</strong>，Java规定：异常必须被捕捉，或者进行异常说明。也就是说，当一个方法选择不捕捉可查异常时，它必须声明将抛出异常；</p>
+<p>　　任何Java代码都可以抛出异常，如：自己编写的代码、来自Java开发环境包中代码，或者Java运行时系统。无论是谁，都可以通过Java的 throw 语句抛出异常。</p>
+<p>　　<strong>总体来说，Java规定：对于可查异常必须捕捉、或者声明抛出。允许忽略不可查的 RuntimeException 和 Error。</strong></p>
+</li>
+</ul>
+<p>2、异常说明</p>
+<p>对于受检查异常而言，java提供了相应的语法，使你能告知客户端程序员某个方法可能会抛出的异常类型，然后客户端程序员就可以进行相应的处理。这就是异常说明，它属于方法声明的一部分，紧跟在形式参数列表之后，如下面的代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">()</span> <span class="keyword">throws</span> TooBig, TooSmall, DivZero </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+
+<p>表示方法f可能会抛出TooBig，TooSmall，DivZero三种异常，而</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">g</span><span class="params">()</span></span>&#123;... ...&#125;</span><br></pre></td></tr></table></figure>
+
+<p>表示方法g不会抛出任何异常</p>
+<p>代码必须与异常说明保持一致。若方法中的代码产生了受检查异常却没有进行处理，编译器就会发现这个问题并提醒你：要么处理这个异常，要么在异常说明中表明此方法产生异常。不过，我们可以声明方法将抛出异常，但实际上并不抛出。</p>
+<p>3、捕获异常</p>
+<p><strong>监控区域：</strong>它是一段可能产生异常的代码，并且后面跟着处理这些异常的代码，由try…catch…子句实现。</p>
+<p>（1）try子句</p>
+<p>​    如果方法内部抛出了异常，这个方法将在抛出异常的过程中结束。若不希望方法就此结束，可以在方法内设置一个特殊的块来捕获异常。其中，在这个块里，尝试各种方法调用的部分称为try块：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123; </span><br><span class="line">    <span class="comment">// Code that might generate exceptions </span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>(2) catch子句-异常处理程序</p>
+<p>抛出的异常必须得到处理，而且针对每个要捕获的异常，都必须准备相应的异常处理程序。异常处理程序必须紧跟在try块之后，以catch关键字表示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123; </span><br><span class="line">  <span class="comment">// Code that might generate exceptions </span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Type1 id1)|&#123; </span><br><span class="line">  <span class="comment">// Handle exceptions of Type1 </span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Type2 id2) &#123; </span><br><span class="line">  <span class="comment">// Handle exceptions of Type2 </span></span><br><span class="line">&#125; <span class="keyword">catch</span>(Type3 id3) &#123; </span><br><span class="line">  <span class="comment">// Handle exceptions of Type3 </span></span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>异常处理程序可能用不到标识符（id1,id2,…），因为异常的类型本身就已经给出了足够的信息来处理异常，但标识符不可省。<strong>当异常被抛出时，异常处理机制将负责搜寻参数与异常类型相匹配的第一个处理程序。然后进入对应的catch自居执行，此时认为异常得到处理。一旦catch子句结束，则处理程序的查找结束</strong>（与 switch…case…不同）。</p>
+<p>特别需要注意的是：</p>
+<ul>
+<li>异常匹配原则：抛出异常时，异常处理系统会按照代码的书写顺序找出最近匹配的处理程序。一旦找到，它就认为异常将得到处理，然后停止查找；</li>
+<li>不可屏蔽派生类异常：捕获基类异常的catch子句必须放在捕获其派生类异常的catch子句之后，否则编译不会通过；</li>
+<li>catch子句必须与try子句连用</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/04/java%E7%9A%84%E6%8A%BD%E8%B1%A1%E7%89%B9%E6%80%A7%EF%BC%9A%E6%8A%BD%E8%B1%A1%E7%B1%BB%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/02/04/java%E7%9A%84%E6%8A%BD%E8%B1%A1%E7%89%B9%E6%80%A7%EF%BC%9A%E6%8A%BD%E8%B1%A1%E7%B1%BB%E4%B8%8E%E6%8E%A5%E5%8F%A3%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" class="post-title-link" itemprop="url">java的抽象特性：抽象类与接口深度解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-02-04 15:47:32 / 修改时间：16:24:10" itemprop="dateCreated datePublished" datetime="2021-02-04T15:47:32+08:00">2021-02-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><strong>要点</strong></p>
+<ul>
+<li>抽象类</li>
+<li>接口</li>
+<li>抽象类与接口的区别</li>
+</ul>
+<h2 id="一、抽象"><a href="#一、抽象" class="headerlink" title="一、抽象"></a>一、抽象</h2><p>对于面向对象编程来说，抽象是它的四大特征之一。在java中，可以通过两种形式来体现OOP的抽象：接口和抽象类。接口和抽象类为我们提供了一种将接口与实现分离的更加结构化的方法。</p>
+<h2 id="二、抽象类"><a href="#二、抽象类" class="headerlink" title="二、抽象类"></a>二、抽象类</h2><p>1）概念基础</p>
+<p>所有的对象都是通过类来描述的，但是并不是所有的类都是可以描述对象（对象=状态+行为）的。如果一个类没有足够的信息来描述一个具体的对象，那么我们就可以将这样的类设为抽象类。抽象类只能被public和默认修饰符修饰。</p>
+<p>抽象方法是一种特殊的方法：它只有声明，而没有具体的实现。抽象方法的声明格式为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>抽象方法必须用abstract关键字进行修饰。如果一个类含有抽象方法，则称这个类为抽象类，抽象类必须在类前用abstract关键字修饰 <strong>(特别需要注意的是，抽象类也可以不包含抽象方法，即其中所有的方法都是具体方法)**。</strong>因为抽象类中含有未具体实现的方法，所以不能用抽象类创建对象。**</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassName</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>抽象类就是为了继承而存在的，如果你定义了一个抽象类，却不去继承它，那么等于白白创建了这个抽象类，因为你不能用它来做任何事情。对于一个父类，如果它的某个方法在父类中实现出来没有任何意义，必须根据子类的实际需求来进行不同的实现，那么就可以将这个方法声明为abstract方法，此时这个类也就称为abstract类了。</p>
+<p>包含抽象方法的类称为抽象类，但并不意味着抽象类中只能有抽象方法，它和普通类一样，同样可以拥有成员变量和普通的成员方法。注意，抽象类和普通类的主要三点区别：</p>
+<ul>
+<li>抽象方法不能是private的，否则，其不能被子类继承，子类也无法实现该方法，从而这样做没有任何意义；</li>
+<li>抽象类不能用来创建对象</li>
+<li>如果一个类继承于一个抽象类，则子类必须实现父类的抽象方法。如果子类没有实现父类的抽象方法，则必须将子类也定义为abstract类。</li>
+</ul>
+<p>2）本质</p>
+<ul>
+<li>抽象类与具体类的唯一区别：含有抽象方法的类一定是抽象类；</li>
+<li>抽象类的根本作用是为了继承，所以抽象类的抽象方法不能被private修饰；</li>
+<li>抽象类比具体类仅多一点抽象因素：行为层面的抽象（可以包含抽象方法）；</li>
+</ul>
+<h2 id="三、接口"><a href="#三、接口" class="headerlink" title="三、接口"></a>三、接口</h2><p>1）概念基础</p>
+<p>接口（interface），在软件工程中，接口泛指别人调用的方法或者函数。它是对行为的抽象。接口只能被public和默认修饰符修饰。在java中，定义一个接口的形式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">InterfaceName</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>接口中可以含有 变量和方法。</strong>但是要注意，接口中的 <strong>变量</strong> 会被隐式地指定为 <strong>public static final变量（并且只能是public static final变量，\</strong>而且 public static final 可省，即默认就是public static final 的）*<strong>* ，而 <strong>方法</strong> 会被隐式地指定为 <strong>public abstract方法且只能是 public abstract 方法\</strong>（public abstract 可省，即默认就是 public abstract 的）**</strong>，<strong>并且接口中所有的方法不能有具体的实现，也就是说，接口中的方法必须都是抽象方法。</strong>从这里可以隐约看出接口和抽象类的区别，<strong>接口是一种极度抽象的类型，它比抽象类更加“抽象”。</strong></p>
+<p>要让一个类遵循某组特地的接口需要使用 <strong>implements</strong> 关键字，具体格式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class ClassName implements Interface1,Interface2,[....]&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，允许一个类遵循多个特定的接口。如果一个非抽象类遵循了某个接口，就必须实现该接口中的所有方法。对于遵循某个接口的抽象类，可以不实现该接口中的抽象方法。</p>
+<p>2）本质</p>
+<ul>
+<li>接口是一种行为契约，是对行为的抽象；</li>
+</ul>
+<h2 id="四、接口与抽象类的区别"><a href="#四、接口与抽象类的区别" class="headerlink" title="四、接口与抽象类的区别"></a>四、接口与抽象类的区别</h2><p>1、语法层面上的区别</p>
+<ul>
+<li>抽象类可以提供成员方法的实现细节，而接口中只能存在public abstract（可省）方法；</li>
+<li>抽象类中的成员变量可以是各种类型，而接口中的成员变量只能是public static final类型的；</li>
+<li>接口中不能含有静态代码块以及静态方法、而抽象类可以有静态代码块和静态方法；</li>
+<li>一个类只能继承一个抽象类，而一个类却可以实现多个接口。</li>
+</ul>
+<p><img src="https://img-blog.csdn.net/20161210225212635?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvanVzdGxvdmV5b3Vf/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p>2、设计层面上的区别</p>
+<p>1）抽象类是对一种事物的抽象，即对类抽象，而接口是对行为的抽象。抽象类是对整个类整体进行抽象，包括属性、行为，但是接口却是对类局部（行为）进行抽象。举个简单的例子，飞机和鸟是不同类的事物，但是它们都有一个共性，就是都会飞。那么在设计的时候，可以将飞机设计为一个类 Airplane，将鸟设计为一个类 Bird，但是不能将飞行 这个特性也设计为类，因此它只是一个行为特性，并不是对一类事物的抽象描述。此时可以将 飞行 设计为一个接口Fly，包含方法fly()，然后Airplane和Bird分别根据自己的需要实现Fly这个接口。然后至于有不同种类的飞机，比如战斗机、民用飞机等直接继承Airplane即可，对于鸟也是类似的，不同种类的鸟直接继承Bird类即可。从这里可以看出，<strong>继承是一个 “是不是”的关系，而 接口 实现则是 “有没有”的关系。</strong>如果一个类继承了某个抽象类，则子类必定是抽象类的种类，而接口实现则是有没有、具备不具备的关系，比如鸟是否能飞（或者是否具备飞行这个特点），能飞行则可以实现这个接口，不能飞行就不实现这个接口。</p>
+<p>2）设计层面不同，抽象类作为很多子类的父类，它是一种模板式设计。而接口是一种行为规范，它可以跨越不同的类，是一种辐射式设计。什么是模板式设计？最简单例子，大家都用过ppt里面的模板，如果用模板A设计了ppt B和ppt C，ppt B和ppt C公共的部分就是模板A了，如果它们的公共部分需要改动，则只需要改动模板A就可以了，不需要重新对ppt B和ppt C进行改动。而辐射式设计，比如某个电梯都装了某种报警器，一旦要更新报警器，就必须全部更新。也就是说 <strong>对于抽象类，如果需要添加新的方法，可以直接在抽象类中添加具体的实现，子类可以不进行变更；而对于接口则不行，如果接口进行了变更，则所有实现这个接口的类都必须进行相应的改动。</strong></p>
+<p>门和警报的例子：门都有open()和close()两个动作，此时我们可以定义通过抽象类和接口来定义这个抽象概念：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Door</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>或者</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Door</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是现在如果我们需要门具有报警alarm( )的功能，那么该如何实现？下面提供两种思路：</p>
+<p>　　1）将这三个功能都放在抽象类里面，但是这样一来所有继承于这个抽象类的子类都具备了报警功能，但是有的门并不一定具备报警功能；</p>
+<p>　　2）将这三个功能都放在接口里面，需要用到报警功能的类就需要实现这个接口中的open( )和close( )，也许这个类根本就不具备open( )和close( )这两个功能，比如火灾报警器。</p>
+<p>　　从这里可以看出， Door的open() 、close()和alarm()根本就属于两个不同范畴内的行为，open()和close()属于门本身固有的行为特性，而alarm()属于延伸的附加行为。因此最好的解决办法是单独将报警设计为一个接口，包含alarm()行为,Door设计为单独的一个抽象类，包含open和close两种行为。再设计一个报警门继承Door类和实现Alarm接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Alram</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">alarm</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Door</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">open</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">close</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlarmDoor</span> <span class="keyword">extends</span> <span class="title">Door</span> <span class="keyword">implements</span> <span class="title">Alarm</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">oepn</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="comment">//....</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="comment">//....</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">alarm</span><span class="params">()</span> </span>&#123;</span><br><span class="line">      <span class="comment">//....</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、小结</p>
+<ul>
+<li>抽象类是对一种事物的抽象，接口是对行为的抽象；</li>
+<li>抽象类是一种模板，接口是一种契约</li>
+<li>抽象类的抽象程序介于普通类和接口之间。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/04/java%E5%8E%9F%E7%94%9F%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%8C%85%E8%A3%85%E5%99%A8%E7%B1%BB%E5%9E%8B%E6%B7%B1%E5%BA%A6%E5%89%96%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1473,481 +1733,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/14/%E7%89%9B%E5%AE%A2%E5%88%B7%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/14/%E7%89%9B%E5%AE%A2%E5%88%B7%E9%A2%98/" class="post-title-link" itemprop="url">牛客刷题</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-14 15:01:53" itemprop="dateCreated datePublished" datetime="2021-01-14T15:01:53+08:00">2021-01-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-03 19:08:58" itemprop="dateModified" datetime="2021-02-03T19:08:58+08:00">2021-02-03</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><strong>1.Statement的作用</strong></p>
-<ul>
-<li>用于执行不带参数的简单SQL语句</li>
-<li>Prepared Statement对象用于执行预编译SQL语句。</li>
-<li>Callable Statement对象用于执行对存储过程的调用。</li>
-</ul>
-<p><strong>2.在java中，对于不再使用的内存资源，如调用完成的方法，“垃圾回收器”会自动将其释放么？</strong></p>
-<p>不会。方法调用时，会创建栈帧在栈中，调用完是程序自动出栈释放，而不是gc释放。JVM内存可简单分为三个区：</p>
-<ul>
-<li>堆区，用于存放所有对象，是线程共享的。（数组也属于对象）</li>
-<li>栈区，用于存放基本数据类型的数据和对象的引用，是线程私有的。</li>
-<li>方法区，用于存放类信息、常量、静态变量、编译后的字节码等，是线程共享的</li>
-</ul>
-<p>gc主要针对堆区。</p>
-<p><strong>3.字符流</strong></p>
-<p><img src="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537222061_12B6233B6EA3C9956865918F5E9B7240" alt="img"></p>
-<p><img src="https://uploadfiles.nowcoder.com/images/20190603/652334996_1559537178275_256EC3581646F19915DBB5C9F4D80330" alt="img"></p>
-<p><strong>4.java创建对象的方式</strong></p>
-<p>5种方式：</p>
-<ul>
-<li>使用new关键字</li>
-<li>使用反射的Class类的newInstance方法</li>
-<li>使用反射的Constructor类的newInstance（）方法</li>
-<li>使用对象克隆clone（）方法</li>
-<li>使用反序列化（ObjectInputStream）的readObject()方法</li>
-</ul>
-<p><strong>5.java包的作用</strong></p>
-<p>为了更好地组织类，java提供了包机制，用于区别类名的命名空间。</p>
-<p>包的作用：</p>
-<ul>
-<li>把功能相似或相关的类或接口组织在同一个包中，方便类的查找和使用。</li>
-<li>如同文件夹一样，包也采用了树形目录的存储方式。同一个包中的类名字是不同的，不同的包中的类的名字是可以相同的，当同时调用两个不同包中相同类名的类时，应该加上包名加以区别。因此包可以避免名字冲突。</li>
-<li>包也限定了访问权限，拥有包访问权限的类才能访问某个包中的类。java使用包（package）这种机制是为了防止命名冲突，访问控制，提供搜索和定位类（class）、接口、枚举（enumerations）和注释（annotation）等。</li>
-</ul>
-<p><strong>6.File类的常用方法和说明</strong></p>
-<p>1.访问文件名相关方法：</p>
-<ul>
-<li><p>String getName(); 返回此File对象所表示的文件名和路径名（如果是路径，则返回最后一级子路径名）。</p>
-</li>
-<li><p>String getPath(); 返回此File对象所对应的路径名。</p>
-</li>
-<li><p>File getAbsolutePath(); 返回此File对象所对应的绝对路径名。</p>
-</li>
-<li><p>String getParent(); 返回此File对象所对应目录（最后一级子目录）的父路径名。</p>
-</li>
-<li><p>boolean renameTo(File newName); 重命名此File对象所对应的文件或目录，如果重命名成功，则返回true:否则返回false.<strong>（A）</strong></p>
-</li>
-</ul>
-<p>2.文件检测相关方法</p>
-<ul>
-<li>boolean exists(); 判断File对象所对应的文件或目录是否存在。</li>
-<li>boolean canWrite(); 判断File对象所对应的目录或文件是否可写。</li>
-<li>boolean canRead(); 判断File对象所对应的目录或文件是否可读。</li>
-<li>boolean isFile(); 判断File对象所对应的是否是文件，而不是目录。</li>
-<li>boolean isDirectory(); 判断File对象所对应的是否是目录，而不是文件。</li>
-<li>boolean isAbsolute(); 判断File对象所对应的文件或目录是否是绝对路径。该方法消除了不同平台的差异，可以直接判断File对象是否为绝对路径。在UNIX/Linux/BSD等系统上，如果路径名开头是一条斜线（/）,则表明该File对象对应一个绝对路径；在Windows等系统上，如果路径开头是盘符，则说明它是绝对路径。</li>
-</ul>
-<p>3.获取常规文件信息</p>
-<ul>
-<li>long lastModified(); 返回文件最后修改时间。</li>
-<li>long length(); 返回文件内容的长度。</li>
-</ul>
-<p>4.文件操作相关的方法</p>
-<ul>
-<li>boolean createNewFile(); 当此File对象所对应的文件不存在时，该方法将新建的一个该File对象所指定的新文件，如果创建成功则返回true；否则返回false.<strong>(C)</strong></li>
-<li>boolean delete(); 删除File对象所对应的文件或路径。</li>
-<li>static File CreateTempFile(String prefix,String suffix);在默认的临时文件目录创建一个临时空文件，使用给定前缀、系统生成的随机数和给定后缀作为文件名。这是一个静态方法，可以直接通过File来调用。preFix参数必须至少是3个字节长。建议前缀使用一个短的、有意义的字符串。建议前缀使用一个短的、有意义的字符串，比如”hjb“ 或”main”. suffix参数可以为null,在这种情况下，将使用默认的后缀”.tmp”.</li>
-<li>static File CreateTempFile(String prefix,String suffix,File directory);在directory所指定的目录中创建一个临时空文件，使用给定前缀、系统生成的随机数和给定后缀作为文件名。这是一个静态方法，可以直接通过File来调用。</li>
-<li>void deleteOnExit(); 注册一个删除钩子，指定当Java虚拟机退出时，删除File对象随对应的文件和目录。</li>
-</ul>
-<p>5.目录操作相关方法<strong>（D）</strong></p>
-<ul>
-<li>boolean mkdir(); 试图创建一个File对象所对应的目录，如果创建成功，则返回true;否则返回false. 调用该方法时File对象必须对应一个路径，而不是一个文件。</li>
-<li>String[] list(); 列出File对象的所有子文件名和路径名，返回String数组。</li>
-<li>File[] listFiles(); 列出File对象的所有子文件和路径，返回File数组。</li>
-<li>static File[] listRoots(); 列出系统所有的根路径。这是一个静态方法，可以直接通过File类来调用。</li>
-</ul>
-<p><strong>7.几种内部类</strong></p>
-<p>在java中，可以将一个类定义在另一个类里面或者一个方法里面，这样的类称为内部类，广泛意义上的内部类一般包括四种：成员内部类，局部内部类，匿名内部类，静态内部类。</p>
-<p>1、成员内部类</p>
-<ul>
-<li>该类像是外部类的一个成员，可以无条件的访问外部类的所有成员属性和成员方法（包括private成员和静态成员）；</li>
-<li>成员内部类拥有与外部类同名的成员变量时，会发生隐藏现象，即默认情况下访问的是成员内部类中的成员。如果要访问外部类中的成员，需要以下形式访问：【外部类.this.成员变量或外部类.this.成员方法】</li>
-<li>在外部类中如果要访问内部类的成员，必须先创建一个成员内部类的对象，再通过指向这个对象的引用来访问；</li>
-<li>成员内部类是依附外部类而存在的，也就是说，如果要创建成员内部类的对象，前提是必须存在一个外部类的对象；</li>
-<li>内部类可以拥有private访问权限，protected访问权限，public访问权限及包访问权限。如果成员内部类用private修饰，则只能在外部类的内部访问；如果用public修饰，则任何地方都能访问；如果用protected修饰，则只能在同一个包下或者继承外部类的情况下访问；如果是默认访问权限，则只能在同一个包下访问。外部类只能被public和包访问两种权限。</li>
-</ul>
-<p>2、局部内部类</p>
-<ul>
-<li>局部内部类是定义在一个方法或者一个作用域里面的类，它和成员内部类的区别在于局部内部类的访问权限于方法内或者该作用域内；</li>
-<li>局部内部类就像是方法里面的一个局部变量一样，是不能有public、protected、private以及static修饰符的。</li>
-</ul>
-<p>3、匿名内部类</p>
-<ul>
-<li>一般使用匿名内部类的方法来编写事件监听代码；</li>
-<li>匿名内部类是不能有访问修饰符和static修饰符的；</li>
-<li>匿名内部类是唯一一种没有构造器的类；</li>
-<li>匿名内部类用于继承其他类或是实现接口，并不需要增加额外的方法，只是对继承方法的实现或是重写。</li>
-</ul>
-<p>4、内部静态类</p>
-<ul>
-<li>静态内部类是不需要依赖于外部类的，这点和类的静态成员属性有点类似；</li>
-<li>不能使用外部类的非static成员变量或者方法。</li>
-</ul>
-<p><strong>8.关于值相等</strong></p>
-<p>1、int与Integer、new Integer()进行==比较时，结果永远为true；</p>
-<p>2、Integer与new Integer()进行==比较时，结果永远为false</p>
-<p>3、Integer与Integer进行==比较时，看范围；在大于等于-128小于等于127的范围内为true，在此范围外为false。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a1=<span class="number">127</span>;</span><br><span class="line">Integer a2=<span class="number">127</span>;</span><br><span class="line">System.out.println(a1==a2);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a3=<span class="number">127</span>;</span><br><span class="line">Integer a4=<span class="keyword">new</span> Integer;</span><br><span class="line">System.out.println(a3==a4);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a5=<span class="number">128</span>;</span><br><span class="line">Integer a6=<span class="number">128</span>;</span><br><span class="line">System.out.println(a5==a6);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a7=<span class="number">128</span>;</span><br><span class="line">Integer a8=<span class="keyword">new</span> Integer(<span class="number">128</span>);</span><br><span class="line">System.out.println(a7==a8);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//Integer与Integer比较</span></span><br><span class="line">Integer a9=<span class="number">127</span>;</span><br><span class="line">Integer a10=<span class="number">127</span>;</span><br><span class="line">System.out.println(a9==a10);	<span class="comment">//true</span></span><br><span class="line"></span><br><span class="line">Integer a11=<span class="number">128</span>;</span><br><span class="line">Integer a12=<span class="number">128</span>;</span><br><span class="line">System.out.println(a11==a12);	<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//new Integer()与Integer比较</span></span><br><span class="line">Integer a13=<span class="number">127</span>;</span><br><span class="line">Integer a14=<span class="keyword">new</span> Integer(<span class="number">127</span>);</span><br><span class="line">System.out.println(a13==a14);	<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line">Integer a15=<span class="number">128</span>;</span><br><span class="line">Integer a16=<span class="number">127</span>;</span><br><span class="line">System.out.println(a15==a16);	<span class="comment">//false</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>9.执行顺序</strong></p>
-<p>父类静态代码块-&gt;子类静态代码块-&gt;父类构造代码块-&gt;父类构造函数-&gt;子类构造代码块-&gt;子类构造函数</p>
-<p><strong>10.String,StringBuilder,StringBuffer</strong></p>
-<p>StringBuilder，StringBuffer，String都是final的，但是为什么StringBuilder，StringBuffer可以进行修改呢，因为不可变包括的是，引用不可变及对象不可变，而这三个都是属于引用不可变，（也就是地址不要变，里面的内容随心所欲），而StringBuilder，StringBuffer中都包含append方法，可对对象中的内容进行增加。</p>
-<p><strong>11.HashMap与HashTable区别</strong></p>
-<p>HashMap是map接口的实现类，是将键映射到值的对象，其中键和值都是对象，并且不能包含重复键，但可以包含重复值。HashMap允许null key和null value，而Hashtable不允许。</p>
-<p>HashTable是线程安全Collection。</p>
-<p>区别如下：</p>
-<ul>
-<li>HashMap允许将null作为一个entry的key或者value，而Hashtable不允许。</li>
-<li>HashMap把Hashtable的contains方法去掉了，改成containsValue和containsKey。因为contains方法容易让人引起误解。</li>
-<li>HashTable继承自Dictionary类，而HashMap是java1.2引进的Map interface的一个实现。</li>
-<li>HashTable的方法是Synchronize的，而HashMap不是，在多个线程访问Hashtable时，不需要自己为它的方法实现同步，而HashMap就必须为之提供外同步。</li>
-</ul>
-<p><strong>12 识别合法的构造方法</strong></p>
-<p>构造方法可以被重载，一个构造方法可以通过this关键字调用另一个构造方法，this语句必须位于构造方法的第一行；方法的重载：重载构成的条件：方法的名称相同，但参数类型或参数个数不同，才能构成方法的重载。</p>
-<p>当一个类中没有定义任何构造方法，java将自动提供一个缺省构造方法；</p>
-<p>子类通过super关键字调用父类的一个构造方法；</p>
-<p>当子类的某个构造方法没有通过super关键字调用父类的构造方法，通过这个构造方法创建子类对象时，会自动先调用父类的缺省构造方法。</p>
-<p>构造方法不能被static,final,synchronized,abstract,native修饰，但可以被public,private,protected修饰；</p>
-<p>构造方法不是类的成员方法；</p>
-<p>构造方法不能被继承</p>
-<p><strong>13、解决哈希冲突</strong></p>
-<p>ThreadLocalMap中使用开放地址法来处理散列冲突，而HashMap中使用的是分离链表法。之所以采用不同的方式主要是因为：在ThreadLoaclMap中的散列值分散的十分均匀，很少会出现冲突。并且ThreadLocalMap经常需要清楚无用的对象，使用传数组更加方便。</p>
-<p><strong>14、switch支持的类型</strong></p>
-<p>以java8为准，switch支持10种类型 基本类型：byte,char,short,int 对于包装类：Byte,Short,Character,Integer String Enum</p>
-<p>实际只支持int类型 java实际只用支持int类型的switch语句，那其他的类型是如何支持的 a、基本类型byte char short原因：这些基本数字类型可自动向上转为int，实际还是用的int。b、基本类型包装类Byte,Short，Character，Integer原因：java的自动拆箱机制可看这些对象自动转为基本类型 c、String类型原因：实际switch比较的string.hashCode值，它是一个int类型</p>
-<p><strong>15、JVM内存结构</strong></p>
-<p>程序计数器是一个以<strong>线程私有</strong>的一块较小的内存空间，用于记录所属线程所执行的字节码的行号指示器；字节码解释器工作时，通过改变程序计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳准、异常处理、线程恢复等基础功能都需要依赖程序计数器来完成。</p>
-<p><img src="https://uploadfiles.nowcoder.com/files/20190627/284864965_1561601257798_221440388796170.png" alt="img"></p>
-<p><strong>16、面向对象的五大基本原则</strong></p>
-<p>单一职责原则（SRP）：一个类，最好只做一件事，只有一个引起它的变化。单一职责原则可以看作是低耦合、高内聚在面向对象原则上的引申，将职责定义为引起变化的原因，以提高内聚性来减少引起变化的原因。</p>
-<p>开放封闭原则（OCP）：软件实体应该是可扩展的，而不可修改的。也就是，对外扩展开放，对修改封闭的。</p>
-<p>里氏替换原则（LSP）：子类必须能够替换其基类。这一思想体现为对继承机制的约束规范，只有子类能够替换基类时，才能保证系统在运行期内识别子类，这是保证继承复用的基础。</p>
-<p>依赖倒置原则（DIP）：依赖于抽象。具体而言就是高层模块不依赖于底层模块，二者都同依赖于抽象；抽象不依赖于具体，具体依赖于抽象。</p>
-<p>接口隔离原则（ISP）：使用多个小的转么的接口，而不要使用一个大的总接口</p>
-<p><strong>17、Collections</strong></p>
-<p><img src="http://uploadfiles.nowcoder.com/images/20160418/854180_1460986378682_4B1F66BFB4ADEB24A093A20778555B52" alt="img"></p>
-<hr>
-<p><strong>18、java内部类</strong></p>
-<ul>
-<li><p>为什么使用内部类</p>
-<ul>
-<li><p>使用内部类最吸引人的原因是：每个内部类都能独立地继承一个实现，所以无论外围类是否已经继承了某个实现，对于内部类都没有影响</p>
-<p>1.1 使用内部类最大的优点就在于能够非常好的解决多重继承的问题，使用内部类还能够为我们带来如下特性:</p>
-<ul>
-<li>内部类可以用多个实例，每个实例都有自己的状态信息，并且与其他外围对象的信息相互独。</li>
-<li>在单个外围类中，可以让多个内部类以不同的方式实现同一个接口，或者继承同一个类。</li>
-<li>创建内部类对象的时刻并不依赖于外围类对象的创建。</li>
-<li>内部类并没有令人迷惑的’”is-a”‘关系，他就是一个独立的实体。</li>
-<li>内部类提供了更好的封装，除了该外围类，其他类都不能访问。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>内部类分类：</p>
-<ul>
-<li><p>成员内部类：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age =<span class="number">99</span>;</span><br><span class="line">    String name=<span class="string">&quot;CoCo&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">        String name=<span class="string">&quot;Jayden&quot;</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(Outer.<span class="keyword">this</span>.name);</span><br><span class="line">            System.out.println(name);</span><br><span class="line">            System.out.println(age);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Inner <span class="title">getInnerClass</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Inner();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Outer o = <span class="keyword">new</span> Outer();</span><br><span class="line">        Inner in=o.<span class="function">new <span class="title">Inner</span><span class="params">()</span></span>;</span><br><span class="line">        in.show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>1.Inner类定义在Outer类的内部，相当于Outer类的一个成员变量的位置，Inner类可以使用任意访问控制符，如public、protected、private等</p>
-<p>2、Inner类中定义的show()方法可以直接访问Outer类中的数据，而不受访问控制符的影响，如直接访问Outer类中的私有属性age</p>
-<p>3、定义了成员内部类，必须使用外部类对象来创建内部类对象，而不能直接去new一个内部类对象，</p>
-<p>即：内部类 对象名=外部类对象.new 内部类（）；</p>
-<p>4、编译上面的程序后，会发现产生了两个.class文件：Outer.class，Outer$Inner.class{}.</p>
-<p>5、成员内部类中不能存在任何static的变量和方法，可以定义常量：</p>
-<ul>
-<li>因为非静态内部类是要依赖于外部类的实例，而静态变量和方法是不依赖于对象的，仅与类相关。</li>
-<li>简而言之：在加载静态域时，根本没有外部类，所以在非静态内部类中不能定义静态域或方法，编译不通过；非静态内部类的作用域是实例级别</li>
-<li>常量是在编译器就确定的，放到所谓的常量池了。</li>
-</ul>
-<p>注意：外部类是不能直接使用内部类的成员和方法的，可先创建内部类的对象，然后通过内部类的对象来访问其成员变量和方法；如果外部类和内部类具有相同的成员变量或方法，内部类默认访问自己的成员变量或方法，如果要访问外部类的成员变量，可以使用this关键字，如Outer.this.name</p>
-</li>
-<li><p>静态内部类：是static修饰的内部类</p>
-<p>1、静态内部类不能直接访问外部类的非静态成员，但可以通过new 外部类().成员的方式访问</p>
-<p>2、如果外部类的静态成员与内部类的成员名称相同，可通过“类名.静态成员”访问外部类的静态成员；如果外部类的静态成员与内部类的成员名称不相同，则可通过“成员名”直接调用外部类的静态成员</p>
-<p>3、创建静态内部类的对象时，不需要外部类的对象，可以直接创建内部类 对象名 = new 内部类();</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Outer</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age =<span class="number">99</span>;</span><br><span class="line">    <span class="keyword">static</span> String name=<span class="string">&quot;Coco&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Inner</span></span>&#123;</span><br><span class="line">        String name=<span class="string">&quot;Jayden&quot;</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">show</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(Outer.name);</span><br><span class="line">            System.out.println(name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        Inner i=<span class="keyword">new</span> Inner();</span><br><span class="line">        i.show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>方法内部类：其作用域仅限于方法内，方法外部无法访问该内部类</p>
-<p>1、局部内部类就像是方法里面的一个局部变量一样，是不能有public、protected、private以及static修饰符</p>
-<p>2、只能访问方法中定义的final类型的局部变量，因为：</p>
-<p>​    当方法被调用运行完毕之后，局部变量就已消亡了。但内部类对象可能还存在，直到没有被引用时才会消亡。此时就会出现一种情况，就是内部类要访问一个不存在的局部变量；使用final修饰符不仅会保持对象的引用不会改变，而且编译器还会持续维护这个对象在回调方法中的生命周期。局部内部类并不是直接调用方法传进来的参数，而是内部类将传进来的参数通过自己的构造器备份到了字节的内部，自己内部的方法调用的实际是自己的属性而不是外部类方法的参数；</p>
-</li>
-<li><p>匿名内部类：</p>
-<p>1、匿名内部类是直接使用new来生成一个对象的引用；</p>
-<p>2、对于匿名内部类的使用是存在一个缺陷的，就是它仅能被使用一次，创建匿名内部类时它会立即创建一个该类的实例，该类的定义会立即消失，所以匿名内部类是不能够被重复使用；</p>
-<p>3、使用匿名内部类时，我们必须是继承一个类或者实现一个接口，但是二者不可兼得，同时也只能继承一个类或者实现一个接口；</p>
-<p>4、匿名内部类中是不能定义构造函数的，匿名内部类中不能存在任何的静态成员变量和静态方法；</p>
-<p>5、匿名内部类中不能存在任何的静态成员变量和静态方法，匿名内部类不能是抽象的，它必须要实现继承的类或者实现的接口的所有抽象方法。</p>
-<p>6、匿名内部类初始化：使用构造代码块！利用构造代码块能够达到为匿名内部类创建一个构造器的效果</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.niuke;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 匿名内部类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">s5</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> InnerClass <span class="title">getInnerClass</span><span class="params">(<span class="keyword">final</span> <span class="keyword">int</span> num,String str2)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> InnerClass() &#123;</span><br><span class="line">            <span class="keyword">int</span> number=num+<span class="number">3</span>;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getNumber</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> number;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        s5 out=<span class="keyword">new</span> s5();</span><br><span class="line">        InnerClass innerClass=out.getInnerClass(<span class="number">2</span>,<span class="string">&quot;shen&quot;</span>);</span><br><span class="line">        System.out.println(innerClass.getNumber());</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">InnerClass</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">getNumber</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-</li>
-</ul>
-<p><strong>19、java daemon线程</strong></p>
-<p>java的线程分为两类：用户线程和daemon线程。</p>
-<p>用户线程：用户线程可以简单的理解为用户定义的线程，当然包括majavain线程。</p>
-<p>daemon线程：daemon线程是为我们创建的用户线程提供服务的线程，比如说JVM的GC等等，这样的线程有一个非常明显的特征：当用户线程运行结束的时候，daemon线程将会自动退出。</p>
-<p>daemon线程的特点：</p>
-<p>1、守护线程创建的过程中需要先调用setDaemon方法进行设置，然后再启动线程。否则会报出IllegalThreadStateException异常。</p>
-<p>2、由于daemon线程的终止条件是当前是否存在用户线程，所以我们不能指派daemon线程来进进行一些业务操作，而只能服务用户线程。</p>
-<p>3、daemon线程创建的子线程仍然是daemon线程。</p>
-<p><strong>20、JVM参数配置</strong></p>
-<p>举例所示：-Xms1G -Xms2G -Xmn500M -XX:MaxPermSize=64M -XX:+UseConcMarkSweepGC -XX:SurvivorRatio=3,</p>
-<p>-Xms1G    设置java堆最小值为1G</p>
-<p>-Xmx2G    设置java堆最大值为2G</p>
-<p>-Xmn500M    设置新生代大小为500M（一个Eden区，两个Survivor区）</p>
-<p>-XX：MaxPermSize=64M    设置永久代大小为64M</p>
-<p>-XX：+UseConcMarkSweepGC    设置使用CMS收集器</p>
-<p>-XX：SurvivorRatio=3    设置Eden区与Survivor区大小的比例。</p>
-<p><strong>21、实现会话跟踪的机制</strong></p>
-<p>Cookies、URL重写，隐藏式表单域，Session机制。</p>
-<p>Cookies是使用最广泛的会话跟踪机制，Cookies是由服务器创建，并把Cookies信息保存在用户机器上的硬盘上，下次用户再次访问该站点服务器的时候，保存在用户机器上硬盘的Cookies信息就被送回给服务器。一般Cookies一般不多于4KB，且用户的敏感信息如信用卡账号密码不应该保存在Cookies中。</p>
-<p>URL重写:URL重写用于在每个URL结尾附加标识会话的数据，与标识符关联的服务器保存有关与会话的数据，如我们访问某个新闻的时候，在地址栏我们一般会看到这样的信息：<a target="_blank" rel="noopener" href="http://www.xxx.com/news?id=??%EF%BC%8C%E9%80%9A%E5%B8%B8%E7%9A%84%E8%AF%9Did%E5%90%8E%E9%9D%A2%E7%9A%84%E9%97%AE%E5%8F%B7%E8%A1%A8%E7%A4%BA%E8%AF%A5%E6%9D%A1%E6%96%B0%E9%97%BB%E5%9C%A8%E5%90%8E%E5%8F%B0%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%E7%9A%84%E6%96%B0%E9%97%BB%E8%A1%A8%E7%9A%84id%E3%80%82URL%E9%87%8D%E5%86%99%E8%83%BD%E5%A4%9F%E5%9C%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%81%9C%E7%94%A8cookies%E6%88%96%E8%80%85%E4%B8%8D%E6%94%AF%E6%8C%81cookies%E7%9A%84%E6%97%B6%E5%80%99%E4%BB%8D%E7%84%B6%E8%83%BD%E5%A4%9F%E5%8F%91%E6%8C%A5%E4%BD%9C%E7%94%A8%E3%80%82">http://www.XXX.com/news?id=??，通常的话id后面的问号表示该条新闻在后台数据库中的新闻表的id。URL重写能够在客户端停用cookies或者不支持cookies的时候仍然能够发挥作用。</a></p>
-<p>隐藏表单域：</p>
-<p>通常，在表单中我们使用隐藏表单域的时候会有这么一句代码：<input type="hidden" name="XXX" value="XXX"/>。通过给type属性赋值为hidden值来实现隐藏，这样用户在浏览的时候看不到这行代码的数据，但是当用户通过查看源代码还是可以看到的。</p>
-<p>Session机制</p>
-<p>这个机制要慎用，特别是对于访问量很大的站点，因为这种机制是把session信息保存在服务器端。如果访问量特别大的话，对于服务器的承受力的要求有多高是可想而知的。</p>
-<p><strong>22、J2EE常用名词解释</strong></p>
-<p>1、web容器：给处于其中的应用程序组件（JSP，Servlet）提供一个环境，使JSP，Servlet直接和容器中的环境变量接口交互，不必关注其他系统问题。主要有web服务器来实现。例如，tomcat,weblogic,websphere等。该容器提供的接口严格遵守J2EE规范中的web application标准。我们把遵守以上标准的web服务器就叫做J2EE中的WEB容器。</p>
-<p>2、Web container：实现J2EE体系结构中Web组件协议的容器。这个协议规定了一个Web组件运行时的环境，包括安全，一致性，生命周期管理，事务，配置和其他的服务。一个提供和JSP和J2EE平台APIs界面相同服务的容器。一个Web container由web服务器或者J2EE服务器提供。</p>
-<p>3、EJB容器：Enterprise java Bean容器。更具有行业领域特色，他提供给运行在其中的组件EJB各种管理功能。只要满足J2EE规范的EJB放入该容器，马上就会被容器进行高效率的管理。并且可以通过现成的接口来获得系统级别的服务。例如邮件服务、事务管理。一个实现了J2EE体系结构中EJB组件规范的容器。这个规范指定了一个Enterprise bean的运行时环境，包括安全、一致性、生命周期、事务、配置、和其他的服务。</p>
-<p>4、JNDI：（java Naming &amp; Directory interface）java命名目录服务。主要提供的功能是：提供一个目录系统，让其他各地的应用程序在其上面留下自己的索引，从而满足快速查找和定位分布式应用程序的功能。</p>
-<p>5、JMS（java Message Service）java消息服务。主要实现各个应用程序之间的通讯。包括点对点和广播。</p>
-<p>6、JTA（java Transaction API） java事务服务。提供各种分布式事务服务。应用程序只需调用其提供的接口即可。</p>
-<p>7、JAF：（java Action FrameWork）java安全认证框架。提供一些安全控制方面的框架。让开发者通过各种部署和自定义实现自己的个性安全控制策略。</p>
-<p>8、RMI/IIOP：（Remote Method Invocation/internet对象请求中介协议）他们主要用于通过远程调用服务。例如，远程有一台计算机上运行一个程序，它提供股票分析服务，我们可以在本地计算机上实现对其直接调用。当然这是要通过一定的规范才能在异构的系统之间进行通信。RMI是JAVA特有的。</p>
-<p><strong>23、异常的种类</strong></p>
-<p><img src="http://uploadfiles.nowcoder.com/images/20151010/214250_1444467985224_6A144C1382BBEF1BE30E9B91BC2973C8" alt="img"></p>
-<p>1、粉红色的是受检查的异常（checked exceptions），其必须被try{}catch语句块所捕获，或者在方法签名里通过throws子句声明。受检查的异常必须在编译时被捕获处理，命名为Checked Exception是因为java编译器要进行检查，以确保这个规则得到遵守。</p>
-<p>2、绿色的异常是运行时异常（runtime exceptions），需要程序员自己分析代码决定是否捕获和处理，比如空指针，被0除…</p>
-<p>3、声明为Error的，属于严重错误，如系统崩溃、虚拟机错误、动态链接失败等，这些错误无法恢复或者不可能捕捉，将导致应用程序中断，Error不需要捕捉。</p>
-<p><strong>24、equals和==的比较</strong></p>
-<p>== 比较的是<strong>地址和值</strong>。</p>
-<p>equals比较的是值。</p>
-<p><img src="https://uploadfiles.nowcoder.com/images/20190701/300975041_1561974792932_428A93CE2102F1DFD863C72B9733057F" alt="img"></p>
-<p>s1==s2，比较的是地址和值，由上图得知两个引用指向的是同一个地址，<strong>所以返回true</strong></p>
-<p>s3==s4，比较的是两个new出来开辟的空间对象地址，所以值相同，但地址不同，<strong>返回false</strong></p>
-<p>s1.equals(s3)，比较的是内容，<strong>返回true</strong></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s1=<span class="string">&quot;uml&quot;</span>;	</span><br><span class="line">String s2=<span class="string">&quot;uml&quot;</span>;</span><br><span class="line">String s3=<span class="keyword">new</span> String(<span class="string">&quot;uml&quot;</span>);</span><br><span class="line">String s4=<span class="keyword">new</span> String(<span class="string">&quot;uml&quot;</span>);</span><br><span class="line">System.out.println(s1==s2);	<span class="comment">//true</span></span><br><span class="line">System.out.println(s3==s4);	<span class="comment">//false</span></span><br><span class="line">System.out.println(s1.equals(s2));	<span class="comment">//true</span></span><br><span class="line">System.out.println(s3.equals(s4));	<span class="comment">//true</span></span><br><span class="line">System.out.println(s1.equals(s3));	<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>25、volatile</strong></p>
-<p>1、java的内存模型</p>
-<p>java内存模型规定了所有的变量都存储在主内存中，但是每个线程会有自己的工作内存，线程的工作内存保存了该线程中使用了的变量（从主内存中拷贝的），线程对变量的操作都必须在工作内存中进行，不同线程之间无法直接访问对方工作内存中的变量，线程间变量值从传递都要经过主内存完成</p>
-<p><img src="https://uploadfiles.nowcoder.com/images/20180827/9780880_1535335958506_5721C0ED3C89479FA5F09D1F8E722D00" alt="图片说明"></p>
-<p>2、什么是原子性</p>
-<p>一个操作是不可中断的，要么全部执行成功要么全部执行失败，比如银行转账</p>
-<p>3、什么是可见性</p>
-<p>当多个线程访问同一变量时，一个线程修改了这个变量的值，其他线程就能够立即看到修改的值</p>
-<p>4、什么是有序性</p>
-<p>程序执行的顺序按照代码的先后顺序执行</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a=<span class="number">0</span>;	<span class="comment">//1</span></span><br><span class="line"><span class="keyword">int</span> b=<span class="number">2</span>;	<span class="comment">//2</span></span><br></pre></td></tr></table></figure>
-
-<p>这两句代码1会比2先执行，但是JVM在真正执行时不一定是1在2之前，这里涉及一个概念叫做指令重排，处理器为了提高程序运行效率，可能会对输入代码进行优化，它不保证程序中各个语句的执行先后顺序同代码中的顺序一致，但是它会保证程序最终执行结果和代码顺序执行的结果是一致的。比如上面的代码语句1和语句2谁先执行对最终的程序结果并没有影响，那么就有可能在执行过程中，语句2先执行而语句1后执行。</p>
-<p>在指令重排时会考虑指令之间的数据依赖性，比如2依赖了1的数值，那么处理器会保证1在1之前执行。</p>
-<p>但是在多线程的情况下，指令重排就会有影响了。</p>
-<p>5、volatile到底做了什么</p>
-<ul>
-<li>禁止了指令重排</li>
-<li>保证了不同线程对这个变量进行操作时的可见性，即一个线程修改了某个变量值，这个新值对其他线程是立即可见的。</li>
-<li>不保证原子性（线程不安全）</li>
-</ul>
-<p><strong>26、final finally finalize</strong></p>
-<p>1、final</p>
-<p>如果一个类被声明为final，意味着它不能再派生出新的子类，不能作为父类被继承。因此一个类不能既声明为abstract的，又被声明为final的。将变量或方法声明为final，可以保证它们在使用中不被改变。被声明为final的变量必须在new一个对象时初始化（即只能在声明变量或构造器或代码块内初始化），而在以后的引用中只能读取，不可修改。被声明为final的方法也同样只能使用，不能覆盖（重写）。</p>
-<p>2、finally</p>
-<p>在异常处理时提供finally块来执行清除操作，如果抛出一个异常，那么相匹配的catch子句就会执行，然后控制就会进入finally块。</p>
-<p>3、finalize</p>
-<p>方法名。java技术允许使用finalize()方法在垃圾收集器将对象从内存中清除出去之前做必要的清理工作。这个方法是由垃圾收集器在确定这个对象没有被引用时对这个对象调用的。它是在Object类中定义的，因此所有的类都继承了它。子类覆盖finalize()方法以整理系统资源或者执行其他清理工作。finalize()方法是在垃圾收集器删除对象之前对这个对象调用的。</p>
-<p><strong>27、内存泄漏</strong></p>
-<p>内存泄漏（Memory Leak）是指一个不再被使用的对象或者变量还在内存中占有存储空间。在C/C++语言中，内存泄漏出现在开发人员忘记释放已分配的内存就会造成内存泄漏。在java语言中引入垃圾回收机制，有GC负责进行回收不再使用的对象，释放内存。但是还是会存在内存泄漏的问题。</p>
-<p>内存泄漏主要有两种情况：1.在堆中申请的空间没有释放。2.对象已不再被使用，但是仍然在内存中保留着。GC机制的引入只能解决第一种情况，对于第2中情况无法保证不再使用的对象会被释放。Java语言中的内存泄漏主要指第2种情况。</p>
-<p>内存泄漏的原因：1. 静态集合类。如HashMap和Vector。这些容器是静态的，生命周期和程序的生命周期一致，那么在容器中对象的生命周期也和其一样，对象在程序结束之前将不能被释放，从而会造成内存泄漏。2.各种连接，如数据库连接，网络连接，IO连接，不再使用时如果连接不释放容易造成内存泄漏。3. 释放对象往往没有相应的删除，可能会导致内存泄漏。</p>
-<p>内存溢出（OOM）是指程序在申请内存时没有足够的内存供使用，进而导致程序崩溃这是结果描述。内存泄漏（Memory Leak）最终会导致内存溢出。</p>
-<p><strong>28、标识符</strong></p>
-<p>1、标识符由26个英文字符大小写（a<del>z,A</del>Z）、数字（0~9）、下划线(_)和美元符号($)组成；</p>
-<p>2、不能以数字开头，不能是关键字；</p>
-<p>3、严格区分大小写；</p>
-<p>4、标识符可以为任意长度；</p>
-<p><strong>29、接口和抽象类的区别</strong></p>
-<p>1、接口的方法默认为public abstract，接口中的变量默认为public static final，在java8之前所有的方法不能有实现抽象类中可以有非抽象方法；</p>
-<p>2、一个类可以实现多个接口，但只能继承一个抽象类</p>
-<p>3、一个类实现接口，要实现该接口的所有抽象方法。</p>
-<p>4、接口不能被实例化，但可以声明，但是必须引用一个实现该接口的对象。抽象类可以有构造方法，但是不能被直接通过new进行实例化。但可以通过子类继承，实例化子类的时候抽象类也会被实例化。这其实用到了多态，向上转型。父类引用指向子类对象。</p>
-<p>5、从设计层面来说，抽象类是对类的抽象，是一种模板设计，接口是行为的抽象，是一种行为的规范。</p>
-<p><strong>30、Integer对象的方法</strong></p>
-<p>Integer.parseInt(“”)是将字符串类型转换为int的基础数据类型</p>
-<p>Integer.valueOf(“”)是将字符串类型数据转换为Integer对象</p>
-<p>Integer.intValue()；是将Integer对象中的数据取出，返回一个基础数据类型int</p>
-<p><strong>31、Servlet的几个对象</strong></p>
-<p>ServletContext对象：servlet容器在启动时会加载web应用，并为每个web应用创建唯一的servlet context对象，可以把ServletContext看成是一个web应用的服务器端组件的共享内存，在ServletContext中可以存放共享数据。ServletContect对象是真正的一个全局对象，凡是web容器中的Servlet都可以访问。</p>
-<p>整个web应用只有唯一的一个ServletContext对象</p>
-<p>ServletConfig对象：用于封装servlet的配置信息。从一个servlet被实例化后，对任何客户端在任何时候访问有效，但仅对servlet自身有效，一个servlet的ServletConfig对象不能被另一个servlet访问。</p>
-<p><strong>32、IO流的分类</strong></p>
-<p>按照流的流向分，可以分为输入流和输出流：</p>
-<ul>
-<li>输入流：只能从中读取数据，而不能向其写入数据。</li>
-<li>输出流：只能向其写入数据，而不能向其读取数据。</li>
-</ul>
-<p>此处的输入，输出涉及一个方向的问题，数据从内存到硬盘，通常称为输出流—-也就是说，这里的输入，输出都是从程序运行所在的内存的角度来划分的。</p>
-<blockquote>
-<p>注：如果从硬盘的角度来考虑，上述应该是输入流才对；但划分输入/输出流时是从程序运行所在的内存角度来考虑的，因此上述为输出流而不是输入流。</p>
-</blockquote>
-<p><img src="https://uploadfiles.nowcoder.com/files/20170906/3766702_1504658512297_20160505173519730" alt="这是图片描述"></p>
-<p>对于如图15.2所示的数据流向，数据从服务器通过网络流向客户端，在这种情况下，server端的内存负责将数据输出到网络里，因此server端的程序使用输出流；client端的内存负责从网络中读取数据，因此client端的程序应该使用输入流。</p>
-<blockquote>
-<p>注：java的输入流主要是InputStream和Reader作为基类，而输出流则是主要由outputStream和Writer作为基类。它们都是一些抽象基类，无法直接创建实例。</p>
-</blockquote>
-<p><strong>节点流：</strong>FileInputStream、FileOutputStream、FileReader、FileWriter、StringReader、StringWriter、ByteArrayInputStream、ByteArrayOutputStream、CharArrayReader、PipedInputStream、PipedOutputStream、PipedReaderPipedWriter</p>
-<p><strong>处理流：</strong>BufferedInputStream、BufferedOutputStream、BufferedReader、BufferedWriter、InputStreamReader、OutputStreamReader、DataInputStream、DataOutputStream、PrintWriter</p>
-<p>节点流的前缀都是名词，如File、String、char等；处理流的前缀都是动词，如input、print、bufferd等等。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/12/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%94%A8gpu%E8%B7%91%E7%A8%8B%E5%BA%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/test.jpg">
-      <meta itemprop="name" content="GCC">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Laplace">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/12/%E8%AE%B0%E7%AC%AC%E4%B8%80%E6%AC%A1%E7%94%A8gpu%E8%B7%91%E7%A8%8B%E5%BA%8F/" class="post-title-link" itemprop="url">记第一次用gpu跑程序</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-01-12 15:35:31 / 修改时间：16:03:35" itemprop="dateCreated datePublished" datetime="2021-01-12T15:35:31+08:00">2021-01-12</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1、首先cmd执行<code>nvidia-smi</code>命令查看一下显卡配置。</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20210112153848320.png" alt="image-20210112153848320"></p>
-<p>可以看到服务器是有GPU并有一些后台应用使用了GPU资源。确定有GPU之后下一步就是想办法如何让自己的python程序跑在指定的GPU上。</p>
-<p>2、keras使用CPU和GPU运算没有任何的语法差别，它能自动地判断能不能使用GPU运算，能的话就用GPU，不能则CPU（所以之前没配置GPU之前都是跑在CPU上）。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.environ[<span class="string">&quot;CUDA_VISIBLE_DEVICES&quot;</span>]=<span class="string">&quot;0&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>在python程序头部敲上以上命令即可在GPU配置好的情况下使用0号GPU跑程序。</p>
-<p>3、如何配置GPU呢？主要需要四个部分。</p>
-<ul>
-<li><code>tensorflow-gpu</code>（运行<code>pip install tensorflow-gpu==1.14.0</code>）</li>
-<li>适合版本的NVDIA驱动（师傅已经安装好）</li>
-<li>CUDA(待安装)</li>
-<li>cuDNN（待安装）</li>
-</ul>
-<p>服务器上的环境配置：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tensorflow-gpu: 1.14.0</span><br><span class="line">keras: 2.2.4</span><br><span class="line">nvidia driver: 451.67 (驱动显卡工作的程序)</span><br><span class="line">CUDA: 10.0 (英伟达开发的用于GPU运算的框架)</span><br><span class="line">cuDNN: 7.6.4 (专用于深度神经网络的库)</span><br></pre></td></tr></table></figure>
-
-<p><strong>踩的坑：</strong></p>
-<p>一开始下载<code>CUDA v11.0</code>和8.0.4的<code>cuDNN</code>。在执行train.py程序时报错<code>ImportError: Could not find cudart64_100.dll</code>。报错信息为<code>CUDA</code>与<code>tensorflow-gpu</code>的版本不匹配，所以这里将<code>CUDA</code>进行降级，重新下10.0的<code>CUDA</code>。</p>
-<p>卸载过程主要就是将<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA</code>中v11.0的文件夹进行删除并删除CUDA的两个环境变量。</p>
-<p><code>cuDNN</code>也进行降级与<code>CUDA</code>的版本进行适配。</p>
-<p>下载完成之后，将<code>cuDNN</code>中的bin、include、lib文件夹中文件拷贝到<code>C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v10.0</code>中对应的文件夹即可。</p>
-<p>4、测试python程序</p>
-<p>在train.py中引入上述的两行程序点击RUN。之后就可以看到飞快的训练速度了~</p>
-<p><img src="C:\Users\GCC\AppData\Roaming\Typora\typora-user-images\image-20210112160308759.png" alt="image-20210112160308759"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/10/">10</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -2015,7 +1804,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

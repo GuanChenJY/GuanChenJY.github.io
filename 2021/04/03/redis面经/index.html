@@ -39,7 +39,7 @@
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200115180329317.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="og:image" content="https://img-blog.csdnimg.cn/20200115180337645.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70">
 <meta property="article:published_time" content="2021-04-03T12:27:22.000Z">
-<meta property="article:modified_time" content="2021-04-05T07:22:32.620Z">
+<meta property="article:modified_time" content="2021-04-15T11:31:15.271Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy8xNDUzNDg2OS02N2YxOGVmY2FmZTQ2NjlhLmpwZw?x-oss-process=image/format,png">
@@ -197,7 +197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-05 15:22:32" itemprop="dateModified" datetime="2021-04-05T15:22:32+08:00">2021-04-05</time>
+                <time title="修改时间：2021-04-15 19:31:15" itemprop="dateModified" datetime="2021-04-15T19:31:15+08:00">2021-04-15</time>
               </span>
 
           
@@ -234,7 +234,7 @@
 <p>假如用户第一次访问数据库中的某些数据。这个过程会比较慢，因为是从硬盘上读取的。将该用户访问的数据存在缓存中，这样下一次再访问这些数据的时候就可以直接从缓存中获取了。操作缓存就是直接操作内存，所以速度相当快。如果数据库中的对应数据改变的之后，同步改变缓存中相应的数据即可！</p>
 <p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy8xNDUzNDg2OS02N2YxOGVmY2FmZTQ2NjlhLmpwZw?x-oss-process=image/format,png" alt="img"></p>
 <p><strong>高并发：</strong></p>
-<p>直接操作缓存能够承受的请求是远远大于直接访问数据库的，所以我们可以考虑把数据库种的部分数据转移到缓存中去，这样用户的一部分请求会直接到缓存这里而不用经过数据库。</p>
+<p>直接操作缓存能够承受的请求是远远大于直接访问数据库的，所以我们可以考虑把数据库中的部分数据转移到缓存中去，这样用户的一部分请求会直接到缓存这里而不用经过数据库。</p>
 <p><img src="https://imgconvert.csdnimg.cn/aHR0cHM6Ly91cGxvYWQtaW1hZ2VzLmppYW5zaHUuaW8vdXBsb2FkX2ltYWdlcy8xNDUzNDg2OS0wOWIxZDI3OWEwNWVmNWJjLmpwZw?x-oss-process=image/format,png" alt="img"></p>
 <h3 id="为什么要用redis而不用map-guava做缓存"><a href="#为什么要用redis而不用map-guava做缓存" class="headerlink" title="为什么要用redis而不用map/guava做缓存"></a>为什么要用redis而不用map/guava做缓存</h3><p>缓存分为本地缓存和分布式缓存。以 Java 为例，使用自带的 map 或者 guava 实现的是本地缓存，最主要的特点是轻量以及快速，生命周期随着 jvm 的销毁而结束，并且在多实例的情况下，每个实例都需要各自保存一份缓存，缓存不具有一致性。</p>
 <p>使用 redis 或 memcached 之类的称为分布式缓存，在多实例的情况下，各实例共用一份缓存数据，缓存具有一致性。缺点是需要保持 redis 或 memcached服务的高可用，整个程序架构上较为复杂。</p>
@@ -286,7 +286,7 @@
 <p>缺点：</p>
 <ul>
 <li>1、数据安全性低。RDB是间隔一段时间进行持久化、如果持久化之间redis发生故障，会发生数据丢失。所以这种方式更适合数据要求不严谨的时候。</li>
-<li>AOF（Append-only file）持久化方式：是指所有的命令行记录以redis命令请求协议的格式玩保存为aof文件。</li>
+<li>AOF（Append-only file）持久化方式：是指所有的命令行记录以redis命令请求协议的格式保存为aof文件。</li>
 </ul>
 <p>AOF持久化：</p>
 <p>AOF持久化（即Append Only File持久化），则是将redis执行的每次写命令记录到单独的日志文件中，当重启Redis会重新将持久化的日志中文件恢复数据。</p>
@@ -303,7 +303,7 @@
 <li>AOF文件比RDB更新频率高、优先使用AOF还原数据。</li>
 <li>AOF比RDB更安全也更大</li>
 <li>RDB性能比AOF好</li>
-<li>如果两个都哦配置了优先加载AOF。</li>
+<li>如果两个都配置了优先加载AOF。</li>
 </ul>
 <h3 id="如何选择合适的持久化方式"><a href="#如何选择合适的持久化方式" class="headerlink" title="如何选择合适的持久化方式"></a>如何选择合适的持久化方式</h3><p>一般来说， 如果想达到足以媲美PostgreSQL的数据安全性，你应该同时使用两种持久化功能。在这种情况下，当 Redis 重启的时候会优先载入AOF文件来恢复原始的数据，因为在通常情况下AOF文件保存的数据集要比RDB文件保存的数据集要完整。</p>
 <p>如果你非常关心你的数据， 但仍然可以承受数分钟以内的数据丢失，那么你可以只使用RDB持久化。</p>
@@ -324,7 +324,7 @@
 <h3 id="redis-key的过期时间和永久有效分别怎么设置？"><a href="#redis-key的过期时间和永久有效分别怎么设置？" class="headerlink" title="redis key的过期时间和永久有效分别怎么设置？"></a>redis key的过期时间和永久有效分别怎么设置？</h3><p>EXPIRE和PERSIST命令。</p>
 <h3 id="我们知道通过expire来设置key的过期时间，那么对过期的数据怎么处理呢？"><a href="#我们知道通过expire来设置key的过期时间，那么对过期的数据怎么处理呢？" class="headerlink" title="我们知道通过expire来设置key的过期时间，那么对过期的数据怎么处理呢？"></a>我们知道通过expire来设置key的过期时间，那么对过期的数据怎么处理呢？</h3><p>除了缓存服务器自带的缓存效率策略之外，我们还可以根据具体的业务需求进行自定义的缓存淘汰，常见的策略有两种：</p>
 <p>1、定时去清理过期的缓存；</p>
-<p>2、当有用户请求过来，再判断这个请求所用到的缓存是否过期，过期的话话就去底层系统得到新数据并更新缓存。</p>
+<p>2、当有用户请求过来，再判断这个请求所用到的缓存是否过期，过期的话就去底层系统得到新数据并更新缓存。</p>
 <p>两者各有优劣，第一种的缺点是为维护大量缓存的key是比较麻烦的，第二种的缺点就是每次用户请求都要判断缓存失效，逻辑相对比较复杂！具体用哪种方案，大家可以根据自己的应用场景来权限。</p>
 <h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><h3 id="mysql里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据"><a href="#mysql里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据" class="headerlink" title="mysql里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据"></a>mysql里有2000w数据，redis中只存20w的数据，如何保证redis中的数据都是热点数据</h3><p>redis内存数据集大小升到一定大小的时候，就会施行数据淘汰策略。</p>
 <h3 id="redis的内存淘汰策略有哪些"><a href="#redis的内存淘汰策略有哪些" class="headerlink" title="redis的内存淘汰策略有哪些"></a>redis的内存淘汰策略有哪些</h3><p>redis的内存淘汰策略是指在redis的用于缓存的内存不足时，怎么处理需要新写入且需要申请额外空间的数据。</p>
@@ -398,7 +398,7 @@
 <h3 id="官方redis-cluster方案"><a href="#官方redis-cluster方案" class="headerlink" title="官方redis cluster方案"></a>官方redis cluster方案</h3><p><img src="https://img-blog.csdnimg.cn/20200115173621637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly90aGlua3dvbi5ibG9nLmNzZG4ubmV0,size_16,color_FFFFFF,t_70" alt="img"></p>
 <h3 id="redis集群模式的工作原理？redis的key如何寻址的？分布式寻址有哪些算法？一致性哈希算法？"><a href="#redis集群模式的工作原理？redis的key如何寻址的？分布式寻址有哪些算法？一致性哈希算法？" class="headerlink" title="redis集群模式的工作原理？redis的key如何寻址的？分布式寻址有哪些算法？一致性哈希算法？"></a>redis集群模式的工作原理？redis的key如何寻址的？分布式寻址有哪些算法？一致性哈希算法？</h3><p>redis cluster是一种服务端Sharding计数，3.0版本开始正式提供。redis cluster并没有使用一致性hash，而是采用slot的概念，一共分成16384个槽。将请求发送到任意节点，接收到请求的节点会将查询请求发送到正确的节点上执行</p>
 <p><strong>方案说明</strong></p>
-<p>通过哈希的方式，将数据分片，每个节点均分存储一定哈希槽(哈希值)区间的数据，默认分配了16384 个槽位<br>每份数据分片会存储在多个互为主从的多节点上<br>数据写入先写主节点，再同步到从节点(支持配置为阻塞同步)<br>同一分片多个节点间的数据不保持一致性<br>读取数据时，当客户端操作的key没有分配在该节点上时，redis会返回转向指令，指向正确的节点<br>扩容时时需要需要把旧节点的数据迁移一部分到新节点<br>在 redis cluster 架构下，每个 redis 要放开两个端口号，比如一个是 6379，另外一个就是 加1w 的端口号，比如 16379。</p>
+<p>通过哈希的方式，将数据分片，每个节点均分存储一定哈希槽(哈希值)区间的数据，默认分配了16384 个槽位<br>每份数据分片会存储在多个互为主从的多节点上<br>数据写入先写主节点，再同步到从节点(支持配置为阻塞同步)<br>同一分片多个节点间的数据不保持一致性<br>读取数据时，当客户端操作的key没有分配在该节点上时，redis会返回转向指令，指向正确的节点<br>扩容时需要把旧节点的数据迁移一部分到新节点<br>在 redis cluster 架构下，每个 redis 要放开两个端口号，比如一个是 6379，另外一个就是 加1w 的端口号，比如 16379。</p>
 <p>16379 端口号是用来进行节点间通信的，也就是 cluster bus 的东西，cluster bus 的通信，用来进行故障检测、配置更新、故障转移授权。cluster bus 用了另外一种二进制的协议，gossip 协议，用于节点间进行高效的数据交换，占用更少的网络带宽和处理时间。<br><strong>节点间的内部通信机制</strong></p>
 <p>基本通信原理</p>
 <p>集群元数据的维护有两种方式：集中式、Gossip协议。redis cluster节点间采用gossip协议进行通信。</p>
@@ -553,7 +553,10 @@
     <a href="/2021/03/28/springboot%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" rel="prev" title="springboot阅读笔记">
       <i class="fa fa-chevron-left"></i> springboot阅读笔记
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/09/%E5%B9%B6%E5%8F%91%E9%9D%A2%E7%BB%8F/" rel="next" title="并发面经">
+      并发面经 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -628,7 +631,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="秒杀系统主要解决两个问题，一个是并发读，一个是并发写： 并发读的优化就是尽量减少客户端到服务端来读数据，或者读更少的数据；并发写处理原则也一样，载数据库独立出一个库，做特殊处理。 秒杀的整体架构包括稳、准、快三个关键字： 稳：即流量符合预期时整体架构要满足高可用，就算超出预期也不能掉链子。 准：要保证数据的一致性，不能超卖。 快：系统性能要足够高，尽可能做好系统优化。 秒杀系统的架构原则：“4要1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="秒杀系统设计">
+<meta property="og:url" content="http://example.com/2021/04/12/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:site_name" content="Laplace">
+<meta property="og:description" content="秒杀系统主要解决两个问题，一个是并发读，一个是并发写： 并发读的优化就是尽量减少客户端到服务端来读数据，或者读更少的数据；并发写处理原则也一样，载数据库独立出一个库，做特殊处理。 秒杀的整体架构包括稳、准、快三个关键字： 稳：即流量符合预期时整体架构要满足高可用，就算超出预期也不能掉链子。 准：要保证数据的一致性，不能超卖。 快：系统性能要足够高，尽可能做好系统优化。 秒杀系统的架构原则：“4要1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://res-static.hc-cdn.cn/fms/img/18951bb5dd9815d13baa0a8c82936ea91603774400299.jpg">
+<meta property="og:image" content="https://res-static.hc-cdn.cn/fms/img/92d7eb39e63c332d0dc5c7da7a4177511603774400300.jpg">
+<meta property="og:image" content="https://res-static.hc-cdn.cn/fms/img/c20b8dddb3e0ab2f4f2c8c54e10b3e861603774400300.jpg">
+<meta property="article:published_time" content="2021-04-12T05:23:42.000Z">
+<meta property="article:modified_time" content="2021-04-12T06:52:49.311Z">
+<meta property="article:author" content="GCC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://res-static.hc-cdn.cn/fms/img/18951bb5dd9815d13baa0a8c82936ea91603774400299.jpg">
+
+<link rel="canonical" href="http://example.com/2021/04/12/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>秒杀系统设计 | Laplace</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Laplace</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/12/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/test.jpg">
+      <meta itemprop="name" content="GCC">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Laplace">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          秒杀系统设计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-04-12 13:23:42 / 修改时间：14:52:49" itemprop="dateCreated datePublished" datetime="2021-04-12T13:23:42+08:00">2021-04-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>秒杀系统主要解决两个问题，一个是并发读，一个是并发写：</strong></p>
+<p>并发读的优化就是尽量减少客户端到服务端来读数据，或者读更少的数据；并发写处理原则也一样，载数据库独立出一个库，做特殊处理。</p>
+<p><strong>秒杀的整体架构包括稳、准、快三个关键字：</strong></p>
+<p>稳：即流量符合预期时整体架构要满足高可用，就算超出预期也不能掉链子。</p>
+<p>准：要保证数据的一致性，不能超卖。</p>
+<p>快：系统性能要足够高，尽可能做好系统优化。</p>
+<p><strong>秒杀系统的架构原则：“4要1不要”</strong></p>
+<p>数据要尽量少：用户请求的数据能少就少，包括上传给系统的数据和返回给客户端的数据。首先因为数据传输需要时间，不管是请求数据还是返回数据都需要服务端处理，非常消耗CPU；其次系统依赖的数据能少就少。</p>
+<p>请求数要尽量少：用户请求的页面返回后，浏览器渲染这个页面还需要其他的额外请求，所以减少请求数可以减少资源消耗。</p>
+<p>路径要尽量短：就是用户发出请求到返回数据，这个过程中经过的中间节点数。因为每经过一个节点都会产生一个新的连接，同时增加了新的不确定性。所以缩短请求路径不仅可以增加可用性，同时还能提高性能，减少延时。</p>
+<p>依赖要尽量少：指完成一次用户请求依赖的系统或服务要尽可能少。减少依赖可以对系统进行分级，防止重要的系统被不重要的系统拖垮。</p>
+<p>不要有单点</p>
+<p><img src="https://res-static.hc-cdn.cn/fms/img/18951bb5dd9815d13baa0a8c82936ea91603774400299.jpg" alt="如何设计一个秒杀系统总结2"></p>
+<p><strong>如何做好动静分离</strong></p>
+<p>动静分离就是把请求的数据分为动态数据和静态数据。动态数据和静态数据的主要区别是看页面中输入的数据是否和URL、浏览者、时间、地域相关，以及是否含有cookie等私密数据。</p>
+<p>怎么对静态数据做缓存？</p>
+<ul>
+<li>应该把静态数据缓存到离用户最近的地方。常见的有：缓存在用户浏览器上、CDN、服务端的Cache中</li>
+<li>静态化改造就是要直接缓存HTTP连接。如下图所示，Web 代理服务器根据请求 URL，直接取出对应的 HTTP 响应头和响应体然后直接返回，这个响应过程简单得连 HTTP 协议都不用重新组装，甚至连 HTTP 请求头也不需要解析。</li>
+</ul>
+<p>如何做动静分离的改造：</p>
+<p>以典型的商品详情为例介绍，看看这个页面里都有哪些动静数据。我们从以下 5 个方面来分离出动态内容。</p>
+<p>1.URL唯一化，商品详情系统天然地就可以做到 URL 唯一化，比如每个商品都由 ID 来标识。</p>
+<p>2.分离浏览者相关的因素。浏览者相关的因素包括是否已登录，以及登录身份等，这些因素可以单独拆分出来，通过动态请求获取。</p>
+<p>3.分离时间因素，服务端输出的时间通过动态请求获取。</p>
+<p>4.异步化地域因素，页面上与地域有关的因素通过异步方式获取。</p>
+<p>5.去掉cookie，这里说的去掉cookie并不是用户端收到的页面不含cookie了，而是缓存的静态数据中不含cookie。</p>
+<p><strong>流量削峰</strong></p>
+<p>削峰的存在可以让服务器的处理更加平稳，可以节省服务器的资源成本。削峰本质上就是更多的延缓用户请求的发出，以便减少和过滤一些无效请求。</p>
+<p>流量削峰的几种操作思路：排队、答题、分层过滤。</p>
+<p>1）排队</p>
+<p>用消息队列来缓冲瞬时流量，除了消息队列，类似排队还有很多方式，如：</p>
+<p>a. 利用线程池加锁等待也是一种常用排队方式。</p>
+<p>b. 先进先出、先进后出等常用的内存排队算法的实现方式。</p>
+<p>c. 把请求序列化到文件中，然后再顺序的读文件来恢复请求等方式。</p>
+<p>2）答题</p>
+<p>答题可以防止：1、部分买家使用秒杀器在参加秒杀时作弊。2、延缓请求，起到对请求流量进行削峰的作用。</p>
+<p>秒杀答题设计思路：</p>
+<p><img src="https://res-static.hc-cdn.cn/fms/img/92d7eb39e63c332d0dc5c7da7a4177511603774400300.jpg" alt="如何设计一个秒杀系统总结4"></p>
+<p>整个答题逻辑主要分为3部分</p>
+<p>第一，题库生成模块，主要是生成一个问题和答案，防止秒杀器来答题。</p>
+<p>第二，题库的推送模块，用于在答题前，把题目推送给详情系统和交易系统。题库推送主要为了保证每次用户请求的题目是唯一的，防止答题作弊。</p>
+<p>第三，题目的图片生成模板，用于把题目生成图片格式，并在图片里增加干扰因素。由于答题时网络拥挤，应该把题目图片提前推送到CDN上并进行预热。</p>
+<p>3）分层过滤</p>
+<p><img src="https://res-static.hc-cdn.cn/fms/img/c20b8dddb3e0ab2f4f2c8c54e10b3e861603774400300.jpg" alt="如何设计一个秒杀系统总结5"></p>
+<p>核心思想：在不同的层次尽可能的过滤掉无效请求，让漏斗最末端的才是有效请求，要达到这种效果，必须对数据做分层校验。</p>
+<p>分层校验原则：</p>
+<p>a.将动态请求的读数据缓存在web端，过滤掉无效的数据读。</p>
+<p>b.对读数据不做强一致性校验，减少因为一致性校验产生瓶颈的问题。</p>
+<p>c.对写数据进行基于时间的合理分片，过滤掉过期的失效请求。</p>
+<p>d.对写请求做限流保护，将超出系统承载能力的请求过滤掉</p>
+<p>e. 对写数据进行强一致性校验，只保留最后有效的数据</p>
+<p>分层校验的目的是：在读系统中，尽量减少由于一致性校验带来的系统瓶颈，尽量将不影响性能的校验提前。在写数据系统中，主要对写的数据做一致性检查，最后在数据库层保证数据的最终准确性。</p>
+<p><strong>减库存的几种方式：</strong></p>
+<p>1、下单减库存：下单减库存是最简单的减库存方式，也是控制最精确的一种，下单时直接通过数据库的事务机制控制商品库 存，这样一定不会出现超卖的情况。</p>
+<p>2、付款减库存：付款时才减库存，如果并发比较高，有可能出现买家下单后付不了款的情况，因为商品可能已经卖出</p>
+<p>3、预扣库存：买家下单后，库存为其保留一定的时间，超过这个时间，库存将会自动释放，释放后其他买家就可以继续购买。</p>
+<p>如何减库存？</p>
+<ul>
+<li>在应用中通过事务来判断，保证减后库存不能为负数，否则就回滚。</li>
+<li>直接设置数据库字段数据为无符号整数，这样减后，库存字段值小于零时执行SQL语句会报错</li>
+<li>通过SQL的case when语句判断或乐观锁实现。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/09/%E5%B9%B6%E5%8F%91%E9%9D%A2%E7%BB%8F/" rel="prev" title="并发面经">
+      <i class="fa fa-chevron-left"></i> 并发面经
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="GCC"
+      src="/images/test.jpg">
+  <p class="site-author-name" itemprop="name">GCC</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/GuanChenJY" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;GuanChenJY" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:303163861@qq.com" title="E-Mail → mailto:303163861@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">GCC</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

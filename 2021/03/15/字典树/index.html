@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img-blog.csdn.net/20180823221048359?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTc3ODU3MA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
 <meta property="article:published_time" content="2021-03-15T11:41:03.000Z">
-<meta property="article:modified_time" content="2021-03-16T13:49:26.093Z">
+<meta property="article:modified_time" content="2021-04-15T11:31:04.732Z">
 <meta property="article:author" content="GCC">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img-blog.csdn.net/20180823221048359?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl8zOTc3ODU3MA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
@@ -187,7 +187,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 21:49:26" itemprop="dateModified" datetime="2021-03-16T21:49:26+08:00">2021-03-16</time>
+                <time title="修改时间：2021-04-15 19:31:04" itemprop="dateModified" datetime="2021-04-15T19:31:04+08:00">2021-04-15</time>
               </span>
 
           
@@ -208,6 +208,11 @@
 </ul>
 <p>Trie又被称为前缀树、字典树、所以当然是一棵树。上面这棵Trie树包含的字符串集合是{in, inn, int, tea, ten, to}。典型的应用是用于统计和排序大量的字符串，所以经常被搜索引擎系统用于文本词频统计。它的优点是：最大限度地减少无谓的字符串比较。</p>
 <p>Trie的核心思想是空间换时间。利用字符串的公共前缀来降低查询时间的开销以达到提高效率的目的。</p>
+<p>Trie是一棵有根树，其每个节点包含以下字段：</p>
+<ul>
+<li>指向子节点的指针数组。</li>
+<li>布尔字段isEnd，标识该节点是否为结尾</li>
+</ul>
 <p><strong>前缀树的3个基本性质：</strong></p>
 <p>1、根节点不包含字符，除根节点外每一个节点都只包含一个字符。</p>
 <p>2、从根节点到某一结点，路径上经过的字符连接起来，为该节点对应的字符串。</p>
@@ -216,6 +221,7 @@
 <p>通常字典树的查询时间复杂度是O（logL）,L是字符串的长度。所以效率还是比较高的。</p>
 <p>网上的一部分文章说的都是字典树的效率比hash表高。我觉得还是相对来看比较好，各有各的特点吧。</p>
 <p>hash表，通过hash函数把所有的单词分别hash成key值，查询的时候直接通过hash函数即可，都知道hash表的效率是非常高的为O(1)，直接说字典树的查询效率比hash高，难道有比O（1）还快的。</p>
+<p><strong>LeetCode208题</strong></p>
 
     </div>
 
@@ -312,7 +318,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">89</span>
+          <span class="site-state-item-count">91</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
